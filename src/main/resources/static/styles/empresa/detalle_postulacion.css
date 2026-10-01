@@ -1,0 +1,327 @@
+/*Paletts and fonts*/
+:root {
+    /*Colors*/
+    --violeta: #9c4bff;
+    --morado-c: #9400D3;
+    --morado-o: #29003a;
+    --negro-1: #292528;
+    --gris-o: #363636;
+    --gris-c: #cccccc;
+    --gris-c-2: #999999;
+    --blanco: #ffffff;
+    --negro-2: #222;
+    --negro: #000;
+    --verde: #008000;
+    --verde-2: #22AB74;
+    --rojo: #FF0000;
+    --rojo-2: #c84153;
+    --crimson: #DC143C;
+    --white-smoke: #F5F5F5;
+    --gris-3: #999;
+    --gris-4: #FAFAFA;
+    /*fonts*/
+    --font-satoshi: 'Satoshi';
+    --font-clash: 'ClashDisplay';
+}
+
+/*Universal Styles*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-size: 10px;
+}
+
+body {
+    font-family: var(--font-satoshi);
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+/*Main content*/
+.content {
+    padding: 3rem;
+    margin-left: 27rem;
+}
+
+.content__btn-volver {
+    margin-bottom: 2rem;
+}
+
+.content__btn-volver a {
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.content__btn-volver i {
+    font-size: 1.4rem;
+}
+
+.content__header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.content__title {
+    margin-bottom: 2.5rem;
+}
+
+.content__title h1 {
+    font-size: 2.3rem;
+    font-weight: 900;
+    margin-bottom: .5rem;
+}
+
+.content__title span {
+    font-size: 1.2rem;
+    color: var(--gris-c-2);
+}
+
+.content__mail span {
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+/*Cards*/
+.content__cards {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.card {
+    width: 100%;
+    padding: 1.5rem;
+    border-radius: .5rem;
+    box-shadow: 0 0 .2rem var(--gris-c);
+}
+
+.card--main {
+    display: flex;
+    gap: 2rem;
+}
+
+.card__info {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+}
+
+.card__info h2 {
+    font-size: 2rem;
+    font-weight: 900;
+    margin-bottom: .5rem;
+}
+
+.card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.card__title span {
+    font-size: 1.2rem;
+    color: var(--gris-c-2);
+}
+
+.card__data {
+    width: 100%;
+    display: flex;
+    gap: 5rem;
+    margin: 3rem 0;
+}
+
+.card__data-item {
+    width: 100%;
+}
+
+.card__data-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--gris-o);
+    margin-bottom: .5rem;
+}
+
+.card__data-value {
+    font-size: 1.2rem;
+    color: var(--gris-c-2);
+}
+
+.card__skills-container {
+    margin-top: 1rem;
+}
+
+.card__skills-container h3 {
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+}
+
+.card__skills {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.skill {
+    padding: 1rem;
+    border-radius: .7rem;
+    box-shadow: 0 0 .3rem var(--gris-c);
+}
+
+.skill__name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--gris-3);
+}
+
+.skill__value {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-top: .3rem;
+}
+
+.card__img {
+    width: 30rem;
+    height: 30rem;
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+.card__img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+}
+
+.card__group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.card__name-c-t p {
+    font-size: 1.2rem;
+    color: var(--gris-c-2);
+}
+
+.card__network {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    background-color: var(--white-smoke);
+    padding: .5rem 1rem;
+    border-radius: 1rem;
+}
+
+.card__network i {
+    font-size: 1.2rem;
+    color: var(--negro);
+}
+
+.card__network span {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--gris-c-2);
+}
+
+.card__description-title h3 {
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+}
+
+.card__description-text p {
+    font-size: 1.3rem;
+}
+
+.card__description-text p span {
+    font-size: 1.3rem;
+}
+
+.card__cv-title {
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+}
+
+.card__cv-instruction {
+    font-size: 1.2rem;
+    margin: 2.3rem 0;
+}
+
+.btn__cv-download {
+    text-decoration: none;
+    text-align: center;
+    display: inline-block;
+    width: 100%;
+    align-items: center;
+    padding: 1rem 3rem;
+    background: var(--morado-c);
+    color: var(--blanco);
+    border-radius: .7rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+    transition: .2s ease-in-out;
+}
+
+.btn__cv-download i {
+    font-size: 1.5rem;
+    margin-right: .7rem;
+}
+
+.btn__cv-download:hover {
+    background: var(--morado-o);
+}
+
+.cv__no-available {
+    font-size: 1.3rem;
+    color: var(--color-gray-600);
+    padding: 1rem;
+}
+
+.card__status-update h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: .4rem;
+}
+
+.form__field-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 2.3rem;
+}
+
+.form__select {
+    width: 100%;
+    padding: .9rem 1rem;
+    margin-top: 1.4rem;
+    border-radius: .7rem;
+    border: 1px solid var(--gris-c);
+    font-size: 1.2rem;
+    color: var(--gris-3);
+}
+
+.btn__action-submit {
+    background: var(--verde-2);
+    padding: 1rem 1.5rem;
+    border-radius: .7rem;
+    color: var(--blanco);
+    font-size: 1.4rem;
+    font-weight: 700;
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.btn__action-submit i {
+    margin-right: .7rem;
+    font-size: 1.4rem;
+}
+
+.btn__action-submit:hover {
+    background: #0c9a6a;
+}

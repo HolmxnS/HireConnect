@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Styles-->
+    <link rel="stylesheet" th:href="@{/styles/fragments/admin/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/styles/admin/ver_vacante.css}">
+    <!--Fonts-->
+    <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
+    <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
+    <!--Icons-->
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
+    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
+
+    <title th:text="'Detalle de Vacante - ' + ${vacante.titulo}"></title>
+</head>
+
+<body>
+    <div id="sidebar" th:replace="~{fragments/admin/sidebar_admin :: sidebar('empresas')}"></div>
+
+
+    <main class="content">
+
+        <!-- Botón Volver -->
+        <a th:href="@{/admin/empresas/ver/{id}(id=${vacante.empresa.id})}" class="back-btn">
+            <i class="fa-solid fa-arrow-left"></i> Volver
+        </a>
+
+        <div class="vacancy">
+
+            <div class="vacancy__header">
+                <div>
+                    <h2 th:text="${vacante.titulo}"></h2>
+                    <p>
+                        Publicada por:
+                        <span th:text="${vacante.empresa.nombreLegal}">
+                        </span>
+                    </p>
+                </div>
+
+                <div class="vacancy__status">
+                    <span th:class="${#strings.equalsIgnoreCase(vacante.estado, 'ACTIVA')} ? 
+                    'estado activa' : 'estado cerrada'" th:text="${vacante.estado}"></span>
+                    <a th:href="@{/admin/vacantes/cerrar/{id}(id=${vacante.id})}"
+                        onclick="return confirm('¿Estás seguro de CERRAR esta vacante?')" class="btn-cerrar">
+                        <i class="fa-solid fa-times-circle"></i> Cerrar
+                    </a>
+                </div>
+            </div>
+
+            <div class="vacancy__info-card">
+                <h3>Información</h3>
+
+                <ul class="vacancy__info-list">
+                    <li>
+                        <i class="fa-solid fa-money-bill"></i>
+                        <p>Salario:
+                            $<span th:text="${#numbers.formatDecimal(vacante.salario, 0, 'COMMA', 0, 'POINT')}"></span>
+                        </p>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-clock"></i>
+                        <p>Tipo:
+                            <span th:text="${vacante.tipoContrato.descripcion}"></span>
+                        </p>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-map-pin"></i>
+                        <p>Modalidad:
+                            <span th:text="${vacante.modalidad.descripcion}"></span>
+                        </p>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-graduation-cap"></i>
+                        <p>Nivel:
+                            <span th:text="${vacante.experienciaRequerida.descripcion}"></span>
+                        </p>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-calendar-check"></i>
+                        <p>Publicación:
+                            <span th:text="${#temporals.format(vacante.fechaPublicacion, 'dd/MMM/yyyy')}"></span>
+                        </p>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-list-ol"></i>
+                        <p>Total Postulantes:
+                            <span class="cant" th:text="${#lists.size(postulantes)}"></span>
+                        </p>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="vacancy__description">
+                <h3>Descripción Detallada</h3>
+                <div class="description" th:utext="${vacante.descripcion}">
+                </div>
+            </div>
+        </div>
+        
+        <div class="applicants">
+            <h2><i class="fa-solid fa-users-line"></i> Postulaciones</h2>
+
+            <div class="table__responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nombre del Postulante</th>
+                            <th>Email</th>
+                            <th>Fecha de Postulación</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr th:each="postulacion : ${postulantes}">
+                            <td th:text="${postulacion.postulante.nombre} + ' ' + ${postulacion.postulante.apellido}">
+                            </td>
+                            <td th:text="${postulacion.postulante.email}"></td>
+                            <td th:text="${#temporals.format(postulacion.fechaPostulacion, 'dd/MM/yyyy')}"></td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(postulantes)}">
+                            <td colspan="3" class="empty">Aún no hay postulaciones.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

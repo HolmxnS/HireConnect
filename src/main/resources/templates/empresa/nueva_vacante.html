@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Styles-->
+    <link rel="stylesheet" th:href="@{/styles/fragments/empresa/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/styles/empresa/nueva_vacante.css}">
+    <!--Fonts-->
+    <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
+    <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
+    <!--Icons-->
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
+    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
+
+    <title>Nueva Vacante - HireConnect</title>
+</head>
+
+<body>
+    <div th:replace="~{fragments/empresa/sidebar_empresa :: sidebar('vacantes')}"></div>
+
+    <main class="main">
+        <div class="main__header">
+            <h1>Nueva Vacante</h1>
+            <a th:href="@{/empresa/vacante}">
+                <i class="fa-solid fa-arrow-left mr-2"></i> Volver
+            </a>
+        </div>
+
+        <form class="form" th:action="@{/empresa/vacantes/guardar}" th:object="${vacante}" method="post">
+            <input type="hidden" th:field="*{id}" />
+            <div class="form__group">
+                <label for="titulo">Título de la vacante</label>
+                <input type="text" th:field="*{titulo}" id="titulo" required>
+                <p class="error" th:if="${#fields.hasErrors('titulo')}" th:errors="*{titulo}"></p>
+            </div>
+
+            <div class="form__group">
+                <label for="descripcion">Descripción</label>
+                <textarea class="form__textarea" th:field="*{descripcion}" id="descripcion" rows="4" required
+                    placeholder="Describe las responsabilidades, la cultura y lo que hace este puesto especial."></textarea>
+                <p class="error" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></p>
+            </div>
+
+            <div class="form__row">
+                <div class="form__group">
+                    <label for="salario">Salario</label>
+                    <input type="number" th:field="*{salario}" id="salario" step="1000" min="0"
+                        placeholder="Ej: 4.500.000" required>
+                    <p class="error" th:if="${#fields.hasErrors('salario')}" th:errors="*{salario}"></p>
+                </div>
+
+                <div class="form__group">
+                    <label for="modalidad">Modalidad de Trabajo</label>
+                    <select th:field="*{modalidad}" id="modalidad" required>
+                        <option value="">Selecciona una opción</option>
+                        <option th:each="m : ${modalidades}" th:value="${m.name()}" th:text="${m.descripcion}">
+                        </option>
+                    </select>
+                    <p class="error" th:if="${#fields.hasErrors('modalidad')}" th:errors="*{modalidad}"></p>
+                </div>
+            </div>
+
+            <div class="form__row">
+                <div class="form__group">
+                    <label for="tipoContrato">Tipo de Contrato</label> <select th:field="*{tipoContrato}"
+                        id="tipoContrato" required>
+                        <option value="">Selecciona una opción</option>
+                        <option th:each="t : ${tiposContrato}" th:value="${t.name()}" th:text="${t.descripcion}">
+                        </option>
+                    </select>
+                    <p class="error" th:if="${#fields.hasErrors('tipoContrato')}" th:errors="*{tipoContrato}"></p>
+                </div>
+                <!-- 6. Experiencia Requerida -->
+                <div class="form__group">
+                    <label for="experienciaRequerida">Nivel de Experiencia</label>
+                    <select th:field="*{experienciaRequerida}" id="experienciaRequerida" required>
+                        <option value="">Selecciona un nivel</option>
+                        <option th:each="e : ${nivelesExperiencia}" th:value="${e.name()}"
+                            th:text="${e.descripcion}"></option>
+                    </select>
+                    <p class="error" th:if="${#fields.hasErrors('experienciaRequerida')}"
+                        th:errors="*{experienciaRequerida}"></p>
+                </div>
+            </div>
+            <!-- 7. Habilidades Requeridas -->
+            <div class="form__group">
+                <label for="habilidadesRequeridas">Habilidades
+                    Requeridas (Separadas por coma)</label>
+                <input type="text" th:field="*{habilidadesRequeridas}" id="habilidadesRequeridas" required
+                    placeholder="Ej: Java, Spring Boot, AWS, Scrum">
+                <p class="error" th:if="${#fields.hasErrors('habilidadesRequeridas')}"
+                    th:errors="*{habilidadesRequeridas}"></p>
+            </div>
+            <div class="form__row">
+                <div class="form__group">
+                    <label for="fechaInicio">Fecha de Inicio</label>
+                    <input type="date" th:field="*{fechaInicio}" id="fechaInicio"
+                        placeholder="dd/mm/aaaa" required />
+                </div>
+                <div class="form__group">
+                    <label for="fechaFin">Fecha de Cierre</label>
+                    <input type="date" th:field="*{fechaFin}" id="fechaFin" placeholder="dd/mm/aaaa"
+                        required />
+                </div>
+            </div>
+
+            <button type="submit" class="form__btn">Publicar Vacante</button>
+        </form>
+    </main>
+</body>
+
+</html>

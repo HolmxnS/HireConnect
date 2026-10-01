@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/styles/fragments/admin/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
+    <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
+    <link rel="stylesheet" th:href="@{/styles/admin/mi_perfil.css}">
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
+    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
+    <title>HireConnect - Editar Perfil Admin</title>
+</head>
+
+<body>
+    <div th:replace="~{fragments/admin/sidebar_admin :: sidebar('perfil')}"></div>
+
+    <main class="main">
+
+        <div class="main__title">
+            <h1>Mi Perfil</h1>
+        </div>
+
+        <div class="profile">
+            <div class="profile__banner">
+            </div>
+
+            <div class="profile__content">
+                <div class="profile__avatar" id="profileAvatarClickArea">
+                    <img th:if="${admin.foto != null and admin.foto != ''}" th:src="@{${admin.foto}}"
+                        alt="Foto de Perfil" id="profileImage">
+
+                    <div class="profile__upload-overlay"><i class="fas fa-camera"></i></div>
+
+                    <div th:if="${admin.foto == null or admin.foto == ''}" class="profile__photo-placeholder">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+
+                    <form th:action="@{/admin/subirFoto(id=${admin.id})}" method="post" enctype="multipart/form-data"
+                        id="fotoUploadForm">
+                        <input type="file" name="file" accept="image/*" id="fileInput">
+                    </form>
+                </div>
+
+                <div class="profile__details">
+                    <h2 th:text="${admin.nombre + ' ' + admin.apellido}">Nombre</h2>
+                    <p th:text="${admin.email}">Correo del Administrador</p>
+                </div>
+            </div>
+
+            <div class="profile__photo-actions">
+                <a th:if="${admin.foto != null and admin.foto != ''}" th:href="@{/admin/eliminarFoto(id=${admin.id})}"
+                    class="photo-delete">Eliminar Foto</a>
+            </div>
+
+        </div>
+
+        <div class="profile__section">
+            <div class="profile__card">
+                <h3>Información Básica y Seguridad</h3>
+
+                <form th:action="@{/admin/guardar-perfil}" th:object="${admin}" method="post" id="adminForm" class="form">
+                    <div class="form__group">
+
+                        <input type="hidden" th:field="*{id}" />
+                        <input type="hidden" th:field="*{email}" />
+                        <input type="hidden" th:field="*{password}" />
+
+                        <div class="form__field">
+                            <label for="nombre">Nombre</label>
+                            <input type="text" th:field="*{nombre}" id="nombre" placeholder="Nombre" required>
+                        </div>
+
+                        <div class="form__field">
+                            <label for="apellido">Apellido</label>
+                            <input type="text" th:field="*{apellido}" id="apellido" placeholder="Apellido" required>
+                        </div>
+
+                        <div class="form__field">
+                            <label for="email">Email</label>
+                            <input type="email" th:value="${admin.email}" disabled class="form__input-disabled">
+                        </div>
+
+                        <div class="form__actions">
+                            <button type="submit" form="adminForm" class="form__save-button">Guardar Cambios</button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </main>
+
+    <script th:src="@{/js/foto.js}"></script>
+</body>
+
+</html>

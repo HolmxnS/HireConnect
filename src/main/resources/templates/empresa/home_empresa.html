@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Styles-->
+    <link rel="stylesheet" th:href="@{/styles/fragments/empresa/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/styles/empresa/home_empresa.css}">
+    <!--Fonts-->
+    <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
+    <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
+    <!--Icons-->
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
+    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
+
+    <title>Home - Empresa</title>
+</head>
+
+<body>
+    <div th:replace="~{fragments/empresa/sidebar_empresa :: sidebar('home')}"></div>
+
+    <main class="main">
+
+        <section class="main__welcome-section" th:if="${faltantes.isEmpty()}">
+
+            <div class="welcome__content">
+                <h1>
+                    Bienvenido a la Plataforma
+                    <span th:text="${empresa.nombreLegal}"></span>
+                </h1>
+
+                <p>
+                    Publica vacantes, gestiona candidatos y encuentra el talento ideal más rápido.
+                </p>
+            </div>
+        </section>
+
+        <!-- CARD PERFIL INCOMPLETO -->
+        <div class="profile-card" th:if="${!faltantes.isEmpty()}">
+
+            <div class="profile-card__top">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <span>PERFIL INCOMPLETO</span>
+            </div>
+
+            <div class="profile-card__body">
+
+                <div class="profile-card__content">
+
+                    <h2>Completa tu perfil empresarial</h2>
+
+                    <p>
+                        Tu empresa aún tiene información pendiente.
+                        Completa estos campos para mejorar la confianza
+                        de los postulantes.
+                    </p>
+
+                    <ul class="profile-card__list">
+
+                        <li th:each="item : ${faltantes}">
+                            <i class="fa-solid fa-check"></i>
+                            <span th:text="${item}"></span>
+                        </li>
+
+                    </ul>
+
+                    <a th:href="@{/empresa/editar}" class="profile-card__button">
+
+                        Completar perfil
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </a>
+
+                </div>
+
+                <div class="profile-card__illustration">
+                    <i class="fa-regular fa-id-card"></i>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="main__blur"></div>
+    </main>
+
+    <script th:src="@{/js/filter.js}"></script>
+</body>
+
+</html>

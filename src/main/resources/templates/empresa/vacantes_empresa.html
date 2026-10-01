@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Styles-->
+    <link rel="stylesheet" th:href="@{/styles/fragments/empresa/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/styles/empresa/vacantes_empresa.css}">
+    <!--Fonts-->
+    <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
+    <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
+    <!--Icons-->
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
+    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
+
+    <title th:text="${empresa.nombreLegal} + ' | Dashboard'"></title>
+</head>
+
+<body>
+
+    <div th:replace="~{fragments/empresa/sidebar_empresa :: sidebar('vacantes')}"></div>
+
+    <main class="main">
+        <header class="main__header">
+            <h1>Bienvenido <span th:text="${empresa.nombreLegal}">Empresa</span></h1>
+        </header>
+
+        <section class="cards">
+            <div class="card">
+                <a th:href="@{/empresa/vacantes/nueva}">
+                    <i class="fa-solid fa-plus-circle"></i>
+                    <h3>Crear Vacante</h3>
+                    <p>Busca nuevo talento</p>
+                </a>
+            </div>
+
+            <div class="card">
+                <a th:href="@{/empresa/vacantes}">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                    <h3>Gestionar Vacantes</h3>
+                    <p>Editar, eliminar, ver estado</p>
+                </a>
+
+            </div>
+
+            <div class="card">
+                <a th:href="@{/empresa/postulaciones(empresaId=${empresa.id})}">
+                    <i class="fa-solid fa-users"></i>
+                    <h3>Ver Postulaciones</h3>
+                    <p>Revisa los candidatos</p>
+                </a>
+            </div>
+        </section>
+
+        <section class="info">
+            <h3>Perfil de la Empresa</h3>
+            <div class="info__grid">
+                <p><strong>Nombre Legal:</strong> <span th:text="${empresa.nombreLegal}"></span></p>
+                <p><strong>Correo:</strong> <span th:text="${empresa.email}"></span></p>
+                <p><strong>Teléfono:</strong> <span th:text="${empresa.telefono}"></span></p>
+                <p><strong>Ubicación:</strong> <span th:text="${empresa.ubicacion}"></span></p>
+            </div>
+            <div class="info__desc">
+                <strong>Descripción:</strong>
+                <p th:text="${empresa.descripcion}"></p>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>

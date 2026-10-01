@@ -1,0 +1,416 @@
+:root {
+    /* Paleta base */
+    --violeta: #9c4bff;
+    --morado-c: #9400D3;
+    --morado-o: #29003a;
+    --negro-1: #292528;
+    --gris-o: #363636;
+    --gris-c: #cccccc;
+    --gris-c-2: #999999;
+    --blanco: #ffffff;
+    --negro: #000;
+    --verde: #22AB74;
+    --rojo: #c84153;
+    --white-smoke: #f5f5f5;
+    --font-satoshi: 'Satoshi';
+    --font-clash: 'ClashDisplay';
+    --primary-color: var(--morado-c);
+    --primary-color-hover: #7E00B0;
+    --bg-page: #f3f4f6;
+    --bg-card: #ffffff;
+    --text-strong: #111827;
+    --text-base: #374151;
+    --text-medium: #6b7280;
+    --text-error: #b91c1c;
+    --border-color: #e5e7eb;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    font-size: 10px;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-satoshi);
+}
+
+/*Main*/
+.main {
+    margin-top: 2rem;
+    margin-left: 24rem;
+    flex: 1;
+    max-width: 100%;
+    min-height: 90vh;
+    padding: 1.7rem 4rem;
+    overflow-y: auto;
+}
+
+.main__title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 700;
+    color: var(--text-strong);
+    margin-bottom: 3rem;
+}
+
+.main__title i {
+    font-size: 2rem;
+}
+
+.main__title span {
+    font-size: 1.9rem;
+    font-family: inherit;
+}
+
+/*Settings section*/
+.settings {
+    width: 80%;
+    height: 100%;
+    background-color: var(--bg-card);
+    border-radius: 1rem;
+    padding: 3rem 4rem;
+    margin: 1rem 0;
+    box-shadow: 0 3px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.settings h5 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.settings h5 i {
+    font-size: 1.8rem;
+}
+
+.settings h5 span {
+    font-size: 2rem;
+    font-family: inherit;
+}
+
+.settings .settings__description {
+    color: var(--text-medium);
+    margin-bottom: 3rem;
+    font-size: 1.5rem;
+    padding: 0 .8rem;
+}
+
+/*Settings form*/
+.form {
+    display: grid;
+    gap: 1.25rem;
+    padding: 0 2rem;
+}
+
+.form__field label {
+    display: block;
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-base);
+}
+
+.form__input {
+    width: 70%;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    background-color: var(--bg-card);
+    font-size: 1.3rem;
+    font-family: inherit;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    margin-bottom: 1rem;
+}
+
+.form__input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.2);
+}
+
+.form__actions {
+    display: flex;
+    margin-top: 2rem;
+    width: 70%;
+    padding: 0 2rem;
+}
+
+.form__actions button {
+    font-size: 1.4rem;
+    font-family: inherit;
+}
+
+.btn-save {
+    background-color: var(--primary-color);
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.05rem;
+    border: none;
+    border-radius: 0.6rem;
+    padding: 1rem 3rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-save:hover {
+    background-color: var(--primary-color-hover);
+}
+
+.btn-save:active {
+    transform: scale(0.97);
+}
+
+/*Alert error*/
+.flash-alert {
+    margin-top: 2rem;
+    padding: 1rem 1.25rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+    font-weight: 500;
+}
+
+.flash-alert.error {
+    background-color: #fef2f2;
+    border-color: var(--rojo);
+    color: var(--text-error);
+}
+
+.flash-alert.success {
+    background-color: #ecfdf5;
+    border-color: var(--verde);
+    color: var(--verde);
+}
+
+.validation-error {
+    font-size: 0.8rem;
+    color: var(--text-error);
+    margin-top: 0.25rem;
+}
+
+/* Sección de eliminar cuenta */
+.settings--danger {
+    margin-top: 4rem;
+    border: 2px solid #fee2e2;
+    background-color: #fef2f2;
+}
+
+.settings--danger h5 {
+    color: var(--rojo);
+    font-size: 0.2rem;
+}
+
+.settings--danger h5 span {
+    color: var(--rojo);
+    font-size: 1.5rem;
+}
+
+.settings--danger h5 i {
+    color: var(--rojo);
+    font-size: 1.5rem;
+}
+
+.settings--danger .settings__description {
+    font-size: 1.2rem;
+}
+
+.btn-delete {
+    background-color: var(--rojo);
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 0.6rem;
+    padding: 1rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.btn-delete i {
+    font-size: 1.6rem;
+}
+
+.btn-delete:hover {
+    background-color: #991b1b;
+}
+
+.btn-delete:active {
+    transform: scale(0.97);
+}
+
+/* Modal de eliminación */
+.modal__title--danger {
+    color: var(--rojo);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.modal__title--danger i {
+    font-size: 2.4rem;
+    color: var(--rojo);
+}
+
+.modal__text--danger {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.modal__text--danger p {
+    font-size: 1.6rem;
+}
+
+.modal__text--danger strong {
+    font-size: 1.6rem;
+    color: var(--rojo);
+}
+
+.modal__list {
+    list-style: none;
+    padding: 1rem 0;
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.modal__list li {
+    font-size: 1.5rem;
+    padding: 0.5rem 0;
+    padding-left: 2rem;
+    position: relative;
+    color: var(--text-base);
+}
+
+.modal__list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: var(--rojo);
+    font-size: 2rem;
+}
+
+.modal__btn-cancel {
+    background-color: var(--gris-c);
+    color: var(--text-strong);
+    font-weight: 600;
+    padding: 1rem 2rem;
+    font-size: 1.5rem;
+    border: none;
+    border-radius: 0.6rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.modal__btn-cancel:hover {
+    background-color: var(--gris-c-2);
+}
+
+.modal__btn-confirm-delete {
+    background-color: var(--rojo);
+    color: #fff;
+    font-weight: 600;
+    padding: 1rem 2rem;
+    font-size: 1.5rem;
+    border: none;
+    border-radius: 0.6rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.modal__btn-confirm-delete:hover {
+    background-color: #991b1b;
+}
+
+/*modal*/
+.modal {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.modal__container {
+    background: var(--bg-card);
+    border-radius: 1rem;
+    padding: 3rem 3.5rem;
+    max-width: 500px;
+    width: 95%;
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.35);
+    animation: fadeInUp 0.3s ease;
+}
+
+.modal__title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.modal__title span {
+    font-size: 2rem;
+    font-family: inherit;
+}
+
+.modal__text {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    font-size: 1.8rem;
+    color: var(--text-base);
+    margin-bottom: 2rem;
+}
+
+.modal__text p {
+    font-size: 1.8rem;
+    font-family: inherit;
+}
+
+.modal__text p span {
+    font-size: 1.8rem;
+    font-weight: 600;
+    font-family: inherit;
+}
+
+.modal__text i {
+    color: var(--verde);
+    font-size: 2.4rem;
+    margin-bottom: 0.75rem;
+}
+
+.modal__actions {
+    display: flex;
+    justify-content: center;
+    gap: 1.25rem;
+}
+
+.modal__close-btn {
+    background-color: var(--primary-color);
+    color: #fff;
+    font-weight: 600;
+    padding: 1rem 2rem;
+    font-size: 1.5rem;
+    border: none;
+    border-radius: 0.6rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.modal__close-btn:hover {
+    background-color: var(--primary-color-hover);
+}
+
+.modal__close-btn:active {
+    transform: scale(0.98);
+}

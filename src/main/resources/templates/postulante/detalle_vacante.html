@@ -1,0 +1,173 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--Styles-->
+    <link rel="stylesheet" th:href="@{/styles/postulante/detalle_vacante.css}" />
+    <link rel="stylesheet" th:href="@{/styles/fragments/postulante/sidebar.css}" />
+    <!--Fonts-->
+    <link rel="stylesheet" th:href="@{/styles/satoshi.css}" />
+    <link rel="stylesheet" th:href="@{/styles/clash-display.css}" />
+    <!--Icons-->
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}" />
+    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
+
+    <title th:text="${vacante.titulo} + ' | Detalle'"></title>
+</head>
+
+<body>
+    <div th:replace="~{fragments/postulante/sidebar_postulante :: sidebar ('vacantes')}"></div>
+
+    <div class="details">
+        <div class="details__layout">
+
+            <!-- IZQUIERDA -->
+            <div class="details__main">
+
+                <div class="details__card">
+                    <a th:href="@{/postulante/vacantes}" class="btn-back">
+                        <i class="fa-solid fa-arrow-left"></i> Volver
+                    </a>
+
+                    <div class="details__vacancy info">
+                        <h1 th:text="${vacante.titulo}">Título de la Vacante</h1>
+
+                        <div class="info__company">
+                            <span th:if="${vacante.empresa != null}">
+                                <i class="fa-solid fa-building"></i>
+                                <span th:text="${vacante.empresa.nombre}"></span>
+                            </span>
+
+                            <span class="info__separator"></span>
+
+                            <span class="info__status"
+                                th:classappend="${vacante.estado != null and vacante.estado.name() == 'ACTIVA'} ? 'estado-activa' : 'estado-inactiva'"
+                                th:text="${vacante.estado != null ? vacante.estado.name() : ''}">
+                            </span>
+                        </div>
+                    </div>
+                    <div class="details__grid">
+                        <div class="details__item">
+                            <p>Salario</p>
+                            <p th:if="${vacante.salario != null}"
+                                th:text="'$' + ${#numbers.formatDecimal(vacante.salario, 0, 'COMMA', 0, 'POINT')} + ' COP'">
+                            </p>
+                        </div>
+
+                        <div class="details__item">
+                            <p>Modalidad</p>
+                            <p th:text="${vacante.modalidad.descripcion}"></p>
+                        </div>
+
+                        <div class="details__item">
+                            <p>Contrato</p>
+                            <p th:text="${vacante.tipoContrato.descripcion}"></p>
+                        </div>
+
+                        <div class="details__item">
+                            <p>Experiencia</p>
+                            <p th:text="${vacante.experienciaRequerida.descripcion}"></p>
+                        </div>
+
+                        <div class="details__item">
+                            <p>Publicado</p>
+                            <p th:text="${#temporals.format(vacante.fechaPublicacion, 'dd/MM/yyyy')}"></p>
+                        </div>
+                    </div>
+
+                    <div class="details__section">
+                        <h3>Descripción y Responsabilidades</h3>
+                        <div class="details__description-content" th:utext="${vacante.descripcion}">
+                            <p>Contenido de la descripción.</p>
+                        </div>
+                    </div>
+
+                    <div th:if="${vacante.habilidadesRequeridas != null and vacante.habilidadesRequeridas.length() > 0}"
+                        class="details__section">
+                        <h3>Habilidades Clave</h3>
+                        <div class="skills__list">
+                            <span th:each="habilidad : ${vacante.habilidadesRequeridas.split(',')}"
+                                class="skills__badge">
+                                <span th:text="${habilidad.trim()}"></span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="details__action">
+                        <div class="flex-end">
+                            <a th:href="@{/postulante/postular(vacanteId=${vacante.id}, postulanteId=${postulanteId})}"
+                                class="details__postulate"
+                                th:if="${vacante.estado != null and vacante.estado.name() == 'ACTIVA'}">
+                                <i class="fa-solid fa-paper-plane mr-2"></i> Postularme Ahora
+                            </a>
+
+                            <button type="button" class="btn-inactive"
+                                th:unless="${vacante.estado != null and vacante.estado.name() == 'ACTIVA'}" disabled>
+                                Vacante Inactiva
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- DERECHA -->
+            <aside class="similar-jobs">
+
+                <div class="similar-jobs__header">
+                    <h3>Vacantes similares</h3>
+                </div>
+
+                <div class="similar-jobs__list">
+
+
+                    <div class="similar-job-card" th:each="v : ${vacantesSimilares}">
+
+                        <div class="similar-job-card__top">
+
+
+                            <div class="similar-job-card__photo">
+
+                                <img th:if="${v.empresa.foto != null}" th:src="@{${v.empresa.foto}}" alt="Logo Empresa">
+
+                                <div th:if="${v.empresa.foto == null}" class="similar-job-card__placeholder">
+                                    <i class="fa-solid fa-building"></i>
+                                </div>
+
+                            </div>
+                            <div class="similar-job-card__info">
+
+                                <h4 th:text="${v.titulo}">
+                                    Desarrollador Backend
+                                </h4>
+                            </div>
+                        </div>
+
+                        <span class="similar-job-card__mode" th:text="${v.modalidad.descripcion}">
+                            Remoto
+                        </span>
+
+                        <p th:text="${#strings.abbreviate(v.descripcion, 120)}">
+                            Descripción corta...
+                        </p>
+
+                        <div class="footer-card">
+                            <a th:href="@{/postulante/vacante/{id}(id=${v.id}, postulanteId=${postulanteId})}">
+                                Ver vacante
+                            </a>
+                            <p class="vacancy-date"
+                                th:text="${#temporals.format(v.fechaPublicacion, 'dd/MM/yyyy')}"></p>
+                        </div>
+                    </div>
+                </div>
+
+            </aside>
+
+        </div>
+    </div>
+</body>
+
+</html>

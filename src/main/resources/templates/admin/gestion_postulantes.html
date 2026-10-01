@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Styles-->
+    <link rel="stylesheet" th:href="@{/styles/fragments/admin/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/styles/admin/gestion_postulantes.css}">
+    <!--Fonts-->
+    <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
+    <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
+    <!--Icons-->
+    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
+
+    <title>Revisar Postulantes</title>
+</head>
+
+<body>
+    <div id="sidebar" th:replace="~{fragments/admin/sidebar_admin :: sidebar('postulantes')}"></div>
+
+    <main class="main">
+
+        <div class="main__header">
+            <h1 class="main__title">Bienvenido <span></span></h1>
+
+            <div class="main__user-group">
+                <div class="notification">
+
+                    <div class="notification__icon" id="notifToggle">
+                        <i class="fa-solid fa-bell"></i>
+
+                        <span class="notification__badge" th:if="${notificacionesNuevas > 0}"
+                            th:text="${notificacionesNuevas}"></span>
+                    </div>
+
+                    <div class="notification__panel hidden" id="notifPanel">
+
+                        <div class="notification__header">
+                            <span>Notificaciones</span>
+
+                            <div class="notification__actions">
+                                <a href="#" id="markAllRead">Marcar todas</a>
+                                <a href="#" id="deleteAll" class="danger-header">Eliminar todas</a>
+                            </div>
+                        </div>
+
+                        <div class="notification__content">
+
+                            <div class="notification__item" th:each="n : ${notificacion}"
+                                th:classappend="${n.leida} ? ' read' : ' unread'" th:attr="data-id=${n.id}">
+
+                                <div class="notification__icon-text">
+                                    <div th:if="${T(com.project.HireConnect.dto.Notificacion.TipoNotificacion).POSTULANTE.equals(n.tipo)}"
+                                        class="notification__type postulante">
+                                        <i class="fa-solid fa-user"></i>
+                                    </div>
+
+                                    <div th:if="${T(com.project.HireConnect.dto.Notificacion.TipoNotificacion).EMPRESA.equals(n.tipo)}"
+                                        class="notification__type empresa">
+                                        <i class="fa-solid fa-building"></i>
+                                    </div>
+
+                                    <div class="notificatino__text">
+                                        <strong th:text="${n.nombreRelacionado}"></strong>
+                                        <span th:text="${n.mensaje}"></span>
+                                        <small th:text="${#temporals.format(n.fecha, 'dd/MM/yyyy HH:mm')}"></small>
+                                    </div>
+                                </div>
+
+                                <div class="notification__menu">
+                                    <button class="mark-one">Marcar como leída</button>
+                                    <button class="delete-one danger">Eliminar</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="main__avatar">
+                    <a th:href="@{/admin/editar}">
+                        <img th:if="${admin.foto != null and admin.foto != ''}" th:src="@{${admin.foto}}"
+                            alt="Foto de perfil">
+                    </a>
+
+                    <div th:if="${admin.foto == null or admin.foto == ''}" class="main__avatar-placeholder">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main__content">
+
+            <div class="section__header-group">
+                <h2 class="section__title">Candidatos Registrados</h2>
+                <p class="section__text">Listado y gestión de perfiles de candidatos y sus habilidades.</p>
+            </div>
+
+            <section class="cards">
+
+                <div class="cards__card">
+                    <h3>Total Postulantes</h3>
+                    <p class="number" th:text="${totalPostulantes}">0</p>
+                </div>
+
+                <div class="cards__card">
+                    <h3>En Revisión</h3>
+                    <p class="number" th:text="${postulantesRevision}">0</p>
+                </div>
+
+                <div class="cards__card">
+                    <h3>Aceptados</h3>
+                    <p class="number" th:text="${postulantesAceptados}">0</p>
+                </div>
+
+                <div class="cards__card">
+                    <h3>Perfiles Completos</h3>
+                    <p class="number" th:text="${postulantesCompletados}">0</p>
+                </div>
+
+                <div class="cards__card">
+                    <h3>Postulaciones</h3>
+                    <p class="number" th:text="${totalPostulaciones}">0</p>
+                </div>
+
+            </section>
+
+            <section class="filters filters-postulantes">
+                <div class="filters__item">
+                    <div class="filters__input">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" id="searchInputPostulantes" placeholder="Buscar por nombre o apellido..."
+                            onkeyup="filterPostulantes()">
+                    </div>
+                </div>
+
+                <div class="filters__item">
+                    <select id="statusFilter" onchange="filterPostulantes()">
+                        <option value="all">Todos los Estados</option>
+                        <option value="En revision">En revision</option>
+                        <option value="Aceptada">Aceptada</option>
+                        <option value="Rechazada">Rechazada</option>
+                    </select>
+                </div>
+
+                <div class="filters__item">
+                    <select id="cvFilter" onchange="filterPostulantes()">
+                        <option value="all">Todos</option>
+                        <option value="complete">CV Completo</option>
+                        <option value="incomplete">Sin CV</option>
+                    </select>
+                </div>
+
+                <div class="filters__item">
+                    <select id="sortFilterPostulantes" onchange="sortPostulantes()">
+                        <option value="most_recent">Más Recientes</option>
+                        <option value="oldest">Más Antiguos</option>
+                    </select>
+                </div>
+            </section>
+
+            <div class="table">
+                <div class="table__responsive">
+                    <table class="table__data">
+                        <thead class="table__header">
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Apellido</th>
+                                <th>CV</th>
+                                <th>Estado</th>
+                                <th>Fecha de Registro</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="postulantesList" class="table__body">
+                            <tr th:each="postulante : ${postulantes}"
+                                th:attr="data-date=${#temporals.format(postulante.fechaRegistro,'yyyy-MM-dd')}"
+                                class="postulante-item">
+                                <td class="nombre" th:text="${postulante.nombre}">Nombre</td>
+                                <td class="apellido" th:text="${postulante.apellido}">Apellido</td>
+                                <td class="cv" th:text="${postulante.cv != null ? 'Completo' : 'Incompleto'}">CV
+                                </td>
+                                <td class="postulacion-estado" th:text="${estados[postulante.id]}">Estado</td>
+                                <td th:text="${#temporals.format(postulante.fechaRegistro,'dd/MM/yyyy')}">Fecha
+                                </td>
+                                <td>
+                                    <a th:href="@{'/postulante/descargarCV/' + ${postulante.id}}" target="_blank"
+                                        class="action-link-view">Ver CV</a>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(postulantes)}">
+                                <td colspan="6" class="table__td-empty">No hay postulantes registrados.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+    <script th:src="@{/js/gestion_postulantes.js}"></script>
+    <script th:src="@{/js/admin_dashboard.js}"></script>
+</body>
+
+</html>

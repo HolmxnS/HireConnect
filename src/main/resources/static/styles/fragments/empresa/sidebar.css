@@ -1,0 +1,123 @@
+/*Paletts and fonts*/
+:root {
+    /*Colors*/
+    --violeta: #9c4bff;
+    --morado-c: #9400D3;
+    --morado-o: #29003a;
+    --negro-1: #292528;
+    --gris-o: #363636;
+    --gris-c: #cccccc;
+    --gris-c-2: #999999;
+    --blanco: #ffffff;
+    --negro-2: #222;
+    --negro: #000;
+    --verde: #008000;
+    --verde-2: #22AB74;
+    --rojo: #FF0000;
+    --rojo-2: #c84153;
+    --crimson: #DC143C;
+    --white-smoke: #F5F5F5;
+    /*fonts*/
+    --font-satoshi: 'Satoshi';
+    --font-clash: 'ClashDisplay';
+}
+
+/*Universal Styles*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-size: 10px;
+}
+
+body {
+    font-family: var(--font-satoshi);
+}
+
+/*Sidebar*/
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 24rem;
+    height: calc(100vh);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 .5rem var(--gris-c);
+    z-index: 2;
+}
+
+.sidebar__logo {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    margin: 3rem 1.5rem;
+}
+
+.sidebar__logo h1 {
+    font-size: 2.3rem;
+    padding-left: 2rem;
+}
+
+.sidebar__highlight {
+    font-size: 2.3rem;
+    color: var(--violeta);
+}
+
+.sidebar__nav {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+}
+
+.sidebar ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 3rem;
+    padding: 2rem 3rem;
+}
+
+.sidebar ul li a {
+    display: inline-block;
+    align-items: center;
+    text-decoration: none;
+    font-size: 1.3rem;
+    font-weight: 600;
+    width: 100%;
+    height: 5rem;
+    padding: 1.5rem;
+    border-radius: .3rem;
+    color: var(--negro-1);
+    transition: .2s ease;
+}
+
+.sidebar ul li a:hover {
+    background-color: var(--morado-c);
+    color: white;
+}
+
+.sidebar ul li a i {
+    font-size: 1.5rem;
+    margin-right: 1rem;
+}
+
+.sidebar ul li:last-child {
+    margin-top: auto;
+}
+
+.sidebar .sidebar__active {
+    background: var(--morado-c);
+    color: white;
+}
+
+.sidebar ul li a.sidebar__active:hover {
+    background: var(--morado-c);
+}
+
+.sidebar ul li a.sidebar__logout:hover {
+    background: var(--crimson);
+    color: var(--blanco);
+}

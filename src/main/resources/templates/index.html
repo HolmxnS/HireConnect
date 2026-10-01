@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es" xmlns="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Styles-->
+    <link rel="stylesheet" th:href="@{/styles/style.css}">
+    <!--Fonts-->
+    <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
+    <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
+    <!--Icons (font awesome kit)-->
+    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Inicio</title>
+</head>
+
+<body>
+
+    <!--Menu-->
+    <header class="menu">
+        <div class="menu__logo">
+            <h1>Hire<span class="menu__highlight logo--higlight">Connect</span></h1>
+        </div>
+
+        <div class="menu__nav">
+            <nav aria-label="Main navigation">
+                <ul class="menu__list">
+                    <li class="menu__item"><a href="#" class="menu__link">Inicio</a></li>
+                    <li class="menu__item"><a href="#beneficios" class="menu__link">Beneficios</a></li>
+                    <li class="menu__item"><a href="#advantages" class="menu__link">Ventajas</a></li>
+                    <li class="menu__item"><a href="#about-us" class="menu__link">Sobre nosotros</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="menu__account">
+            <a th:href="@{/login}" class="menu__account-btn menu__account-btn--signin">Iniciar Sesión</a>
+            <a th:href="@{/register}" class="menu__account-btn menu__account-btn--signup">Registrarse</a>
+        </div>
+    </header>
+
+    <!--Hero-->
+    <section class="hero">
+        <div
+            class="absolute inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]">
+            <div
+                class="absolute inset-0 -z-10 m-auto h-[610px] w-[870px] rounded-full bg-purple-500 opacity-25 blur-[100px]">
+            </div>
+        </div>
+
+        <div class="hero__grid">
+            <div class="hero__content">
+                <span class="hero__eyebrow">Encuentra el empleo que</span>
+                <h2 class="hero__title">Se ajusta a tus <span class="hero__highlight">habilidades</span> y
+                    ambiciones</h2>
+                <p>Crea tu cuenta, completa tu perfil y empieza a postular o reclutar. Nuestro sistema facilita el
+                    proceso para ambos lados.</p>
+
+                <div class="hero__cta">
+                    <a th:href="@{/register/postulante}" class="hero__button hero__button--primary">Busco empleo <i
+                            class="fa-solid fa-right-long"></i></a>
+                    <a th:href="@{/register/empresa}" class="hero__button hero__button--secondary">Busco talento <i
+                            class="fa-solid fa-briefcase"></i></a>
+                </div>
+
+                <div class="hero__search">
+                    <div class="hero__search-field">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Cargo, palabra clave o empresa">
+                    </div>
+                    <span class="hero__search-divider"></span>
+                    <div class="hero__search-field">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <input type="text" placeholder="Ciudad o ubicación">
+                    </div>
+                    <a th:href="@{/register}" class="hero__search-btn">Buscar <i
+                            class="fa-solid fa-arrow-right"></i></a>
+                </div>
+
+                <div class="hero__tags">
+                    <span>Búsquedas populares:</span>
+                    <a th:href="@{/register}">Desarrollador</a>
+                    <a th:href="@{/register}">Diseño UX/UI</a>
+                    <a th:href="@{/register}">Marketing</a>
+                    <a th:href="@{/register}">Analista de datos</a>
+                </div>
+            </div>
+
+            <div class="hero__visual">
+                <div class="hero__blur"></div>
+                <img th:src="@{/source/img/ilust-empleo-1.jpg}" alt="Reclutadora revisando perfiles de candidatos"
+                    class="hero__img">
+
+                <div class="hero__stat hero__stat--1">
+                    <i class="fa-solid fa-briefcase"></i>
+                    <div>
+                        <strong>Vacantes</strong>
+                        <span>Activas hoy</span>
+                    </div>
+                </div>
+
+                <div class="hero__stat hero__stat--2">
+                    <i class="fa-solid fa-building"></i>
+                    <div>
+                        <strong>Empresas</strong>
+                        <span>Verificadas</span>
+                    </div>
+                </div>
+
+                <div class="hero__stat hero__stat--3">
+                    <i class="fa-solid fa-users"></i>
+                    <div>
+                        <strong>Postulantes</strong>
+                        <span>Conectados</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--Section - Categorías-->
+    <section class="categories sect-white">
+        <div class="sect-text-main">
+            <h3>Explora por categoría</h3>
+            <p>Encuentra vacantes organizadas por área, sin perder tiempo filtrando lo que no te sirve.</p>
+        </div>
+
+        <div class="categories__grid">
+            <a th:href="@{/register}" class="categories__card">
+                <i class="fa-solid fa-code"></i>
+                <span>TI &amp; Software</span>
+            </a>
+            <a th:href="@{/register}" class="categories__card">
+                <i class="fa-solid fa-bullhorn"></i>
+                <span>Marketing</span>
+            </a>
+            <a th:href="@{/register}" class="categories__card">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Ventas</span>
+            </a>
+            <a th:href="@{/register}" class="categories__card">
+                <i class="fa-solid fa-palette"></i>
+                <span>Diseño</span>
+            </a>
+            <a th:href="@{/register}" class="categories__card">
+                <i class="fa-solid fa-hand-holding-dollar"></i>
+                <span>Finanzas</span>
+            </a>
+            <a th:href="@{/register}" class="categories__card">
+                <i class="fa-solid fa-user-tie"></i>
+                <span>RR. HH. &amp; Admin</span>
+            </a>
+            <a th:href="@{/register}" class="categories__card">
+                <i class="fa-solid fa-gears"></i>
+                <span>Ingeniería</span>
+            </a>
+        </div>
+    </section>
+
+    <!--Section - Cómo funciona-->
+    <section class="how-it-works sect-white">
+        <div class="sect-text-main">
+            <h3>¿Cómo funciona?</h3>
+            <p>Cuatro pasos entre crear tu cuenta y conectar con la oportunidad correcta.</p>
+        </div>
+
+        <div class="how-it-works__steps">
+            <div class="how-it-works__step">
+                <div class="how-it-works__icon"><i class="fa-solid fa-user-plus"></i></div>
+                <span class="how-it-works__number">01</span>
+                <h4>Crea tu cuenta</h4>
+                <p>Regístrate como postulante o como empresa en pocos minutos.</p>
+            </div>
+            <div class="how-it-works__step">
+                <div class="how-it-works__icon"><i class="fa-solid fa-id-card"></i></div>
+                <span class="how-it-works__number">02</span>
+                <h4>Completa tu perfil</h4>
+                <p>Agrega tu CV, habilidades o la información de tu empresa.</p>
+            </div>
+            <div class="how-it-works__step">
+                <div class="how-it-works__icon"><i class="fa-solid fa-paper-plane"></i></div>
+                <span class="how-it-works__number">03</span>
+                <h4>Postula o publica</h4>
+                <p>Busca vacantes ajustadas a tu perfil o publica una nueva oferta.</p>
+            </div>
+            <div class="how-it-works__step">
+                <div class="how-it-works__icon"><i class="fa-solid fa-handshake"></i></div>
+                <span class="how-it-works__number">04</span>
+                <h4>Conecta</h4>
+                <p>Habla directamente con la empresa o el candidato, sin intermediarios.</p>
+            </div>
+        </div>
+    </section>
+
+    <!--Section - 1 -->
+    <section class="benefits sect-black" id="beneficios">
+
+        <div class="benefits__container">
+
+            <div class="benefits__content">
+                <h3><span>Beneficios</span> de HireConnect</h3>
+
+                <div class="benefits__bio">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+
+                    <div class="benefits__bio--text">
+                        <h4>Búsquedas de Empleo Inteligentes</h4>
+                        <p>Encuentra oportunidades laborales ajustadas a tu perfil, habilidades y preferencias con
+                            filtros avanzados.</p>
+                    </div>
+                </div>
+
+                <div class="benefits__bio">
+                    <i class="fa-solid fa-envelope"></i>
+
+                    <div class="benefits__bio--text">
+
+                        <h4>Postulación Rápida y Eficiente</h4>
+                        <p>Envía tu CV o perfil completo en pocos clics, sin procesos largos o complicados.</p>
+                    </div>
+                </div>
+
+                <div class="benefits__bio">
+                    <i class="fa-solid fa-briefcase"></i>
+
+                    <div class="benefits__bio--text">
+
+                        <h4>Empresas Reales y Verificadas</h4>
+                        <p>Conecta únicamente con compañías serias, confiables y alineadas con tus objetivos
+                            profesionales.</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="benefits__img">
+                <div class="benefits__blur"></div>
+                <img th:src="@{/source/img/Instant information-cuate.png}" alt="ilustracion-person">
+                <a href="https://storyset.com/online">Online illustrations by Storyset</a>
+            </div>
+
+        </div>
+    </section>
+
+    <!--Section - 2 -->
+    <section class="sect-advantages sect-white" id="advantages">
+        <div class="sect-text-main">
+            <h3>Ventajas Competitivas</h3>
+            <p>Descubre las principales características y beneficios que hacen que nuestra plataforma sea la mejor
+                opción para conectar talento con oportunidades laborales.
+            </p>
+        </div>
+
+        <div class="cards">
+
+            <div class="cards__card">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                    <!--Boxicons v3.0 https://boxicons.com | License  https://docs.boxicons.com/free-->
+                    <path
+                        d="m21.45 11.11-3-1.5-2.68-1.34-.03-.03-1.34-2.68-1.5-3c-.34-.68-1.45-.68-1.79 0l-1.5 3-1.34 2.68-.03.03-2.68 1.34-3 1.5c-.34.17-.55.52-.55.89s.21.72.55.89l3 1.5 2.68 1.34.03.03 1.34 2.68 1.5 3c.17.34.52.55.89.55s.72-.21.89-.55l1.5-3 1.34-2.68.03-.03 2.68-1.34 3-1.5c.34-.17.55-.52.55-.89s-.21-.72-.55-.89ZM19.5 1.5l-.94 2.06-2.06.94 2.06.94.94 2.06.94-2.06 2.06-.94-2.06-.94z">
+                    </path>
+                </svg>
+                <h4>Rápido y Fácil de Usar</h4>
+                <p>Pensado para que encuentres lo que necesitas en segundos.</p>
+            </div>
+
+            <div class="cards__card">
+                <i class="fa-solid fa-money-bill"></i>
+                <h4>Totalmente Gratuito</h4>
+                <p>Sin costos ocultos para candidatos.</p>
+            </div>
+
+            <div class="cards__card">
+                <i class="fa-solid fa-palette"></i>
+                <h4>Interfaz Intuitiva y Moderna</h4>
+                <p>Navegación clara y amigable para una experiencia simple y eficiente</p>
+            </div>
+
+            <div class="cards__card">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <h4> Filtros Avanzados de Búsqueda</h4>
+                <p>Encuentra empleos por salario, modalidad, sector, ubicación y más.</p>
+            </div>
+
+            <div class="cards__card">
+                <i class="fa-solid fa-user"></i>
+                <!--Boxicons v3.0 https://boxicons.com | License  https://docs.boxicons.com/free-->
+                <path
+                    d="m15.71 5.29-3-3a.996.996 0 0 0-1.41 0l-3 3a.996.996 0 0 0 0 1.41l3 3c.2.2.45.29.71.29s.51-.1.71-.29l3-3a.996.996 0 0 0 0-1.41ZM11.29 14.29l-3 3a.996.996 0 0 0 0 1.41l3 3c.2.2.45.29.71.29s.51-.1.71-.29l3-3a.996.996 0 0 0 0-1.41l-3-3a.996.996 0 0 0-1.41 0ZM18.71 8.29a.996.996 0 0 0-1.41 0l-3 3a.996.996 0 0 0 0 1.41l3 3c.2.2.45.29.71.29s.51-.1.71-.29l3-3a.996.996 0 0 0 0-1.41l-3-3ZM6 16c.26 0 .51-.1.71-.29l3-3a.996.996 0 0 0 0-1.41l-3-3a.996.996 0 0 0-1.41 0l-3 3a.996.996 0 0 0 0 1.41l3 3c.2.2.45.29.71.29Z">
+                </path>
+                </svg>
+                <h4>Perfil Profesional Dinámico</h4>
+                <p>Muestra habilidades, portafolio, CV y redes profesionales.</p>
+            </div>
+
+            <div class="cards__card">
+                <i class="fa-solid fa-comment"></i>
+                <h4>Comunicación Directa Empresa – Talento</h4>
+                <p>Sin intermediarios ni retrasos.</p>
+            </div>
+        </div>
+        <div class="absolute left-0 right-0 -z-10 m-auto h-[610px] w-[970px] rounded-full bg-purple-500 opacity-25 blur-[100px]"
+            style="top: 50px;">
+        </div>
+    </section>
+
+    <!--Section - 3 -->
+    <section class="encuentra-empleo sect-black" id="about-us">
+        <div class="encuentra-empleo__container">
+
+            <div class="encuentra-empleo__img">
+                <div class="encuentra-empleo__blur"></div>
+                <img th:src="@{/source/img/Innovation-amico.png}" alt="vector-encuentra-tu-empleo">
+            </div>
+            <div class="encuentra-empleo__texto">
+                <h3>Tu próxima gran oportunidad te está esperando</h3>
+                <p>Muestra tu talento, postula en minutos y acércate al futuro profesional que deseas.
+                    Conectamos tus capacidades con empresas que valoran tu potencial.<br>
+                    <br>Asi de facil!
+                </p>
+                <a th:href="@{/register}" class="encuentra-empleo__btn">Construye tu futuro!</a>
+            </div>
+        </div>
+    </section>
+
+    <!--Footer - HireConnect-->
+    <footer>
+        <section id="footer">
+            <div id="footer__bio">
+                <h3>Hire<span class="footer__highlight logo--higlight">Connect</span></h3>
+                <p> Si buscas el trabajo ideal, estás en el lugar correcto: te ayudaremos a encontrar la carrera de tus
+                    sueños.<br><br>
+                    Si tu empresa busca a su próximo empleado estrella, lo encontrarás aquí.</p>
+            </div>
+
+            <div id="footer__nav">
+                <h4>Navegación</h4>
+                <a th:href="@{/}">Inicio</a>
+                <a href="">Sobre nosotros</a>
+                <a th:href="@{/login}">Iniciar Sesión</a>
+                <a href="">Contactanos</a>
+            </div>
+
+            <div id="footer__info">
+                <h4>Información</h4>
+                <p>HireConnect@gmail.com</p>
+                <p>Cartagena, Colombia</p>
+            </div>
+
+            <div id="footer__recon">
+                <h4>Reconocimiento</h4>
+                <p>Jairo López Arrieta</p>
+                <p>Holman Berdugo Jiménez</p>
+                <p>Jhonatan Abadía González</p>
+                <p>Samir Sánchez Barcasnegras</p>
+            </div>
+        </section>
+
+        <p>© 2025 HireConnect. All rights reserved.</p>
+
+        <div id="footer__networks">
+            <a href="https://www.instagram.com/hireconnect_pa/?utm_source=ig_web_button_share_sheet" target="_blank"><i
+                    class="fa-brands fa-instagram"></i></a>
+            <a href="https://www.facebook.com/profile.php?id=61583603383240" target="_blank"><i
+                    class="fa-brands fa-facebook"></i></a>
+            <a href="https://www.tiktok.com/@hireconnect_pa?is_from_webapp=1&sender_device=pc" target="_blank"><i
+                    class="fa-brands fa-tiktok"></i></a>
+        </div>
+        <div
+            class="absolute left-0 right-0 top-0 -z-10 m-auto h-[410px] w-[770px] rounded-full bg-purple-500 opacity-25 blur-[100px]">
+        </div>
+    </footer>
+</body>
+
+</html>

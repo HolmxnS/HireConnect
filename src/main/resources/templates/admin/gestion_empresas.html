@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Styles-->
+    <link rel="stylesheet" th:href="@{/styles/fragments/admin/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/styles/admin/gestion_empresas.css}">
+    <!--Fonts-->
+    <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
+    <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
+    <!--Icons-->
+    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
+
+    <title>Revisar Empresas</title>
+</head>
+
+<body>
+
+    <div id="sidebar" th:replace="~{fragments/admin/sidebar_admin :: sidebar('empresas')}"></div>
+
+    <main class="main">
+
+        <div class="main__header">
+            <h1 class="main__title">Bienvenido <span></span></h1>
+
+            <div class="main__user-group">
+                <div class="notification">
+
+                    <div class="notification__icon" id="notifToggle">
+                        <i class="fa-solid fa-bell"></i>
+
+                        <span class="notification__badge" th:if="${notificacionesNuevas > 0}"
+                            th:text="${notificacionesNuevas}"></span>
+                    </div>
+
+                    <div class="notification__panel hidden" id="notifPanel">
+
+                        <div class="notification__header">
+                            <span>Notificaciones</span>
+
+                            <div class="notification__actions">
+                                <a href="#" id="markAllRead">Marcar todas</a>
+                                <a href="#" id="deleteAll" class="danger-header">Eliminar todas</a>
+                            </div>
+                        </div>
+
+                        <div class="notification__content">
+
+                            <div class="notification__item" th:each="n : ${notificacion}"
+                                th:classappend="${n.leida} ? ' read' : ' unread'" th:attr="data-id=${n.id}">
+
+                                <div class="notification__icon-text">
+                                    <div th:if="${T(com.project.HireConnect.dto.Notificacion.TipoNotificacion).POSTULANTE.equals(n.tipo)}"
+                                        class="notification__type postulante">
+                                        <i class="fa-solid fa-user"></i>
+                                    </div>
+
+                                    <div th:if="${T(com.project.HireConnect.dto.Notificacion.TipoNotificacion).EMPRESA.equals(n.tipo)}"
+                                        class="notification__type empresa">
+                                        <i class="fa-solid fa-building"></i>
+                                    </div>
+
+                                    <div class="notificatino__text">
+                                        <strong th:text="${n.nombreRelacionado}"></strong>
+                                        <span th:text="${n.mensaje}"></span>
+                                        <small th:text="${#temporals.format(n.fecha, 'dd/MM/yyyy HH:mm')}"></small>
+                                    </div>
+                                </div>
+
+                                <div class="notification__menu">
+                                    <button class="mark-one">Marcar como leída</button>
+                                    <button class="delete-one danger">Eliminar</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="main__avatar">
+                    <a th:href="@{/admin/editar}">
+                        <img th:if="${admin.foto != null and admin.foto != ''}" th:src="@{${admin.foto}}"
+                            alt="Foto de perfil">
+                    </a>
+
+                    <div th:if="${admin.foto == null or admin.foto == ''}" class="main__avatar-placeholder">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main__content">
+
+            <div class="section__header-group">
+                <h2 class="section__title">Empresas en la Plataforma</h2>
+                <p class="section__text">Listado y gestión de perfiles de empresas y sus vacantes.</p>
+            </div>
+
+            <section class="cards">
+
+                <div class="cards__card">
+                    <h3>Número de Empresas</h3>
+                    <p class="number" th:text="${totalEmpresas}">0</p>
+                </div>
+
+                <div class="cards__card">
+                    <h3>Empresas Activas</h3>
+                    <p class="number" th:text="${empresasActivas}">0</p>
+                </div>
+
+                <div class="cards__card">
+                    <h3>Empresas Deshabilitadas</h3>
+                    <p class="number" th:text="${empresasDeshabilitadas}">0</p>
+                </div>
+
+                <div class="cards__card">
+                    <h3>Vacantes Publicadas</h3>
+                    <p class="number" th:text="${vacantes}">0</p>
+                </div>
+
+            </section>
+
+            <div class="filters filters-empresas">
+                <div class="filters__item">
+                    <div class="filters__input">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" id="searchInputEmpresas" onkeyup="filterEmpresas()"
+                            placeholder="Buscar por nombre de empresa...">
+                    </div>
+                </div>
+
+                <div class="filters__item">
+                    <select id="sortFilterEmpresas">
+                        <option value="most_recent">Más Reciente</option>
+                        <option value="oldest">Más Antiguo</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table">
+
+                <div class="table__responsive">
+                    <table class="table__data">
+                        <thead class="table__header">
+                            <tr>
+                                <th scope="col" class="table__th">Nombre Legal</th>
+                                <th scope="col" class="table__th">Fecha de Registro</th>
+                                <th scope="col" class="table__th">RUC/Identificación</th>
+                                <th scope="col" class="table__th">Email Contacto</th>
+                                <th scope="col" class="table__th">Acciones</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="empresasList" class="table__body">
+                            <tr th:each="empresa : ${empresas}" class="empresa-item"
+                                th:attr="data-date=${#temporals.format(empresa.fechaRegistro, 'yyyy-MM-dd')}">
+                                <td th:text="${empresa.nombreLegal}" class="table__td-strong empresa-nombre"></td>
+                                <td th:text="${#temporals.format(empresa.fechaRegistro, 'dd MMM yyyy')}"
+                                    class="table__td"></td>
+                                <td th:text="${empresa.rut}" class="table__td"></td>
+                                <td th:text="${empresa.email}" class="table__td"></td>
+                                <td class="table__td-actions">
+                                    <a th:href="@{/admin/empresas/ver/{id}(id=${empresa.id})}"
+                                        class="action-link-view">Ver Perfil</a>
+                                    <a th:href="@{/admin/empresas/deshabilitar/{id}(id=${empresa.id})}"
+                                        onclick="return confirm('¿Quieres eliminar esta empresa? Esta accion no se puede deshacer. ')"
+                                        class="action-link-delete">Eliminar</a>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(empresas)}">
+                                <td colspan="5" class="table__td-empty">No hay empresas registradas para revisión.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script th:src="@{/js/gestion_empresas.js}" defer></script>
+    <script th:src="@{/js/admin_dashboard.js}"></script>
+</body>
+
+</html>

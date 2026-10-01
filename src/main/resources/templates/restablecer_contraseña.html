@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Styles-->
+    <link rel="stylesheet" th:href="@{/styles/reset_password.css}">
+    <!--Fonts-->
+    <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
+    <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
+    <!--Icons-->
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
+    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
+
+    <title>Restablecer Contraseña - HireConnect</title>
+</head>
+
+<body>
+
+    <div class="redirect-home">
+        <a th:href="@{/}">
+            <h1>Hire<span class="logo-higlight">Connect</span></h1>
+        </a>
+    </div>
+
+    <main class="container">
+        <div class="reset">
+
+            <a class="reset__icon" th:href="@{/}">
+                <div class="reset__logo">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+            </a>
+
+            <div class="reset__welcome">
+                <h3>Restablecer Contraseña</h3>
+                <p>Ingresa tu nueva contraseña</p>
+            </div>
+
+            <div th:if="${error}" class="reset__error">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <p th:text="${error}">Error al procesar la solicitud</p>
+            </div>
+
+            <div th:if="${invalidToken}" class="reset__error">
+                <p>El enlace ha expirado o es inválido.</p>
+                <a th:href="@{/forgot-password}">
+                    Solicita un nuevo enlace aquí
+                </a>
+            </div>
+
+            <div th:unless="${invalidToken}" class="reset__form form">
+                <form th:action="@{/reset-password}" method="post" id="resetForm">
+
+                    <input type="hidden" name="token" th:value="${token}">
+
+                    <div class="form__input">
+                        <label for="password">Nueva Contraseña</label>
+                        <div class="form__password">
+                            <input type="password" id="password" name="password" placeholder="Mínimo 6 caracteres"
+                                minlength="6" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('password')">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form__input">
+                        <label for="confirmPassword">Confirmar Contraseña</label>
+                        <div class="form__password">
+                            <input type="password" id="confirmPassword" name="confirmPassword"
+                                placeholder="Repite tu contraseña" minlength="6" required>
+                            <button type="button" class="toggle-password" onclick="togglePassword('confirmPassword')">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form__btn">
+                        <button type="submit">
+                            <i class="fa-solid fa-shield-halved"></i>
+                            Restablecer Contraseña
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script th:src="@{/js/reset_password.js}"></script>
+</body>
+
+</html>

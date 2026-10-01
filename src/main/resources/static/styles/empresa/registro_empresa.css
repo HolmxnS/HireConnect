@@ -1,0 +1,345 @@
+:root {
+    --violeta: #9c4bff;
+    --morado-c: #9400D3;
+    --morado-o: #29003a;
+    --negro-1: #292528;
+    --gris-o: #363636;
+    --gris-c: #cccccc;
+    --gris-c-2: #999999;
+    --blanco: #ffffff;
+    --gris-c-3: #ececec;
+    --negro-2: #222;
+    --negro: #000;
+    --verde: #008000;
+    --verde-2: #22AB74;
+    --rojo: #FF0000;
+    --rojo-2: #c84153;
+    --crimson: #DC143C;
+    --white-smoke: #F5F5F5;
+    --font-satoshi: 'Satoshi';
+    --font-clash: 'ClashDisplay';
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-size: 10px;
+}
+
+body {
+    font-family: var(--font-satoshi);
+    min-height: 100vh;
+}
+
+.container {
+    width: 100%;
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+}
+
+/*hero*/
+.hero {
+    height: 98vh;
+    align-self: flex-start;
+    max-width: 60rem;
+    width: 100%;
+    margin: .5rem 1rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    text-align: center;
+    padding-bottom: 5rem;
+    background: url('/source/img/Register-company.jpg');
+    background-size: cover;
+    background-position: center;
+    border-radius: 2rem;
+}
+
+.hero__title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--blanco);
+}
+
+.hero__info {
+    font-size: 1.3rem;
+    width: 40rem;
+    color: var(--blanco);
+}
+
+/**/
+.form-panel {
+    width: 100%;
+    padding: 1rem 2rem;
+    display: flex;
+    flex-direction: column;
+}
+
+/*Header*/
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2rem;
+    margin: 0 4rem;
+    margin-bottom: 2rem;
+    background: var(--blanco);
+    border-bottom: 1px solid var(--gris-c-3);
+}
+
+.header__logo a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: var(--negro-1);
+    font-weight: 800;
+    font-size: 1.4rem;
+}
+
+.header__logo h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+}
+
+.header__logo-higlight {
+    font-size: 2.5rem;
+    color: var(--morado-c);
+    font-weight: 800;
+}
+
+.header__step {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: var(--gris-c-2);
+    background: #f0eaff;
+    color: var(--morado-c);
+    padding: .5rem 1.4rem;
+    border-radius: 2rem;
+}
+
+#step-2 {
+    display: none;
+    opacity: 0;
+    transform: translateX(40px);
+}
+
+#step-1,
+#step-2 {
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+
+.register {
+    width: 100%;
+    max-width: 65rem;
+    padding: 3rem;
+}
+
+.register__title {
+    font-family: var(--font-clash);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--negro-1);
+    margin-bottom: .8rem;
+    text-align: center;
+}
+
+.register__underline {
+    width: 12rem;
+    height: .35rem;
+    background: var(--morado-c);
+    border-radius: .2rem;
+    margin: auto;
+}
+
+.register__subtitle {
+    font-size: 1.4rem;
+    color: #6b7280;
+    margin: 1.5rem 0;
+    text-align: center;
+}
+
+.section-label {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--morado-c);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 2rem;
+    margin-top: 3.5rem;
+    padding-bottom: .8rem;
+    border-bottom: 1px solid #f0eaff;
+}
+
+.section-label:first-of-type {
+    margin-top: 0;
+}
+
+.section-label i {
+    font-size: 1.3rem;
+}
+
+/*Register form*/
+
+.register__form {
+    margin-top: 5rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 3.2rem;
+    margin-bottom: .4rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group--full {
+    grid-column: 1 / -1;
+}
+
+label {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: .6rem;
+    letter-spacing: .01em;
+    display: block;
+}
+
+input {
+    font-family: var(--font-satoshi);
+    width: 100%;
+    border: none;
+    border-bottom: 1.5px solid #e2e4e9;
+    padding: 1rem 0 .9rem;
+    font-size: 1.4rem;
+    outline: none;
+    background-color: transparent;
+    color: var(--negro-1);
+    transition: border-color 0.25s ease;
+    margin-bottom: 2.5rem;
+}
+
+input::placeholder {
+    color: #b0b7c3;
+}
+
+input:focus {
+    border-color: var(--morado-c);
+}
+
+/* Password*/
+.input-password-wrapper {
+    position: relative;
+}
+
+.input-password-wrapper input {
+    padding-right: 3.5rem;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-60%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #b0b7c3;
+    font-size: 1.4rem;
+    padding: 0;
+    transition: color 0.2s;
+}
+
+.toggle-password:hover {
+    color: var(--morado-c);
+}
+
+/* Mensajes de error */
+.error {
+    font-size: 1.15rem;
+    color: var(--crimson);
+    margin-top: -.8rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.btn-submit {
+    width: 100%;
+    background: var(--morado-c);
+    color: #fff;
+    border: none;
+    border-radius: 1.2rem;
+    padding: 1.5rem 2rem;
+    font-size: 1.55rem;
+    font-weight: 700;
+    font-family: var(--font-satoshi);
+    margin-top: 2.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    letter-spacing: .01em;
+    transition: background 0.25s ease, transform 0.15s ease, box-shadow 0.25s ease;
+    box-shadow: 0 4px 16px rgba(148, 0, 211, 0.25);
+}
+
+.btn-submit:hover {
+    background: var(--morado-o);
+    box-shadow: 0 6px 24px rgba(41, 0, 58, 0.3);
+    transform: translateY(-1px);
+}
+
+.btn-submit i {
+    font-size: 1.4rem;
+    transition: transform 0.2s;
+}
+
+.btn-submit:hover i {
+    transform: translateX(4px);
+}
+
+/*footer*/
+.card__footer {
+    text-align: center;
+    margin-top: 2.8rem;
+}
+
+.card__footer p {
+    font-size: 1.35rem;
+    color: var(--gris-c-2);
+}
+
+.card__footer a {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--morado-c);
+    text-decoration: none;
+    margin-left: .4rem;
+    transition: color 0.2s;
+}
+
+.card__footer a:hover {
+    color: var(--morado-o);
+    text-decoration: underline;
+}

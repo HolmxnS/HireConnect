@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Styles-->
+    <link rel="stylesheet" th:href="@{/styles/empresa/editar_perfil.css}">
+    <link rel="stylesheet" th:href="@{/styles/fragments/empresa/sidebar.css}">
+    <!--Fonts-->
+    <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
+    <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
+    <!--Icons-->
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
+    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
+
+    <title>Perfil - Empresa</title>
+</head>
+
+<body>
+    <div th:replace="~{fragments/empresa/sidebar_empresa :: sidebar('perfil')}"></div>
+
+    <main class="content">
+        <div class="content__title">
+            <h1>Mi Perfil</h1>
+        </div>
+
+        <div class="profile-banner">
+            <div class="profile-banner__background">
+            </div>
+
+            <div class="profile-banner__content">
+                <div class="profile-banner__avatar" id="profileAvatarClickArea">
+                    <img th:if="${empresa.foto != null}" th:src="@{${empresa.foto}}" alt="Foto de Perfil"
+                        id="profileImage">
+
+                    <div class="profile-banner__upload-overlay"><i class="fas fa-camera"></i></div>
+
+                    <div th:if="${empresa.foto == null}" class="profile-banner__photo-placeholder">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+
+                    <form th:action="@{/empresa/subirFoto(id=${empresa.id})}" method="post"
+                        enctype="multipart/form-data" id="fotoUploadForm">
+                        <input type="file" name="file" accept="image/*" id="fileInput">
+                    </form>
+                </div>
+
+                <div class="profile-banner__details">
+                    <h2 th:text="${empresa.nombreLegal}">Cuenta empresa</h2>
+                    <p th:text="${empresa.email}">El correo de la empresa</p>
+                </div>
+            </div>
+
+            <div class="profile-banner__photo-actions">
+                <a th:if="${empresa.foto != null and empresa.foto != ''}"
+                    th:href="@{/empresa/eliminarFoto(id=${empresa.id})}" class="delete">Eliminar
+                    Foto</a>
+            </div>
+
+        </div>
+
+        <div class="profile profile-section">
+            <div class="profile__container">
+                <h3>Informacion Basica</h3>
+                <div class="profile__field">
+                    <form th:action="@{/empresa/guardar-perfil}" th:object="${empresa}" method="post"
+                        enctype="multipart/form-data" id="empresaForm">
+                        <div class="form">
+                            <input type="hidden" name="foto" th:value="${empresa.foto}" />
+
+                            <div class="form__field">
+                                <label for="nombreLegal">Nombre</label>
+                                <input type="text" th:field="*{nombreLegal}" id="nombreLegal"
+                                    placeholder="Ej: Tech Solutions S.A.S" required>
+                                <p class="error" th:if="${#fields.hasErrors('nombreLegal')}" th:errors="*{nombreLegal}">
+                                </p>
+                            </div>
+                            <div class="form__field">
+                                <label for="sector">Sector</label>
+                                <input type="text" th:field="*{sector}" id="sector"
+                                    placeholder="Ej: Tecnología, Marketing" required>
+                                <p class="error" th:if="${#fields.hasErrors('sector')}" th:errors="*{sector}"></p>
+                            </div>
+                            <div class="form__field">
+                                <label for="email">Email de Contacto</label>
+                                <input type="email" th:field="*{email}" id="email" readonly>
+                            </div>
+                            <div class="form__field">
+                                <label for="telefono">Teléfono</label>
+                                <input type="text" th:field="*{telefono}" id="telefono" placeholder="Ej: 310 456 7890">
+                                <p class="error" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></p>
+                            </div>
+                            <div class="form__field full-width">
+                                <label for="rut">RUT / NIT</label>
+                                <input type="text" th:field="*{rut}" id="rut" readonly>
+                            </div>
+                            <div class="form__field full-width">
+                                <label for="ubicacion">Ubicación / Dirección</label>
+                                <input type="text" th:field="*{ubicacion}" id="ubicacion"
+                                    placeholder="Ej: Calle 45 #12-90, Bogotá" required>
+                                <p class="error" th:if="${#fields.hasErrors('ubicacion')}" th:errors="*{ubicacion}"></p>
+                            </div>
+                            <div class="form__field full-width">
+                                <label for="website">Sitio web</label>
+                                <input type="text" th:field="*{website}" id="website"
+                                    placeholder="Ej: https://www.miempresa.com">
+                                <p class="error" th:if="${#fields.hasErrors('website')}" th:errors="*{website}"></p>
+                            </div>
+                            <div class="form__field full-width">
+                                <label for="descripcion">Descripción de la empresa</label>
+                                <textarea th:field="*{descripcion}" id="descripcion" rows="4"
+                                    placeholder="Cuéntanos brevemente sobre tu empresa, misión y valores."></textarea>
+                                <p class="error" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}">
+                                </p>
+                            </div>
+                            <div class="form__actions">
+                                <button type="submit" form="empresaForm" class="save">Guardar Cambios</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script th:src="@{/js/foto.js}"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,219 @@
+:root {
+    --morado-c: #9400D3;
+    --morado-o: #29003a;
+    --negro-1: #292528;
+    --gris-o: #363636;
+    --gris-c-2: #cccccc;
+    --blanco: #ffffff;
+    --verde-2: #22AB74;
+    --rojo-2: #c84153;
+    --rojo-hover: #a62f43;
+
+    --primary-color: var(--morado-c);
+    --primary-color-hover: #7E00B0;
+    --bg-page: #f3f4f6;
+    --bg-card: var(--blanco);
+    --border-color: #e5e7eb;
+    --text-strong: #111827;
+    --text-base: #374151;
+    --text-medium: #6b7280;
+    --text-light: #9ca3af;
+
+    --font-satoshi: 'Satoshi';
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    font-size: 10px;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-satoshi);
+}
+/*Main*/
+.content {
+    flex: 1;
+    margin-left: 27rem;
+    padding: 3rem;
+}
+
+.back-btn {
+    color: var(--morado-c);
+    display: inline-flex;
+    align-items: center;
+    gap: .8rem;
+    margin-bottom: 3rem;
+    text-decoration: none;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.back-btn i {
+    font-size: 1.5rem;
+}
+/*Info - vacancy*/
+.vacancy,
+.applicants {
+    background: var(--card);
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: var(--shadow);
+}
+
+.vacancy .vacancy__header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.vacancy__header h2 {
+    font-size: 2rem;
+    margin-bottom: .7rem;
+}
+
+.vacancy__header p {
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.vacancy__header span {
+    font-size: 1.2rem;
+    font-weight: 400;
+}
+
+.vacancy__status span {
+    padding: .5rem 1.1rem;
+    border-radius: 1rem;
+    font-weight: 700;
+    font-size: 1rem;
+    text-transform: uppercase;
+}
+
+.estado.activa {
+    background: #d1fae5;
+}
+
+.estado.cerrada {
+    background: #fee2e2;
+}
+
+.btn-cerrar {
+    background: var(--rojo-2);
+    color: #fff;
+    padding: .8rem 1.2rem;
+    margin-left: 1rem;
+    border-radius: .6rem;
+    text-decoration: none;
+    font-weight: 600;
+    box-shadow: 0 0 .2rem var(--gris-c-2);
+}
+
+.vacancy__info-card {
+    padding: 2rem 0;
+}
+
+.vacancy__info-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.vacancy__info-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    list-style: none;
+}
+
+.vacancy__info-list li {
+    padding: 1rem;
+    border-radius: .7rem;
+    box-shadow: 0 0 .3rem var(--gris-c);
+}
+
+.vacancy__info-list i {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--gris-o);
+}
+
+.vacancy__info-list p {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-top: .3rem;
+}
+
+.vacancy__info-list p span {
+    font-size: 1.2rem;
+}
+
+.vacancy__description {
+    margin-top: 1.5rem;
+}
+
+.vacancy__description h3 {
+    font-size: 1.5rem;
+    color: var(--text-main);
+    border-bottom: 2px solid #eee;
+    padding-bottom: .5rem;
+    margin-bottom: 1rem;
+}
+
+.description {
+    color: var(--text-soft);
+    font-size: 1.2rem;
+    padding: 1rem;
+}
+
+/*Applicants*/
+.applicants {
+    margin-top: 2rem;
+}
+
+.applicants i {
+    font-size: 1.3rem;
+}
+
+.applicants h2 {
+    font-size: 1.4rem;
+    margin-bottom: 2rem;
+}
+
+.table__responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th {
+    text-align: left;
+    padding: 12px;
+    font-size: 12px;
+    border-bottom: 2px solid var(--gris-c-2);
+}
+
+.table td {
+    padding: 1.4rem;
+    border-bottom: .05rem solid var(--gris-c-2);
+    font-size: 1.2rem;
+}
+
+.empty {
+    text-align: center;
+    color: var(--text-soft);
+}
+
+@media (max-width: 900px) {
+    .layout-grid {
+        grid-template-columns: 1fr;
+    }
+}

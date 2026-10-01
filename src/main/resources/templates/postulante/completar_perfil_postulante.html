@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" th:href="@{/styles/postulante/registro_postulante.css}" />
+    <title>Completar Perfil - HireConnect</title>
+</head>
+<body>
+    <div class="container">
+        <div class="form-panel">
+            <header class="header">
+                <div class="header__logo">
+                    <a th:href="@{/}"><h1>Hire<span class="header__logo-higlight">Connect</span></h1></a>
+                </div>
+            </header>
+
+            <main class="main">
+                <div class="register">
+                    <h2 class="register__title">Completa tu perfil</h2>
+                    <p class="register__subtitle">Para continuar, necesitamos esta información</p>
+
+                    <!-- Mensajes de éxito/error -->
+                    <div th:if="${exito}" class="alert alert-success" th:text="${exito}"></div>
+                    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+                    <form class="register__form" th:action="@{/postulante/completar_perfil_postulante}" 
+                          th:object="${postulante}" method="post" novalidate>
+
+                        <!-- Tipo de documento -->
+                        <div class="form-group">
+                            <label>Tipo de documento</label>
+                            <div class="select-wrapper">
+                                <select th:field="*{tipoDocumento}" required
+                                        th:disabled="${postulante.perfilCompleto}">
+                                    <option value="">— Selecciona tipo —</option>
+                                    <option value="CEDULA">Cédula de Ciudadanía</option>
+                                    <option value="PASAPORTE">Pasaporte</option>
+                                    <option value="OTRO">Otro</option>
+                                </select>
+                            </div>
+                            <p class="error" th:if="${#fields.hasErrors('tipoDocumento')}" 
+                               th:text="${#fields.errors('tipoDocumento')[0]}"></p>
+                        </div>
+
+                        <!-- Identificación -->
+                        <div class="form-group">
+                            <label>Número de identificación</label>
+                            <input type="text" th:field="*{identificacion}" 
+                                   placeholder="Tu número de identificación" required
+                                   th:disabled="${postulante.perfilCompleto}" />
+                            <p class="error" th:if="${#fields.hasErrors('identificacion')}" 
+                               th:text="${#fields.errors('identificacion')[0]}"></p>
+                        </div>
+
+                        <!-- Fecha de nacimiento -->
+                        <div class="form-group">
+                            <label>Fecha de nacimiento</label>
+                            <input type="date" th:field="*{fechaNacimiento}" required
+                                   th:disabled="${postulante.perfilCompleto}"
+                                   max="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" />
+                            <p class="error" th:if="${#fields.hasErrors('fechaNacimiento')}" 
+                               th:text="${#fields.errors('fechaNacimiento')[0]}"></p>
+                        </div>
+
+                        <!-- Género -->
+                        <div class="form-group">
+                            <label>Género</label>
+                            <div class="select-wrapper">
+                                <select th:field="*{genero}" required
+                                        th:disabled="${postulante.perfilCompleto}">
+                                    <option value="">— Selecciona género —</option>
+                                    <option value="MASCULINO">Masculino</option>
+                                    <option value="FEMENINO">Femenino</option>
+                                </select>
+                            </div>
+                            <p class="error" th:if="${#fields.hasErrors('genero')}" 
+                               th:text="${#fields.errors('genero')[0]}"></p>
+                        </div>
+
+                        <!-- Teléfono -->
+                        <div class="form-group">
+                            <label>Teléfono</label>
+                            <input type="text" th:field="*{telefono}" 
+                                   placeholder="Ej: 3212392010" required
+                                   th:disabled="${postulante.perfilCompleto}" />
+                            <p class="error" th:if="${#fields.hasErrors('telefono')}" 
+                               th:text="${#fields.errors('telefono')[0]}"></p>
+                        </div>
+
+                        <button type="submit" class="btn-submit" 
+                                th:if="${!postulante.perfilCompleto}">
+                            Guardar y continuar <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                        
+                        <p th:if="${postulante.perfilCompleto}" class="text-success">
+                            <i class="fa-solid fa-check"></i> Tu perfil está completo
+                        </p>
+                    </form>
+
+                    <div class="card__footer">
+                        <a th:href="@{/postulante/home}">← Volver al inicio</a>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

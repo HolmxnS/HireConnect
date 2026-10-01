@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--Styles-->
+  <link rel="stylesheet" th:href="@{/styles/fragments/postulante/header.css}">
+  <link rel="stylesheet" th:href="@{/styles/fragments/postulante/sidebar.css}">
+  <link rel="stylesheet" th:href="@{/styles/postulante/vacantePostulante.css}">
+  <!--Fonts-->
+  <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
+  <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
+  <!--Icons-->
+  <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
+  <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
+
+  <title>Vacantes Disponibles - HireConnect</title>
+</head>
+
+<body>
+  <div th:if="${error}" class="modal" id="errorModal">
+    <div class="modal__container">
+      <div class="modal__content">
+        <h3 class="modal__title">Ups...</h3>
+        <div class="modal__text">
+          <i class="fa-solid fa-circle-xmark"></i>
+          <p th:text="${error}">Ya estás postulado a esta vacante.</p>
+        </div>
+        <span class="modal__close-btn">Cerrar</span>
+      </div>
+    </div>
+  </div>
+
+  <div th:if="${exito}" class="modal" id="successModal">
+    <div class="modal__container">
+      <div class="modal__content">
+        <h3 class="modal__title">Hola <span th:text="${postulante.nombre}"></span></h3>
+        <div class="modal__text">
+          <i class="fa-solid fa-circle-check mr-3 text-xl"></i>
+          <p th:text="${exito}">Postulación exitosa! Ahora puedes ver el estado en 'Mis Postulaciones'.</p>
+        </div>
+        <span class="modal__close-btn">Cerrar</span>
+      </div>
+    </div>
+  </div>
+
+  <div th:replace="~{fragments/postulante/sidebar_postulante :: sidebar ('vacantes')}"></div>
+
+  <main class="main">
+
+    <div class="vacancies" id="vacantesContainer">
+      <div th:each="vacante : ${vacantes}" class="vacancies__card" th:data-titulo="${vacante.titulo}"
+        th:data-modalidad="${vacante.modalidad}" th:data-experiencia="${vacante.experienciaRequerida}"
+        th:data-salario="${vacante.salario}" th:data-empresa="${vacante.empresa.nombre}"
+        th:data-fecha="${#temporals.format(vacante.fechaPublicacion, 'yyyy-MM-dd')}"
+        th:data-tipo-contrato="${vacante.tipoContrato.descripcion}">
+
+        <!-- Header de la card: foto + info + fecha -->
+        <div class="vacancies__header">
+          <div class="vacancies__section">
+            <div class="vacancies__company-photo">
+              <img th:if="${vacante.empresa.foto != null}" th:src="@{${vacante.empresa.foto}}" alt="Logo Empresa">
+              <div th:if="${vacante.empresa.foto == null}" class="company-photo-placeholder">
+                <i class="fa-solid fa-building"></i>
+              </div>
+            </div>
+
+            <div class="sect_name">
+              <h3 th:text="${vacante.titulo}"></h3>
+              <p class="sect_name__company">
+                <i class="fa-solid fa-building"></i>
+                <span th:text="${vacante.empresa.nombre}"></span>
+              </p>
+            </div>
+          </div>
+
+          <!-- Fecha relativa -->
+          <span class="vacancies__date" th:data-fecha="${vacante.fechaPublicacion}">
+          </span>
+        </div>
+
+        <span class="modalidad-badge"
+          th:classappend="${vacante.modalidad.descripcion == 'Remoto'} ? 'modalidad-badge--remoto' : (${vacante.modalidad.descripcion == 'Híbrido' or vacante.modalidad.descripcion == 'Hibrido'} ? 'modalidad-badge--hibrido' : 'modalidad-badge--presencial')"
+          th:text="${vacante.modalidad.descripcion}">
+        </span>
+
+        <!-- Descripción truncada -->
+        <div class="vacancies__description">
+          <p th:text="${vacante.descripcion}"></p>
+        </div>
+
+        <!-- Info: solo salario y contrato -->
+        <div class="vacancies__info">
+          <p>
+            <i class="fa-solid fa-file-contract"></i>
+            <span th:text="${vacante.tipoContrato.descripcion}"></span>
+          </p>
+          <p class="special">
+            <i class="fa-solid fa-sack-dollar"></i>
+            $<span th:text="${#numbers.formatDecimal(vacante.salario, 0, 'COMMA', 0, 'POINT')}"></span>
+          </p>
+        </div>
+
+        <div class="vacancies__btns">
+          <a class="btn btn--postulate"
+            th:href="@{/postulante/postular(vacanteId=${vacante.id}, postulanteId=${postulante.id})}">
+            <i class="fa-solid fa-paper-plane"></i> Postularme
+          </a>
+          <a class="btn btn--view-more"
+            th:href="@{/postulante/vacante/{id}(id=${vacante.id}, postulanteId=${postulante.id})}">
+            <i class="fa-solid fa-eye"></i> Ver más
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div th:if="${#lists.isEmpty(vacantes)}" id="no-vacantes-message" class="no__vacancies-message">
+      <i class="fa-solid fa-circle-info icon-no-vacancies"></i>
+      <p class="no__vacancies-title">No se encontraron vacantes disponibles.</p>
+      <p class="no-vacancies-text">Intenta ajustar tus criterios de búsqueda o vuelve más tarde.</p>
+    </div>
+
+    <div th:replace="~{fragments/postulante/header_postulante :: menu-fragment(true)}"></div>
+
+  </main>
+
+  <script th:src="@{/js/filter.js}"></script>
+  <script th:src="@{/js/modal.js}"></script>
+  <script th:src="@{/js/vacante_postulante.js}"></script>
+</body>
+
+</html>

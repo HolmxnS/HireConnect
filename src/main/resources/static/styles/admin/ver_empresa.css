@@ -1,0 +1,268 @@
+:root {
+    --morado-c: #9400D3;
+    --morado-o: #29003a;
+    --negro-1: #292528;
+    --gris-o: #363636;
+    --gris-c-2: #cccccc;
+    --blanco: #ffffff;
+    --verde-2: #22AB74;
+    --rojo-2: #c84153;
+    --rojo-hover: #a62f43;
+    --badge-c: #d1fae5;
+    --badge-c1: #065f46;
+    --badge-c2: #fee2e2;
+    --badge-c3: #991b1b;
+
+    --primary-color: var(--morado-c);
+    --primary-color-hover: #7E00B0;
+    --bg-page: #f3f4f6;
+    --bg-card: var(--blanco);
+    --border-color: #e5e7eb;
+    --text-strong: #111827;
+    --text-base: #374151;
+    --text-medium: #6b7280;
+    --text-light: #9ca3af;
+
+    --font-satoshi: 'Satoshi';
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    font-size: 10px;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-satoshi);
+}
+
+main {
+    margin-top: 1rem;
+    margin-left: 26rem;
+}
+
+/*Main*/
+.content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 2.4rem;
+}
+
+.back-btn {
+    color: var(--morado-c);
+    display: inline-flex;
+    align-items: center;
+    gap: .8rem;
+    margin-bottom: 3rem;
+    text-decoration: none;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.back-btn i {
+    font-size: 1.5rem;
+}
+
+.card {
+    background: var(--bg-white);
+    padding: 2.5rem;
+    border-radius: .3rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 32px;
+}
+
+.company__header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: .1rem solid var(--gris-c-2);
+    padding-bottom: 1.7rem;
+    margin-bottom: 1.7rem;
+}
+
+.company__title {
+    font-size: 2.6rem;
+    font-weight: 800;
+    color: var(--gris-o);
+}
+
+.company__actions {
+    display: flex;
+    align-items: center;
+    gap: 1.3rem;
+}
+
+.company__actions .badge {
+    padding: .5rem 1.1rem;
+    border-radius: 1rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.company__actions .badge-success {
+    background: var(--badge-c);
+    color: var(--badge-c1);
+}
+
+.company__actions .badge-danger {
+    background: var(--badge-c2);
+    color: var(--badge-c3);
+}
+
+.company__actions .btn {
+    padding: 7px 14px;
+    border-radius: 3rem;
+    font-size: 14px;
+    text-decoration: none;
+    font-weight: 600;
+    color: #fff;
+}
+
+.company__actions .btn-success {
+    background: var(--verde-2);
+}
+
+.company__actions .btn-danger {
+    background: var(--rojo-2);
+}
+
+.company__actions .btn:hover {
+    opacity: .9;
+}
+
+.company__group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 3rem;
+    padding: 2rem;
+}
+
+.section__title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--gris-o);
+    margin-bottom: 12px;
+}
+
+.compay__info-list {
+    margin-top: 3rem;
+}
+
+.company__info-list p {
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    font-size: 1.3rem;
+    font-weight: 800;
+    gap: 1rem;
+}
+
+.company__info-list i {
+    font-size: 1.3rem;
+}
+
+.company__info-list p span {
+    font-size: 1.3rem;
+    font-weight: 500;
+}
+
+.company__img {
+    justify-self: center;
+    width: 30rem;
+    height: 30rem;
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+.company__img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+}
+
+.company__photo-placeholder {
+    width: 30rem;
+    height: 30rem;
+    border-radius: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--gris-c-2);
+}
+
+.company__photo-placeholder i {
+    color: var(--gris-o);
+    font-size: 3rem;
+}
+
+.company__description {
+    grid-column: 1 / -1;
+}
+
+.company__description-box {
+    background: #f9fafb;
+    padding: 16px;
+    border-radius: 1rem;
+    border: 1px solid var(--gray-200);
+    box-shadow: 0 0 .1rem var(--gris-c-2);
+    height: 130px;
+    overflow-y: auto;
+}
+
+.company__description-box p {
+    font-size: 1.3rem;
+}
+
+/*vacantes*/
+.vacancies__title {
+    font-size: 1.4rem;
+}
+
+.vacancies__title i {
+    font-size: 1.5rem;
+    margin-right: 1rem;
+}
+
+.vacancies__title span {
+    font-size: 1.4rem;
+
+}
+
+/*Tablas*/
+.vacancies__table{
+    margin-top: 2rem;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th {
+    text-align: left;
+    padding: 12px;
+    font-size: 12px;
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--gris-c-2);
+}
+
+.table td {
+    padding: 1.4rem;
+    border-bottom: .05rem solid var(--gris-c-2);
+    font-size: 1.2rem;
+}
+
+.table__link {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--morado-c);
+    text-decoration: none;
+}
+
+.table__no-data {
+    text-align: center;
+    color: var(--rojo-2);
+}

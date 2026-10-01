@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Styles-->
+    <link rel="stylesheet" th:href="@{/styles/fragments/admin/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/styles/admin/admin_dashboard.css}">
+    <!--Fonts-->
+    <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
+    <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
+    <!--Icons-->
+    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <title>Admin - Inicio</title>
+</head>
+
+<body>
+    <div id="sidebar" th:replace="~{fragments/admin/sidebar_admin :: sidebar('home')}"></div>
+
+    <main class="main">
+        <div class="main__header">
+            <h1 class="main__title">Panel de Administración</h1>
+            <div class="main__user-group">
+                <div class="notification">
+                    <div class="notification__icon" id="notifToggle">
+                        <i class="fa-solid fa-bell"></i>
+                        <span class="notification__badge" th:if="${notificacionesNuevas > 0}"
+                            th:text="${notificacionesNuevas}"></span>
+                    </div>
+                    <div class="notification__panel hidden" id="notifPanel">
+                        <div class="notification__header">
+                            <span>Notificaciones</span>
+                            <div class="notification__actions">
+                                <a href="#" id="markAllRead">Marcar todas</a>
+                                <a href="#" id="deleteAll" class="danger-header">Eliminar todas</a>
+                            </div>
+                        </div>
+                        <div class="notification__content">
+                            <div th:each="n : ${notificacion}" class="notification__item"
+                                th:classappend="${n.leida} ? 'read' : 'unread'" th:attr="data-id=${n.id}">
+
+                                <div class="notification__icon-text">
+                                    <div th:if="${T(com.project.HireConnect.dto.Notificacion.TipoNotificacion).POSTULANTE.equals(n.tipo)}"
+                                        class="notification__type postulante">
+                                        <i class="fa-solid fa-user"></i>
+                                    </div>
+                                    <div th:if="${T(com.project.HireConnect.dto.Notificacion.TipoNotificacion).EMPRESA.equals(n.tipo)}"
+                                        class="notification__type empresa">
+                                        <i class="fa-solid fa-building"></i>
+                                    </div>
+                                    <div class="notification__text">
+                                        <strong th:text="${n.nombreRelacionado}"></strong>
+                                        <span th:text="${n.mensaje}"></span>
+                                        <small th:text="${#temporals.format(n.fecha, 'dd/MM/yyyy HH:mm')}"></small>
+                                    </div>
+                                </div>
+                                <div class="notification__menu">
+                                    <button class="mark-one">Marcar como leída</button>
+                                    <button class="delete-one danger">Eliminar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Avatar del admin -->
+                <div class="main__avatar">
+                    <a th:href="@{/admin/editar}">
+                        <img th:if="${admin.foto != null and admin.foto != ''}" th:src="@{${admin.foto}}"
+                            alt="Foto de perfil">
+                    </a>
+                    <div th:if="${admin.foto == null or admin.foto == ''}" class="main__avatar-placeholder">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-body">
+            <div class="col-left">
+                <div class="welcome-banner">
+                    <div class="welcome-banner__text">
+                        <h2>¡Bienvenido, <span
+                                th:text="${admin.nombre != null ? admin.nombre : 'Administrador'}"></span>!</h2>
+                        <p>Aquí tienes un resumen de la actividad reciente en HireConnect.</p>
+                    </div>
+                    <div class="welcome-banner__icon">
+                        <a th:href="@{/admin/editar}">
+                            <img th:if="${admin.foto != null and admin.foto != ''}" th:src="@{${admin.foto}}"
+                                alt="Foto de perfil">
+                        </a>
+                        <div th:if="${admin.foto == null or admin.foto == ''}" class="main__avatar-placeholder">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estadísticas Principales -->
+                <div class="stats-duo">
+                    <div class="stats-duo__card stats-duo__card--empresas">
+                        <div class="stats-duo__number"><span th:text="${empresas}">0</span></div>
+                        <div class="stats-duo__label">Empresas registradas</div>
+                    </div>
+                    <div class="stats-duo__card stats-duo__card--postulantes">
+                        <div class="stats-duo__number"><span th:text="${postulantes}">0</span>
+                        </div>
+                        <div class="stats-duo__label">Postulantes registrados</div>
+                    </div>
+                </div>
+                <!-- Últimos Registros -->
+                <div>
+                    <div class="section-title">Últimos Registros del Mes</div>
+                    <div class="filter-tabs">
+                        <button class="filter-tabs__btn active" data-tab="todos">Todos</button>
+                        <button class="filter-tabs__btn" data-tab="empresa">Empresas</button>
+                        <button class="filter-tabs__btn" data-tab="postulante">Postulantes</button>
+                    </div>
+
+                    <div class="user-list" id="registrosMesList">
+                        <div th:each="reg : ${registrosMes}" class="user-item"
+                            th:attr="data-tipo=${reg.tipoCuenta}, data-date=${#temporals.format(reg.fechaRegistro, 'yyyy-MM-dd')}">
+
+                            <div class="user-item__info">
+                                <div class="user-item__name" th:text="${reg.nombre}">Nombre</div>
+                                <div class="user-item__meta">
+                                    <span th:text="${reg.correo}"></span> &nbsp;·&nbsp;
+                                    <span th:text="${#temporals.format(reg.fechaRegistro, 'dd/MM/yyyy')}"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div th:if="${#lists.isEmpty(registrosMes)}"
+                            style="text-align:center; color:var(--text-medium); padding:3rem 0;">
+                            No hay registros este mes.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-right">
+                <div class="mini-stats">
+                    <div class="mini-stat">
+                        <div class="mini-stat__number" th:text="${vacantes}">0</div>
+                        <div class="mini-stat__label-group">
+                            <span class="mini-stat__primary">Vacantes</span>
+                            <span class="mini-stat__secondary">publicadas</span>
+                        </div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="mini-stat__number" th:text="${postulacionesHoy}">0</div>
+                        <div class="mini-stat__label-group">
+                            <span class="mini-stat__primary">Postulaciones</span>
+                            <span class="mini-stat__secondary">hoy</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="right-card">
+                    <div class="right-card__header"><span class="right-card__title">Estadísticas</span></div>
+                    <div class="right-chart-wrap"><canvas id="barChart"></canvas></div>
+                </div>
+
+                <!-- Gráfica Lineal -->
+                <div class="chart-section">
+                    <div class="chart-section__header">
+                        <h2 class="chart-section__title">Usuarios Registrados</h2>
+                        <div class="chart-tabs">
+                            <button class="chart-tabs__btn active" data-filter="todos">Todos</button>
+                            <button class="chart-tabs__btn" data-filter="empresa">Empresas</button>
+                            <button class="chart-tabs__btn" data-filter="postulante">Postulantes</button>
+                        </div>
+                    </div>
+                    <div class="chart-wrap"><canvas id="lineChart"></canvas></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        window.registrosPorMesData = /*[[${registrosPorMes}]]*/ {};
+        /*]]>*/
+    </script>
+    <script th:src="@{/js/admin_dashboard.js}"></script>
+</body>
+
+</html>

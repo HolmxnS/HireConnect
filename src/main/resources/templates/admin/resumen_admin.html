@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" th:href="@{/styles/fragments/empresa/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/styles/admin/resumen_admin.css}">
+    <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
+    <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
+
+    <link rel="icon" type="image/png" sizes="32x32"
+        th:href="@{/source/img/hireconnect.png}">
+
+    <script src="https://kit.fontawesome.com/e71256cba2.js"
+        crossorigin="anonymous"></script>
+
+    <title>Resumen - Administrador</title>
+
+    <style>
+        
+    </style>
+</head>
+
+<body>
+
+    <div th:replace="~{fragments/admin/sidebar_admin :: sidebar ('resumen')}"
+        id="sidebar"></div>
+
+    <main class="content">
+
+        <h2 class="page-title">Resumen</h2>
+
+        <div class="powerbi-container">
+            <iframe
+                title="HireConnect"
+                src="https://app.powerbi.com/view?r=eyJrIjoiNGFhODI3NGEtNTUzZi00NmU4LTkxMzQtMDdlMjdkYjhhZDE1IiwidCI6IjlkMTJiZjNmLWU0ZjYtNDdhYi05MTJmLTFhMmYwZmM0OGFhNCIsImMiOjR9"
+                allowfullscreen="true">
+            </iframe>
+        </div>
+
+    </main>
+
+</body>
+
+</html>

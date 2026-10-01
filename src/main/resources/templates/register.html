@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Styles-->
+    <link rel="stylesheet" th:href="@{/styles/type-account.css}">
+    <!--Fonts-->
+    <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
+    <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
+    <!--Icons (font awesome kit)-->
+    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Registro</title>
+</head>
+
+<body>
+    <main>
+
+        <div class="header">
+
+            <div class="header__redirect-home">
+                <a th:href="@{/}">
+                    <h1>Hire<span class="header__logo-higlight">Connect</span></h1>
+                </a>
+            </div>
+
+            <div class="header__redirect-login">
+                <p>¿Ya tienes una cuenta? <a th:href="@{/login}">Inicia Sesión</a></p>
+            </div>
+        </div>
+
+        <div class="type">
+
+            <div class="type__welcome">
+                <i class="fa-solid fa-briefcase"></i>
+                <p>Bienvenido a HireConnect</p>
+            </div>
+
+            <div class="type__content">
+                <h1>Encuentra tu próxima <span>oportunidad</span> o publica talento para <span>tu empresa.</span></h1>
+                <p>Seleccione su tipo de cuenta</p>
+            </div>
+            
+            <div class="roles">
+                <div class="roles__form">
+
+                    <!-- OPCIÓN POSTULANTE -->
+                    <div class="roles__rol">
+                        <i class="fa-solid fa-user rol-icon"></i>
+                        <h3>Postulante</h3>
+                        <p>Busco un nuevo empleo o una oportunidad profesional</p>
+
+                        <!-- 👇 Lógica condicional: OAuth vs Normal -->
+                        <th:block th:if="${oauthPending}">
+                            <!-- Si viene de Google: formulario POST -->
+                            <form th:action="@{/register/oauth/postulante}" method="post">
+                                <button type="submit" class="select-purple">
+                                    Seleccionar
+                                    <i class="fa-solid fa-arrow-right icon-arrow"></i>
+                                </button>
+                            </form>
+                        </th:block>
+
+                        <th:block th:unless="${oauthPending}">
+                            <!-- Flujo normal: enlace GET -->
+                            <a class="select-purple" th:href="@{/register/postulante}">
+                                Seleccionar
+                                <i class="fa-solid fa-arrow-right icon-arrow"></i>
+                            </a>
+                        </th:block>
+                    </div>
+
+                    <!-- OPCIÓN EMPRESA -->
+                    <div class="roles__rol">
+                        <i class="fa-solid fa-building rol-icon"></i>
+                        <h3>Empresa</h3>
+                        <p>Busco talento a través de ofertas de empleo</p>
+
+                        <!-- 👇 Lógica condicional: OAuth vs Normal -->
+                        <th:block th:if="${oauthPending}">
+                            <!-- Si viene de Google: formulario POST -->
+                            <form th:action="@{/register/oauth/empresa}" method="post">
+                                <button type="submit" class="select-white">
+                                    Seleccionar
+                                    <i class="fa-solid fa-arrow-right icon-arrow"></i>
+                                </button>
+                            </form>
+                        </th:block>
+
+                        <th:block th:unless="${oauthPending}">
+                            <!-- Flujo normal: enlace GET -->
+                            <a class="select-white" th:href="@{/register/empresa}">
+                                Seleccionar
+                                <i class="fa-solid fa-arrow-right icon-arrow"></i>
+                            </a>
+                        </th:block>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="trust_bar">
+                <div class="trust_bar__card">
+                    <i class="fa-solid fa-shield-halved"></i>
+
+                    <div class="trust_bar__content">
+                        <h3>Seguro y confiable.</h3>
+                        <p>Tus datos están protegidos.</p>
+                    </div>
+                </div>
+
+                <div class="trust_bar__card">
+                    <i class="fa-solid fa-user-group"></i>
+
+                    <div class="trust_bar__content">
+                        <h3>Miles de oportunidades.</h3>
+                        <p>Conecta con el mejor talento.</p>
+                    </div>
+                </div>
+
+                <div class="trust_bar__card">
+                    <i class="fa-solid fa-bolt"></i>
+
+                    <div class="trust_bar__content">
+                        <h3>Rápido y fácil.</h3>
+                        <p>Crea tu cuenta en minutos.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

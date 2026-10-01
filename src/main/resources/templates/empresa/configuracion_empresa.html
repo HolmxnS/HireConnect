@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--Styles-->
+    <link rel="stylesheet" th:href="@{/styles/fragments/empresa/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/styles/empresa/configuracion_empresa.css}">
+    <!--Fonts-->
+    <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
+    <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
+    <!--Icons-->
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
+    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
+
+    <title>Configuracion</title>
+</head>
+
+<body>
+    <div id="sidebar-overlay" class="content-overlay hidden md:hidden" onclick="toggleSidebar()"></div>
+
+    <div th:replace="~{fragments/empresa/sidebar_empresa :: sidebar('configuracion')}"></div>
+
+    <main class="main">
+        <h2 class="main__title">
+            <i class="fa-solid fa-gear"></i>
+            <span>Configuración de Cuenta</span>
+        </h2>
+
+        <div class="settings">
+            <h5>
+                <i class="fa-solid fa-lock"></i>
+                <span>Cambiar Contraseña
+            </h5>
+
+            <p class="settings__description">Asegúrate de que tu nueva contraseña sea segura</p>
+
+            <form th:action="@{/empresa/cambiarPassword}" method="post">
+                <input type="hidden" name="id" th:value="${empresa.id}" />
+
+                <div class="form cols-1">
+                    <div class="form__field">
+                        <label for="passwordActual">Contraseña Actual</label>
+                        <input class="form__input" type="password" id="passwordActual" name="passwordActual"
+                            placeholder="Introduce tu contraseña actual" required />
+                    </div>
+
+                    <div class="form__field">
+                        <label for="nuevaPassword">Nueva Contraseña</label>
+                        <input class="form__input" type="password" id="nuevaPassword" name="nuevaPassword"
+                            placeholder="Introduce la nueva contraseña" required />
+                    </div>
+
+                    <div class="form__field">
+                        <label for="confirmarPassword">Confirmar Nueva Contraseña</label>
+                        <input class="form__input" type="password" id="confirmarPassword" name="confirmarPassword"
+                            placeholder="Confirma la nueva contraseña" required />
+                    </div>
+                </div>
+
+                <div class="form__actions">
+                    <button type="submit" class="btn-save">
+                        Actualizar Contraseña
+                    </button>
+                </div>
+            </form>
+
+            <div th:if="${error}" class="flash-alert error" role="alert">
+                <span class="block sm:inline" th:text="${error}">Error al actualizar la contraseña.</span>
+            </div>
+        </div>
+        <div class="settings settings--danger">
+            <h5>
+                <i class="fa-solid fa-trash-can"></i>
+                <span>Eliminar Cuenta de Empresa</span>
+            </h5>
+
+            <p class="settings__description">
+                Una vez que elimines tu cuenta de empresa, no hay vuelta atrás. Se eliminarán todas las vacantes,
+                postulaciones asociadas y datos de la empresa. Por favor, asegúrate de que realmente deseas hacer esto.
+            </p>
+
+            <div class="form__actions">
+                <button type="button" class="btn-delete" onclick="mostrarModalEliminar()">
+                    <i class="fa-solid fa-exclamation-triangle"></i>
+                    Eliminar cuenta de empresa
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <div th:if="${exito}" class="modal" id="successModal">
+        <div class="modal__container">
+            <div class="modal__content">
+                <h3 class="modal__title">¡Listo <span th:text="${empresa.nombreLegal}">Empresa</span>!</h3>
+                <div class="modal__text">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <p th:text="${exito}">Tu contraseña ha sido actualizada correctamente.</p>
+                </div>
+                <div class="modal__actions">
+                    <button type="button" class="modal__close-btn btn-base">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="deleteModal" style="display: none;">
+        <div class="modal__container">
+            <div class="modal__content">
+                <h3 class="modal__title modal__title--danger">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    ¿Estás seguro?
+                </h3>
+                <div class="modal__text modal__text--danger">
+                    <p>Esta acción es <span>irreversible</span>. Se eliminarán:</p>
+                    <ul class="modal__list">
+                        <li>Los datos y perfil de tu empresa</li>
+                        <li>Todas las vacantes publicadas</li>
+                        <li>Todas las postulaciones recibidas</li>
+                        <li>Tu historial completo de actividad</li>
+                    </ul>
+                </div>
+                <form th:action="@{/empresa/eliminar-cuenta}" method="post">
+                    <input type="hidden" name="id" th:value="${empresa.id}" />
+                    <div class="modal__actions">
+                        <button type="button" class="modal__btn-cancel" onclick="cerrarModalEliminar()">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="modal__btn-confirm-delete">
+                            Sí, eliminar cuenta de empresa
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/modal.js}"></script>
+</body>
+
+</html>

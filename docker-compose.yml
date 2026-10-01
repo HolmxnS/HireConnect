@@ -1,0 +1,55 @@
+version: "3.9"
+
+services:
+
+  # ──────────────────────────────
+  # Base de datos MongoDB
+  # ──────────────────────────────
+  mongodb:
+    image: mongo:7
+    container_name: hireconnect-db
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: hireconnect
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - hireconnect-net
+
+  # ──────────────────────────────
+  # Aplicación Spring Boot
+  # ──────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hireconnect-app
+    restart: unless-stopped
+    depends_on:
+      - mongodb
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/hireconnect
+      SPRING_DATA_MONGODB_DATABASE: hireconnect
+      SPRING_MAIL_HOST: smtp.gmail.com
+      SPRING_MAIL_PORT: 587
+      SPRING_MAIL_USERNAME: ${MAIL_USERNAME}
+      SPRING_MAIL_PASSWORD: ${MAIL_PASSWORD}
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "true"
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "true"
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+    ports:
+      - "8080:8080"
+    volumes:
+      - uploads_data:/app/uploads
+    networks:
+      - hireconnect-net
+
+volumes:
+  mongo_data:
+  uploads_data:
+
+networks:
+  hireconnect-net:
+    driver: bridge

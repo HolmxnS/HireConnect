@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/styles/recover_password.css}">
+    <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
+    <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
+    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
+    <title>Recuperar Contraseña - HireConnect</title>
+</head>
+
+<body>
+    <main class="recover">
+
+        <div class="recover__home">
+            <a th:href="@{/}">
+                <h1>Hire<span class="recover__logo-higlight">Connect</span></h1>
+            </a>
+        </div>
+
+        <!-- formulario -->
+        <div id="form-view">
+            <div class="recover__welcome">
+                <h3>¿Olvidaste tu contraseña?</h3>
+                <p>¡No te preocupes! Restablecer tu contraseña es fácil. Solo escribe el correo electrónico con el que
+                    te
+                    registraste en HireConnect.</p>
+            </div>
+
+            <div th:if="${error}" class="recover__error">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <p th:text="${error}">Error al procesar la solicitud</p>
+            </div>
+
+            <div class="recover__form form">
+                <form th:action="@{/forgot-password}" method="post">
+                    <div class="form__input">
+                        <label for="email">Correo Electrónico</label>
+                        <input type="email" id="email" name="email" placeholder="tucorreo@ejemplo.com" required>
+                    </div>
+                    <div class="form__btn">
+                        <button type="submit">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            Enviar enlace de recuperación
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="recover__redirect-login">
+                <p>¿Recordaste tu contraseña?</p>
+                <a th:href="@{/login}">Iniciar Sesión</a>
+            </div>
+        </div>
+
+        <!--vista despues de enviar el enlace-->
+        <div id="success-view" class="recover__success-view">
+            <div class="success-icon-wrap">
+                <i class="fa-solid fa-envelope"></i>
+            </div>
+            <h3>Revisa tu correo</h3>
+            <p>¡Casi listo! Enviamos un enlace de recuperación a</p>
+            <p class="email-highlight" id="sent-email-display"></p>
+            <p class="spam-note">Solo haz clic en el enlace del correo para continuar.<br>
+                Si no lo ves, revisa tu carpeta de <strong>spam</strong>.</p>
+
+            <button class="btn-resend" onclick="window.location.href=window.location.pathname">
+                <i class="fa-solid fa-rotate-right"></i>
+                ¿No llegó? Intentar de nuevo
+            </button>
+        </div>
+        <span id="thymeleaf-data" th:data-email-sent="${emailSent}" th:data-email="${email}"
+            style="display:none"></span>
+
+    </main>
+
+    <script>
+        (function () {
+            const meta = document.getElementById('thymeleaf-data');
+            const emailSent = meta?.dataset.emailSent === 'true';
+            const email = meta?.dataset.email || '';
+
+            if (emailSent) {
+                // Ocultar formulario
+                document.getElementById('form-view').style.display = 'none';
+
+                // Mostrar vista de éxito
+                const successView = document.getElementById('success-view');
+                successView.style.display = 'flex';
+
+                // Inyectar el email del usuario
+                document.getElementById('sent-email-display').textContent = email;
+            }
+        })();
+    </script>
+</body>
+
+</html>

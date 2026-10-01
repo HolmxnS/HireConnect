@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Styles-->
+    <link rel="stylesheet" th:href="@{/styles/fragments/postulante/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/styles/fragments/postulante/header.css}">
+    <link rel="stylesheet" th:href="@{/styles/postulante/homePostulante.css}">
+    <!--Fonts-->
+    <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
+    <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
+    <!--Icons-->
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
+    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
+
+    <title>Home - Postulante</title>
+</head>
+
+<body>
+    <div th:replace="~{fragments/postulante/sidebar_postulante :: sidebar('home')}"></div>
+
+    <div th:replace="~{fragments/postulante/header_postulante :: menu-fragment(false)}"></div>
+
+    <main class="main">
+        <!--mensaje de bienvenida -->
+        <section class="main__welcome-section" th:if="${#lists.isEmpty(vacantesRecomendadas)}">
+            <h1>Bienvenido a la Plataforma <span th:text="${postulante.nombre}"></span></h1>
+            <p>
+                Tu talento merece ser visto.
+                Actualiza tu perfil y descubre las empresas que te están buscando hoy.
+            </p>
+        </section>
+
+        <!-- Sección de Recomendaciones-->
+        <section class="main__recommendations" th:if="${not #lists.isEmpty(vacantesRecomendadas)}">
+            <h2>Vacantes recomendadas para ti segun tus habilidades, <span th:text="${postulante.nombre}"></span></h2>
+            <p class="recommendations__subtitle">Basadas en tus habilidades</p>
+            <div class="recommendations__container">
+                <div th:each="vacante : ${vacantesRecomendadas}" class="recommendation-card">
+                    <div class="recommendations__section">
+                        <div class="recommendations__company-photo">
+                            <img th:if="${vacante.empresa.foto != null}" th:src="@{${vacante.empresa.foto}}"
+                                alt="Logo Empresa">
+                            <div th:if="${vacante.empresa.foto == null}" class="company-photo-placeholder">
+                                <i class="fa-solid fa-building"></i>
+                            </div>
+                        </div>
+
+                        <div class="sect_name">
+                            <h3 th:text="${vacante.titulo}"></h3>
+                            <p class="sect_name__company">
+                                <i class="fa-solid fa-building"></i>
+                                <span th:text="${vacante.empresa.nombre}"></span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="recommendation-card__tags">
+                        <span class="tag" th:text="${vacante.modalidad?.descripcion}"></span>
+                        <span class="tag" th:text="${vacante.tipoContrato?.descripcion}"></span>
+                    </div>
+
+                    <!-- Bubbles habilidades con color HireConnect -->
+                    <div class="recommendation-card__habilidades">
+                        <th:block th:each="hab : ${#strings.arraySplit(vacante.habilidadesRequeridas, ',')}">
+                            <span class="habilidad-tag" th:text="${#strings.trim(hab)}"></span>
+                        </th:block>
+                    </div>
+
+                    <!-- Footer: fecha + botón -->
+                    <div class="recommendation-card__footer">
+                        <span class="recommendation-card__date">
+                            <i class="fa-regular fa-calendar"></i>
+                            <span th:text="${vacante.fechaPublicacion != null ? 
+                'Publicado ' + vacante.fechaPublicacion : 'Recién publicado'}"></span>
+                        </span>
+                        <a th:href="@{/postulante/vacante/{id}(id=${vacante.id})}" class="recommendation-card__btn">
+                            Ver vacante <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="main__empty-recommendations" th:if="${#lists.isEmpty(vacantesRecomendadas)}">
+            <p>Aún no tenemos recomendaciones para ti.
+                <a th:href="@{/postulante/perfil}">Agrega habilidades a tu perfil</a>
+                para ver vacantes relacionadas.
+            </p>
+        </section>
+
+        <div class="home__blur"></div>
+    </main>
+
+
+    <script th:src="@{/js/filter.js}"></script>
+
+</body>
+
+</html>

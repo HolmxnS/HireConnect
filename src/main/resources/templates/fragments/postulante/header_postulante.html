@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/styles/fragments/postulante/header.css}">
+</head>
+
+<body>
+    <header th:fragment="menu-fragment(mostrarBusqueda)">
+
+        <!-- Overlay del panel -->
+        <div class="filter-overlay" id="filterOverlay"></div>
+
+        <!-- Panel lateral de filtros -->
+        <div class="filter-panel" id="filterPanel">
+            <div class="filter-panel__header">
+                <h2 class="filter-panel__title">Filtros</h2>
+                <button type="button" class="filter-panel__close" id="closeFilterPanel">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="filtroForm" method="get" th:action="@{/postulante/vacantes/listar}" autocomplete="off">
+
+                <!-- Sección: Rango de Salario -->
+                <div class="filter-section">
+                    <h3 class="filter-section__title">Rango de Salario</h3>
+                    <p class="filter-section__subtitle">El salario promedio es <strong>$2,500,000</strong></p>
+
+                    <div class="salary-histogram" id="salaryHistogram">
+                        <canvas id="histogramCanvas" width="280" height="60"></canvas>
+                    </div>
+
+                    <div class="salary-slider-wrapper">
+                        <input type="range" id="salarioMin" name="salarioMin" min="0" max="20000000" step="100000"
+                            th:value="${salarioMin != null ? salarioMin : 0}" class="salary-range salary-range--min">
+                        <input type="range" id="salarioMax" name="salarioMax" min="0" max="20000000" step="100000"
+                            th:value="${salarioMax != null ? salarioMax : 20000000}"
+                            class="salary-range salary-range--max">
+                    </div>
+
+                    <div class="salary-inputs">
+                        <div class="salary-input-box">
+                            <label>Mínimo</label>
+                            <span id="salarioMinDisplay">$0</span>
+                        </div>
+                        <div class="salary-input-box">
+                            <label>Máximo</label>
+                            <span id="salarioMaxDisplay">$20,000,000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección: Modalidad -->
+                <div class="filter-section">
+                    <h3 class="filter-section__title">Modalidad</h3>
+                    <div class="filter-cards">
+                        <label class="filter-card"
+                            th:classappend="${modalidad == null || modalidad == ''} ? 'filter-card--active' : ''">
+                            <input type="radio" name="modalidad" value=""
+                                th:checked="${modalidad == null || modalidad == ''}">
+                            <span class="filter-card__icon"><i class="fa-solid fa-layer-group"></i></span>
+                            <span class="filter-card__label">Todas</span>
+                        </label>
+                        <label class="filter-card"
+                            th:classappend="${modalidad == 'Presencial'} ? 'filter-card--active' : ''">
+                            <input type="radio" name="modalidad" value="Presencial"
+                                th:checked="${modalidad == 'Presencial'}">
+                            <span class="filter-card__icon"><i class="fa-solid fa-building"></i></span>
+                            <span class="filter-card__label">Presencial</span>
+                        </label>
+                        <label class="filter-card"
+                            th:classappend="${modalidad == 'Remoto'} ? 'filter-card--active' : ''">
+                            <input type="radio" name="modalidad" value="Remoto" th:checked="${modalidad == 'Remoto'}">
+                            <span class="filter-card__icon"><i class="fa-solid fa-house-laptop"></i></span>
+                            <span class="filter-card__label">Remoto</span>
+                        </label>
+                        <label class="filter-card"
+                            th:classappend="${modalidad == 'Hibrido'} ? 'filter-card--active' : ''">
+                            <input type="radio" name="modalidad" value="Hibrido" th:checked="${modalidad == 'Hibrido'}">
+                            <span class="filter-card__icon"><i class="fa-solid fa-arrows-split-up-and-left"></i></span>
+                            <span class="filter-card__label">Híbrido</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Sección: Tipo de Contrato -->
+                <div class="filter-section">
+                    <h3 class="filter-section__title">Tipo de contrato</h3>
+                    <div class="filter-chips">
+                        <button type="button" class="filter-chip"
+                            th:classappend="${tipoContrato == null || tipoContrato == ''} ? 'filter-chip--active' : ''"
+                            data-field="tipoContrato" data-value="">Todos</button>
+                        <button type="button" class="filter-chip"
+                            th:classappend="${tipoContrato == 'Indefinido'} ? 'filter-chip--active' : ''"
+                            data-field="tipoContrato" data-value="Indefinido">Indefinido</button>
+                        <button type="button" class="filter-chip"
+                            th:classappend="${tipoContrato == 'Tiempo completo'} ? 'filter-chip--active' : ''"
+                            data-field="tipoContrato" data-value="Tiempo completo">Tiempo completo</button>
+                        <button type="button" class="filter-chip"
+                            th:classappend="${tipoContrato == 'Tiempo parcial'} ? 'filter-chip--active' : ''"
+                            data-field="tipoContrato" data-value="Tiempo parcial">Tiempo parcial</button>
+                    </div>
+                    <input type="hidden" id="filtroTipoContrato" name="tipoContrato" th:value="${tipoContrato}">
+                </div>
+
+                <!-- Sección: Fecha de Publicación -->
+                <div class="filter-section">
+                    <h3 class="filter-section__title">Fecha de publicación</h3>
+                    <div class="filter-chips">
+                        <button type="button" class="filter-chip"
+                            th:classappend="${fechaFiltro == null || fechaFiltro == ''} ? 'filter-chip--active' : ''"
+                            data-field="fechaFiltro" data-value="">Cualquiera</button>
+                        <button type="button" class="filter-chip"
+                            th:classappend="${fechaFiltro == 'hoy'} ? 'filter-chip--active' : ''"
+                            data-field="fechaFiltro" data-value="hoy">Hoy</button>
+                        <button type="button" class="filter-chip"
+                            th:classappend="${fechaFiltro == '3dias'} ? 'filter-chip--active' : ''"
+                            data-field="fechaFiltro" data-value="3dias">Últimos 3 días</button>
+                        <button type="button" class="filter-chip"
+                            th:classappend="${fechaFiltro == 'semana'} ? 'filter-chip--active' : ''"
+                            data-field="fechaFiltro" data-value="semana">Esta semana</button>
+                        <button type="button" class="filter-chip"
+                            th:classappend="${fechaFiltro == 'mes'} ? 'filter-chip--active' : ''"
+                            data-field="fechaFiltro" data-value="mes">Este mes</button>
+                    </div>
+                    <input type="hidden" id="filtroFecha" name="fechaFiltro" th:value="${fechaFiltro}">
+                </div>
+
+                <!-- Preserve filtro de búsqueda -->
+                <input type="hidden" name="filtro" th:value="${filtro}">
+
+                <!-- Footer del panel -->
+                <div class="filter-panel__footer">
+                    <button type="button" class="btn-clear-all" id="btnLimpiarFiltros">Limpiar todo</button>
+                    <button type="submit" class="btn-apply">
+                        Ver vacantes <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Header principal -->
+        <div class="header-container">
+            <div class="header-content">
+                <div th:if="${mostrarBusqueda}" class="search-wrapper">
+                    <div class="search-main">
+                        <div class="search-bar-google">
+                            <form id="searchForm" method="get" th:action="@{/postulante/vacantes/listar}"
+                                autocomplete="off" style="display:flex;flex:1;align-items:center;">
+                                <input type="hidden" name="modalidad" th:value="${modalidad}">
+                                <input type="hidden" name="tipoContrato" th:value="${tipoContrato}">
+                                <input type="hidden" name="fechaFiltro" th:value="${fechaFiltro}">
+                                <input type="hidden" name="salarioMin" th:value="${salarioMin}">
+                                <input type="hidden" name="salarioMax" th:value="${salarioMax}">
+                                <input type="text" id="buscador" name="filtro" placeholder="Buscar vacantes..."
+                                    th:value="${filtro}">
+                                <button type="submit" class="search-btn">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </button>
+                            </form>
+
+                            <button type="button" class="filter-trigger-btn" id="openFilterPanel">
+                                <i class="fa-solid fa-sliders"></i>
+                                <span>Filtros</span>
+                                <span class="filter-badge" id="filterBadge"
+                                    th:if="${activeFiltersCount != null and activeFiltersCount > 0}"
+                                    th:text="${activeFiltersCount}"></span>
+                            </button>
+                        </div>
+
+                        <div id="historial" class="historial-dropdown">
+                            <div class="historial-header">
+                                <span>Búsquedas recientes</span>
+                                <button type="button" id="limpiar-historial">Limpiar</button>
+                            </div>
+                            <ul id="lista-historial"></ul>
+                        </div>
+                    </div>
+
+                    <!-- Chips activos (resumen de filtros aplicados) -->
+                    <div class="active-filters" id="activeFilters">
+                        <div th:if="${modalidad != null and modalidad != ''}" class="active-filter-chip">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <span th:text="${modalidad}"></span>
+                            <a th:href="@{/postulante/vacantes/listar(filtro=${filtro},experiencia=${experiencia},tipoContrato=${tipoContrato},fechaFiltro=${fechaFiltro},salarioMin=${salarioMin},salarioMax=${salarioMax})}"
+                                class="chip-remove"><i class="fa-solid fa-xmark"></i></a>
+                        </div>
+                        <div th:if="${experiencia != null and experiencia != ''}" class="active-filter-chip">
+                            <i class="fa-solid fa-star"></i>
+                            <span th:text="${experiencia}"></span>
+                            <a th:href="@{/postulante/vacantes/listar(filtro=${filtro},modalidad=${modalidad},tipoContrato=${tipoContrato},fechaFiltro=${fechaFiltro},salarioMin=${salarioMin},salarioMax=${salarioMax})}"
+                                class="chip-remove"><i class="fa-solid fa-xmark"></i></a>
+                        </div>
+                        <div th:if="${tipoContrato != null and tipoContrato != ''}" class="active-filter-chip">
+                            <i class="fa-solid fa-file-contract"></i>
+                            <span th:text="${tipoContrato}"></span>
+                            <a th:href="@{/postulante/vacantes/listar(filtro=${filtro},modalidad=${modalidad},experiencia=${experiencia},fechaFiltro=${fechaFiltro},salarioMin=${salarioMin},salarioMax=${salarioMax})}"
+                                class="chip-remove"><i class="fa-solid fa-xmark"></i></a>
+                        </div>
+                        <div th:if="${fechaFiltro != null and fechaFiltro != ''}" class="active-filter-chip">
+                            <i class="fa-solid fa-calendar"></i>
+                            <span th:text="${fechaFiltro}"></span>
+                            <a th:href="@{/postulante/vacantes/listar(filtro=${filtro},modalidad=${modalidad},experiencia=${experiencia},tipoContrato=${tipoContrato},salarioMin=${salarioMin},salarioMax=${salarioMax})}"
+                                class="chip-remove"><i class="fa-solid fa-xmark"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-box">
+                    <a th:href="@{/postulante/perfil}">
+                        <img th:if="${postulante.foto != null}" th:src="${postulante.foto}" alt="Perfil">
+                        <div th:unless="${postulante.foto != null}" class="profile-box__placeholder">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+</body>
+
+</html>

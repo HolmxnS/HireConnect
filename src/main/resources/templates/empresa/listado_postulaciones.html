@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Styles-->
+    <link rel="stylesheet" th:href="@{/styles/empresa/listado_postulaciones.css}">
+    <link rel="stylesheet" th:href="@{/styles/fragments/empresa/sidebar.css}">
+    <!--Fonts-->
+    <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
+    <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
+    <!--Icons-->
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
+    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
+
+    <title>Postulaciones - Revisión</title>
+</head>
+
+
+<body>
+    <div th:replace="~{fragments/empresa/sidebar_empresa :: sidebar('vacantes')}"></div>
+
+    <main class="main">
+        <div class="main__dashboard">
+
+            <div class="main__dashboard-header">
+                <a th:href="@{/empresa/vacante}">
+                    <i class="fa-solid fa-arrow-left"></i> Volver
+                </a>
+                <a th:href="@{/empresa/vacantes/nueva}" class="main__btn-add-vacancy">
+                    <i class="fa-solid fa-plus"></i> Crear Vacante
+                </a>
+            </div>
+
+            <h1 class="main__dashboard-title">Dashboard de <span th:text="${empresa.nombreLegal}"></span></h1>
+
+            <div class="dashboard">
+
+                <div class="dashboard__nav">
+                    <a th:href="@{/empresa/postulaciones}" class="dashboard__nav-btn"
+                        th:classappend="${vacanteSeleccionadaId == null} ? 'active' : ''">
+                        Mis Vacantes (<span th:text="${#lists.size(vacantesActivas)}">0</span>)
+                    </a>
+
+                    <span class="dashboard__nav-btn" th:if="${vacanteSeleccionadaId != null}" th:classappend="'active'">
+                        Postulaciones (<span th:text="${#lists.size(postulaciones ?: {})}">0</span>)
+                    </span>
+                </div>
+
+                <div class="dashboard__content active">
+
+                    <div th:if="${vacanteSeleccionadaId == null}">
+                        <h3 class="dashboard__title">Buscar vacante</h3>
+
+                        <div class="dashboard__filter filter">
+                            <div class="filter__item">
+                                <div class="filter__input">
+                                    <i class="fa-solid fa-search"></i>
+                                    <input type="text" id="searchInputVacantes" onkeyup="filterVacantes()"
+                                        placeholder="Buscar por título de vacante...">
+                                </div>
+                            </div>
+                            <div class="filter__item">
+                                <select id="sortFilterVacantes" onchange="sortVacantes()">
+                                    <option value="most_recent">Más Reciente</option>
+                                    <option value="oldest">Más Antiguo</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="vacancies" id="vacancies">
+                            <div class="vacancy" id="vacantesList">
+                                <div class="vacancy-item" th:each="vacante : ${vacantesActivas}"
+                                    th:attr="data-date=${#temporals.format(vacante.fechaPublicacion, 'yyyy-MM-dd')}">
+
+                                    <div class="vacancy-type">
+                                        <i class="fa-solid fa-briefcase icon-applicant"></i>
+                                        <span class="vacante-titulo" th:text="${vacante.titulo}">Título de la
+                                            Vacante</span>
+                                    </div>
+
+                                    <div class="vacancy-dates">
+                                        <i class="fa-solid fa-calendar-alt"></i>
+                                        <span
+                                            th:text="${#temporals.format(vacante.fechaPublicacion, 'dd MMM yyyy')}">Fecha
+                                            Publicación</span>
+                                    </div>
+
+                                    <div class="vacancy-days">
+                                        <i class="fa-solid fa-user-check"></i>
+                                        <span th:text="|${vacante.totalPostulaciones} Postulantes|">0 Postulantes</span>
+                                    </div>
+
+                                    <div class="vacancy-status">
+                                        <span class="status-badge status-approved">Activa</span>
+                                    </div>
+
+                                    <div class="vacancy-actions">
+                                        <a th:href="@{/empresa/postulaciones/lista/{vacanteId}(vacanteId=${vacante.id})}"
+                                            class="action-btn success-btn" title="Ver Postulaciones">
+                                            <i class="fa-solid fa-arrow-right"></i>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="empty-list" th:if="${#lists.isEmpty(vacantesActivas)}">
+                                    <p>No tienes vacantes activas actualmente.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div th:if="${vacanteSeleccionadaId != null}">
+                        <h3 class="dashboard__title">
+                            Candidatos para: <span class="text-primary" th:text="${vacanteActual.titulo}"></span>
+                        </h3>
+
+                        <div class="dashboard__filter filter">
+                            <div class="filter__item">
+                                <div class="filter__input">
+                                    <i class="fa-solid fa-search"></i>
+                                    <input type="text" id="searchInputPostulantes" onkeyup="filterPostulantes()"
+                                        placeholder="Buscar por nombre o apellido...">
+                                </div>
+                            </div>
+                            <div class="filter__item">
+                                <select id="statusFilter" onchange="filterPostulantes()">
+                                    <option value="all">Filtrar por Estado</option>
+                                    <option value="En revision">En revision</option>
+                                    <option value="Aceptada">Aceptada</option>
+                                    <option value="Entrevista pendiente">Entrevista Pendiente</option>
+                                    <option value="Rechazada">Rechazada</option>
+                                </select>
+                            </div>
+                            <div class="filter__item">
+                                <select id="sortFilterPostulaciones" onchange="sortPostulaciones()">
+                                    <option value="most_recent">Más Reciente</option>
+                                    <option value="oldest">Más Antiguo</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="vacancy" id="postulacionesList">
+                            <div class="vacancy-item" th:each="postulacion : ${postulaciones}" th:attr="data-date=${#temporals.format(postulacion.fechaPostulacion, 'yyyy-MM-dd')}">
+                                
+                                <div class="vacancy-type">
+                                    <i class="fa-solid fa-user-tie icon-applicant"></i>
+                                    <span
+                                        th:text="${postulacion.postulante.nombre + ' ' + postulacion.postulante.apellido}">Nombre
+                                        del Postulante</span>
+                                </div>
+
+                                <div class="vacancy-dates">
+                                    <i class="fa-solid fa-calendar-alt"></i>
+                                    <span
+                                        th:text="${#temporals.format(postulacion.fechaPostulacion, 'dd MMM yyyy')}">Fecha
+                                        Postulación</span>
+                                </div>
+
+                                <div class="vacancy-days">
+                                    <i class="fa-solid fa-id-card"></i>
+                                    <span th:text="${postulacion.postulante.identificacion}">DNI</span>
+                                </div>
+
+                                <div class="vacancy-status">
+                                    <span class="status-badge"
+                                        th:classappend="${postulacion.estado.descripcion == 'Aceptada' ? 'status-approved' : 
+                        postulacion.estado.descripcion == 'Rechazada' ? 'status-rejected' : 
+                        postulacion.estado.descripcion == 'Entrevista pendiente' ? 'status-interview' : 'status-review'}"
+                                        th:text="${postulacion.estado.descripcion}">En Revisión</span>
+                                </div>
+
+                                <div class="vacancy-actions">
+                                    <a th:href="@{/empresa/postulacion/{id}(id=${postulacion.id})}"
+                                        class="action-btn view-btn" title="Ver Detalle"><i class="fa-solid fa-eye"></i>
+                                        Ver</a>
+                                </div>
+                            </div>
+
+                            <div class="empty-list" th:if="${#lists.isEmpty(postulaciones)}">
+                                <p>No hay postulaciones para la vacante seleccionada.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script th:src="@{/js/listado_postulaciones.js}"></script>
+</body>
+
+</html>

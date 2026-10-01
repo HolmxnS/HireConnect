@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
+    <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
+    <link rel="stylesheet" th:href="@{/styles/empresa/ver_detalle_vacante.css}">
+    <link rel="stylesheet" th:href="@{/styles/fragments/empresa/sidebar.css}">
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
+
+    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
+    <title th:text="${vacante.titulo} + ' | Detalle'"></title>
+</head>
+
+<body>
+    <div th:replace="~{fragments/empresa/sidebar_empresa :: sidebar ('vacantes')}"></div>
+
+    <div class="detalle">
+
+        <div class="detalle__card">
+
+            <a th:href="@{/empresa/vacantes}" class="btn-volver">
+                <i class="fa-solid fa-arrow-left"></i> Volver al Listado de Vacantes
+            </a>
+
+            <div class="header-vacante">
+                <h1 th:text="${vacante.titulo}">Título de la Vacante</h1>
+                <div class="info-empresa">
+                    <span th:if="${vacante.empresa != null}" class="flex items-center">
+                        <i class="fa-solid fa-building"></i>
+                        <span th:text="${vacante.empresa.nombre}">Nombre de la Compañía</span>
+                    </span>
+                    <span th:unless="${vacante.empresa != null}" class="text-gray-400">(Empresa no especificada)</span>
+
+                    <span class="separador"></span>
+
+                    <span class="estado-badge"
+                        th:classappend="${vacante.estado.name() == 'ACTIVA'} ? 'estado-activa' : 'estado-inactiva'"
+                        th:text="${vacante.estado}">Activa</span>
+                </div>
+            </div>
+
+            <div class="detalle-grid">
+
+                <div class="detalle-item">
+                    <p>Salario</p>
+                    <p th:if="${vacante.salario != null}"
+                        th:text="'$' + ${#numbers.formatDecimal(vacante.salario, 0, 'COMMA', 0, 'POINT')} + ' COP'">
+                    </p>
+                </div>
+
+                <div class="detalle-item">
+                    <p>Modalidad</p>
+                    <p th:text="${vacante.modalidad.descripcion}"></p>
+                </div>
+
+                <div class="detalle-item">
+                    <p>Contrato</p>
+                    <p th:text="${vacante.tipoContrato.descripcion}"></p>
+                </div>
+
+                <div class="detalle-item">
+                    <p>Experiencia</p>
+                    <p th:text="${vacante.experienciaRequerida.descripcion}"></p>
+                </div>
+
+                <div class="detalle-item">
+                    <p>Publicado</p>
+                    <p th:text="${#temporals.format(vacante.fechaPublicacion, 'dd/MM/yyyy')}"></p>
+                </div>
+            </div>
+
+            <div class="seccion">
+                <h3>Descripción y Responsabilidades</h3>
+                <div class="descripcion-contenido" th:utext="${vacante.descripcion}">
+                    <p>Contenido de la descripción.</p>
+                </div>
+            </div>
+
+            <div th:if="${vacante.habilidadesRequeridas != null and vacante.habilidadesRequeridas.length() > 0}"
+                class="seccion">
+                <h3>Habilidades Clave</h3>
+                <div class="habilidades-list">
+                    <span th:each="habilidad : ${vacante.habilidadesRequeridas.split(',')}" class="habilidad-badge">
+                        <span th:text="${habilidad.trim()}"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

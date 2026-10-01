@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Styles-->
+    <link rel="stylesheet" th:href="@{/styles/fragments/empresa/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/styles/empresa/dashboard_vacantes.css}">
+    <!--Fonts-->
+    <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
+    <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
+    <!--Icons-->
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
+    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
+
+    <title th:text="${empresa.nombreLegal} + ' | Gestión de Vacantes'"></title>
+</head>
+
+<body>
+
+    <div th:replace="~{fragments/empresa/sidebar_empresa :: sidebar('vacantes')}"></div>
+
+    <main class="main">
+        <div class="main__title">
+            <a th:href="@{/empresa/vacante}" class="main__btn">
+                <i class="fa-solid fa-arrow-left"></i> Volver
+            </a>
+
+            <h2>Gestión De <span class="main__highlight">Vacantes</span></h2>
+
+            <a th:href="@{/empresa/vacantes/nueva}" class="main__btn btn-primary">
+                <i class="fa-solid fa-plus-circle"></i> Crear Nueva Vacante
+            </a>
+        </div>
+
+        <div th:if="${success}" class="alert success">
+            <p th:text="${success}"></p>
+        </div>
+        <div th:if="${error}" class="alert error">
+            <p th:text="${error}"></p>
+        </div>
+
+        <div class="section">
+            <div class="section__title">
+                <h3>Buscar vacante</h3>
+            </div>
+            <div class="filters">
+                <div class="filters__item">
+                    <div class="filters__input">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" id="searchInputVacantes" onkeyup="filterVacantes()"
+                            placeholder="Buscar por título de vacante...">
+                    </div>
+                </div>
+                <div class="filters__item">
+                    <select id="sortFilterVacantes" onchange="sortVacantes()">
+                        <option value="most_recent">Más Reciente</option>
+                        <option value="oldest">Más Antiguo</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${vacantes.isEmpty()}" class="vacancies-empty">
+            <i class="fa-solid fa-box-open icon"></i>
+            <p class="vacancies-empty__message">Aún no hay vacantes publicadas.</p>
+            <p class="vacancies-empty__sub-message">Haz clic en "Crear Nueva Vacante" para empezar a buscar talento.</p>
+        </div>
+
+        <div th:unless="${vacantes.isEmpty()}" class="vacancies">
+            <div th:each="vacante : ${vacantes}" class="vacancies__card"
+                th:classappend="${vacante != null and vacante.estado == 'Cerrada' ? ' cerrada' : ''}">
+
+                <div class="vacancies__card-header">
+                    <div>
+                        <h3 th:text="${vacante.titulo != null ? vacante.titulo : 'Vacante sin Título'}"></h3>
+                        <p>
+                            <i class="fa-solid fa-calendar-alt"></i>
+                            Publicada: <span
+                                th:text="${vacante.fechaPublicacion != null ? #temporals.format(vacante.fechaPublicacion, 'dd/MM/yyyy') : 'N/A'}"></span>
+                        </p>
+                    </div>
+                    <span th:if="${vacante.estado.name() == 'ACTIVA'}" class="estado activa">ACTIVA</span>
+                    <span th:if="${vacante.estado.name() != 'ACTIVA'}" class="estado cerrada-label">CERRADA</span>
+                </div>
+
+                <div class="vacancies__card-body">
+                    <div>
+                        <i class="fa-solid fa-money-bill-wave"></i>
+                        <span th:if="${vacante.salario != null}"
+                            th:text="'$' + ${#numbers.formatDecimal(vacante.salario, 1, 'POINT', 0, 'COMMA')} + ' COP'">
+                        </span>
+                    </div>
+                    <div><i class="fa-solid fa-handshake"></i>
+                        <span
+                            th:text="${vacante.tipoContrato.descripcion != null ? vacante.tipoContrato.descripcion : 'No definido'}"></span>
+                    </div>
+                    <div><i class="fa-solid fa-laptop-house"></i>
+                        <span
+                            th:text="${vacante.modalidad.descripcion != null ? vacante.modalidad.descripcion : 'No definida'}"></span>
+                    </div>
+                    <div><i class="fa-solid fa-graduation-cap"></i>
+                        <span
+                            th:text="${vacante.experienciaRequerida.descripcion != null ? vacante.experienciaRequerida.descripcion : 'No especificada'}"></span>
+                    </div>
+                </div>
+
+                <div class="vacancies__card-footer">
+                    <div class="acciones">
+
+                        <a th:href="@{/empresa/vacante/{id}(id=${vacante.id})}" class="btn-view">
+                            <i class="fa-solid fa-eye mr-2"></i> Ver
+                        </a>
+                        <a th:href="@{/empresa/vacantes/editar/{id}(id=${vacante.id})}" class="btn-edit">
+                            <i class="fa-solid fa-pen-to-square"></i> Editar
+                        </a>
+                        <a th:if="${vacante.estado.name() == 'ACTIVA'}"
+                            th:href="@{/empresa/vacantes/cerrar/{id}(id=${vacante.id})}"
+                            onclick="return confirm('¿Seguro que deseas cerrar esta vacante?');" class="btn-close">
+                            <i class="fa-solid fa-ban"></i> Cerrar
+                        </a>
+                        <a th:if="${vacante.estado.name() == 'CERRADA'}"
+                            th:href="@{/empresa/vacantes/activar/{id}(id=${vacante.id})}"
+                            onclick="return confirm('¿Seguro que deseas activar esta vacante?');" class="btn-activate">
+                            <i class="fa-solid fa-check-circle"></i> Activar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script th:src="@{/js/gestion_vacantes.js}" defer></script>
+</body>
+
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Styles-->
+    <link rel="stylesheet" th:href="@{/styles/fragments/admin/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/styles/admin/ver_empresa.css}">
+    <!--Fonts-->
+    <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
+    <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
+    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
+
+    <title th:text="'Detalle de Empresa - ' + ${empresa.nombreLegal}"></title>
+</head>
+
+<body>
+    <div id="sidebar" th:replace="~{fragments/admin/sidebar_admin :: sidebar('empresas')}"></div>
+
+    <main class="content">
+        <!-- Volver -->
+        <a th:href="@{/admin/empresas}" class="back-btn">
+            <i class="fa-solid fa-arrow-left"></i> Volver a la Lista de Empresas
+        </a>
+
+        <div class="company card">
+            <div class="company__header">
+                <h2 class="company__title" th:text="${empresa.nombreLegal}">Nombre de la Empresa</h2>
+
+                <div class="company__actions">
+                    <span th:classappend="${empresa.estado.name() == 'APROBADA'} ? 'badge-success' : 'badge-danger'"
+                        class="badge">
+                        <span th:text="${empresa.estado}">ACTIVO</span>
+                    </span>
+
+                    <a th:href="@{/admin/empresas/aprobar/{id}(id=${empresa.id})}" class="btn btn-success">
+                        <i class="fa-solid fa-check"></i> Aprobar
+                    </a>
+
+                    <a th:href="@{/admin/empresas/suspender/{id}(id=${empresa.id})}"
+                        onclick="return confirm('¿Estás seguro de suspender esta empresa?')" class="btn btn-danger">
+                        <i class="fa-solid fa-ban"></i> Suspender
+                    </a>
+                </div>
+            </div>
+
+            <div class="company__group">
+
+                <div class="company__info">
+                    <h3 class="section__title">Información General</h3>
+                    <div class="company__info-list">
+                        <p><i class="fa-solid fa-envelope"></i>Email: <span th:text="${empresa.email}"></span></p>
+                        <p><i class="fa-solid fa-phone"></i>Teléfono: <span th:text="${empresa.telefono}"></span>
+                        </p>
+                        <p><i class="fa-solid fa-location-dot"></i>Dirección: <span
+                                th:text="${empresa.ubicacion}"></span></p>
+                        <p><i class="fa-solid fa-calendar-alt"></i>Registro:
+                            <span th:text="${#temporals.format(empresa.fechaRegistro, 'dd/MMM/yyyy')}"></span>
+                        </p>
+                        <p class="ruc-line"><i class="fa-solid fa-id-card"></i> RUT/NIT:
+                            <span th:text="${empresa.rut}"></span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="company__img">
+                    <img th:if="${empresa.foto != null}" th:src="@{${empresa.foto}}" alt="Foto de Perfil"
+                        id="profileImage">
+
+                    <div th:if="${empresa.foto == null}" class="company__photo-placeholder">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                </div>
+
+                <div class="company__description">
+                    <h3 class="section__title">Descripción</h3>
+
+                    <div class="company__description-box">
+                        <p th:text="${empresa.descripcion}">
+                            Descripción detallada de la empresa...
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="vacancies card">
+
+            <h2 class="vacancies__title">
+                <i class="fa-solid fa-briefcase"></i> Vacantes Publicadas
+                <span class="vacancies__count" th:text="'(' + ${#lists.size(vacantes)} + ' Total)'"> (0
+                    Total)</span>
+            </h2>
+
+            <div class="vacancies__table">
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Título</th>
+                            <th>Estado</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr th:each="vacante : ${vacantes}">
+                            <td th:text="${vacante.titulo}">Vacante</td>
+
+                            <td>
+                                <span class="badge" th:classappend="
+                                            ${vacante.estado == 'ACTIVA'} ? 'badge-success' :
+                                            (${vacante.estado == 'CERRADA'} ? 'badge-danger' : 'badge-warning')
+                                        " th:text="${vacante.estado}">
+                                </span>
+                            </td>
+
+                            <td th:text="${#temporals.format(empresa.fechaRegistro, 'dd/MMM/yyyy')}">01/01/2024
+                            </td>
+
+                            <td>
+                                <a th:href="@{/admin/vacantes/ver/{id}(id=${vacante.id})}" class="table__link">Ver
+                                    Detalle</a>
+                            </td>
+                        </tr>
+
+                        <tr th:if="${#lists.isEmpty(vacantes)}">
+                            <td colspan="4" class="table__no-data">Esta empresa no ha publicado vacantes.</td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>

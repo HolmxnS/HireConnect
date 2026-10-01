@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/styles/fragments/empresa/sidebar_empresa.css}">
+    <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
+    <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
+    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
+    <title>Dashboard Empresa</title>
+</head>
+
+<body>
+
+    <aside th:fragment="sidebar (activeMenu)" class="sidebar">
+
+        <div class="sidebar__logo">
+            <h1>Hire<span class="sidebar__highlight">Connect</span></h1>
+        </div>
+
+        <nav class="sidebar__nav">
+            <ul>
+                <li>
+                    <a th:href="@{/empresa/home}" class="sidebar__link"
+                        th:classappend="${activeMenu == 'home'} ? 'sidebar__active' : ''">
+                        <i class="fa-solid fa-house"></i> Inicio
+                    </a>
+                </li>
+
+                <li>
+                    <a th:href="@{/empresa/vacante}"
+                        th:classappend="${activeMenu == 'vacantes'} ? 'sidebar__active' : ''">
+                        <i class="fa-solid fa-briefcase"></i> Vacantes
+                    </a>
+                </li>
+
+                <li>
+                    <a th:href="@{/empresa/editar(empresaId=${empresa.id})}"
+                        th:classappend="${activeMenu == 'perfil'} ? 'sidebar__active' : ''">
+                        <i class="fa-solid fa-user-gear"></i> Mi Perfil
+                    </a>
+                </li>
+
+                <li>
+                    <a th:href="@{/empresa/configuracion}"
+                        th:classappend="${activeMenu == 'configuracion'} ? 'sidebar__active' : ''">
+                        <i class="fa-solid fa-gear"></i> Configuración
+                    </a>
+                </li>
+
+                <li>
+                    <a th:href="@{/logout}" class="sidebar__logout">
+                        <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+</body>
+
+</html>

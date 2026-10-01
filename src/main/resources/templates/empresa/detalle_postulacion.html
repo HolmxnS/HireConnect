@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Styles-->
+    <link rel="stylesheet" th:href="@{/styles/empresa/detalle_postulacion.css}">
+    <link rel="stylesheet" th:href="@{/styles/fragments/empresa/sidebar.css}">
+    <!--Fonts-->
+    <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
+    <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
+    <!--Icons-->
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
+    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
+
+    <title>Revisar Postulante - HireConnect</title>
+</head>
+
+<body>
+    <div th:replace="~{fragments/empresa/sidebar_empresa :: sidebar('vacantes')}"></div>
+
+    <main class="content">
+
+        <div class="content__btn-volver">
+            <a th:href="@{/empresa/postulaciones/lista/{vacanteId}(vacanteId=${vacante.id})}" class="back-link">
+                <i class="fa-solid fa-arrow-left mr-2"></i> Volver a Postulaciones
+            </a>
+        </div>
+
+        <div class="content__header">
+            <div class="content__title">
+                <h1 th:text="${vacante.titulo}">Titulo</h1>
+                <span>Fecha de postulacion - </span>
+                <span th:text="${#temporals.format(postulacion.fechaPostulacion, 'dd/MM/yyyy')}"></span>
+            </div>
+
+            <div class="content__mail">
+                <i class="fa-solid fa-envelope"></i>
+                <span th:text="${postulante.email}">
+            </div>
+        </div>
+
+        <div class="content__cards">
+            <div class="card card--main">
+
+                <div class="card__info">
+
+                    <div class="card__title">
+                        <h2 th:text="|${postulante.nombre} ${postulante.apellido}|">Nombre</h2>
+                        <span>Titulacion - </span>
+                        <span th:text="${postulante.titulacion}">Titulacion</span>
+                    </div>
+
+
+                    <div class="card__data">
+                        <div class="card__data-item">
+                            <p class="card__data-title">Edad</p>
+                            <p th:text="${postulante.edad}" class="card__data-value">27</p>
+                        </div>
+
+                        <div class="card__data-item">
+                            <p class="card__data-title">Genero</p>
+                            <p th:text="${postulante.genero ?: 'N/A'}" class="card__data-value">M</p>
+                        </div>
+
+                        <div class="card__data-item">
+                            <p class="card__data-title">Nacionalidad</p>
+                            <p th:text="${postulante.nacionalidad ?: 'N/A'}" class="card__data-value">M</p>
+                        </div>
+                    </div>
+
+                    <div class="card__skills-container">
+
+                        <h3>Habilidades</h3>
+
+                        <div class="card__skills">
+
+                            <div th:each="hab : ${postulante.habilidades}" class="skill">
+                                <p class="skill__name">Habilidad</p>
+                                <p th:text="${hab}" class="skill__value">95</p>
+                            </div>
+
+                            <div th:if="${#lists.isEmpty(postulante.habilidades)}" class="skill-item">
+                                <span class="skill-text">El candidato no ha listado habilidades.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card__img">
+                    <div th:if="${postulante.foto == null}" class="photo-placeholder-lg">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <img th:unless="${postulante.foto == null}" th:src="@{${postulante.foto}}" alt="Foto de perfil">
+                </div>
+            </div>
+
+            <div class="card__group">
+                <div th:each="edu : ${postulante.educacion}" class=" card">
+                    <div class="card__header">
+
+                        <div class="card__name-c-t">
+                            <p>
+                                <span th:text="${edu.institucion}">Institución</span>
+                            </p>
+                        </div>
+
+                        <div class="card__network">
+                            <i class="fa-solid fa-bolt"></i>
+                            <span>HireConnect</span>
+                        </div>
+                    </div>
+
+                    <div class="card__description">
+                        <div class="card__description-title">
+                            <h3>Historial Academico</h3>
+                        </div>
+
+                        <div class="card__description-text">
+                            <ul th:if="${not #lists.isEmpty(postulante.educacion)}">
+                                <p>
+                                    <span th:text="${edu.titulo}">Título</span>
+                                </p>
+                            </ul>
+                            <p th:if="${#lists.isEmpty(postulante.educacion)}">N/A</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="card__group">
+                <div th:each="exp : ${postulante.experiencia}" class="card">
+                    <div class="card__header">
+
+                        <div class="card__name-c-t">
+                            <div th:if="${not #lists.isEmpty(postulante.experiencia)}">
+                                <div>
+                                    <p th:text="${exp.empresa}">Nombre empresa</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card__network">
+                            <i class="fa-solid fa-bolt"></i>
+                            <span>HireConnect</span>
+                        </div>
+                    </div>
+
+                    <div class="card__description">
+                        <div class="card__description-title">
+                            <h3 th:text="${exp.cargo}">Experiencia</h3>
+                        </div>
+
+                        <div class="card__description-text">
+                            <div th:if="${not #lists.isEmpty(postulante.experiencia)}">
+                                <div>
+                                    <p th:text="${exp.descripcion}">Descripción</p>
+                                </div>
+                            </div>
+                            <p th:if="${#lists.isEmpty(postulante.experiencia)}">N/A</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="card__group">
+
+                <div class="card card__cv">
+                    <h2 class="card__cv-title">CV</h2>
+
+                    <p class="card__cv-instruction">
+                        Revisa el CV del postulante haciendo clic en el botón de descargar el CV para una revisión más
+                        detallada.
+                    </p>
+
+                    <div th:if="${postulante.cv}">
+                        <a th:href="@{'/postulante/descargarCV/' + ${postulante.id}}" target="_blank"
+                            class="btn__cv-download"><i class="fa-solid fa-file-pdf mr-2"></i> Ver CV</a>
+                    </div>
+
+                    <div th:unless="${postulante.cv}" class="cv__no-available">
+                        📄 Este postulante aún no ha subido su CV.
+                    </div>
+                </div>
+
+                <div class="card card__status-update">
+
+                    <h2 class="card__title">Cambiar Estado</h2>
+
+                    <form th:action="@{/empresa/actualizar-postulacion}" method="post">
+
+                        <input type="hidden" name="id" th:value="${postulacion.id}">
+
+                        <input type="hidden" name="empresaId" th:value="${empresa.id}">
+
+                        <div class="form__field-group">
+                            <select id="nuevoEstado" name="estado" required class="form__select">
+                                <option th:value="${postulacion.estado.descripcion}" th:text="${'Actual: ' + postulacion.estado.descripcion}"
+                                    hidden selected></option>
+                                <option value="En revision">En revision</option>
+                                <option value="Entrevista pendiente">Entrevista Pendiente</option>
+                                <option value="Aceptada">Aceptar Candidato</option>
+                                <option value="Rechazada">Rechazar Candidato</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn__action-submit"><i class="fa-solid fa-save mr-2"></i> Guardar y
+                            Notificar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>
