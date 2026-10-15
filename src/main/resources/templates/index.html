@@ -25,20 +25,29 @@
             <h1>Hire<span class="menu__highlight logo--higlight">Connect</span></h1>
         </div>
 
-        <div class="menu__nav">
-            <nav aria-label="Main navigation">
-                <ul class="menu__list">
-                    <li class="menu__item"><a href="#" class="menu__link">Inicio</a></li>
-                    <li class="menu__item"><a href="#beneficios" class="menu__link">Beneficios</a></li>
-                    <li class="menu__item"><a href="#advantages" class="menu__link">Ventajas</a></li>
-                    <li class="menu__item"><a href="#about-us" class="menu__link">Sobre nosotros</a></li>
-                </ul>
-            </nav>
-        </div>
+        <button class="menu__toggle" type="button" aria-label="Abrir menú" aria-expanded="false"
+            aria-controls="menu-panel">
+            <span class="menu__toggle-bar"></span>
+            <span class="menu__toggle-bar"></span>
+            <span class="menu__toggle-bar"></span>
+        </button>
 
-        <div class="menu__account">
-            <a th:href="@{/login}" class="menu__account-btn menu__account-btn--signin">Iniciar Sesión</a>
-            <a th:href="@{/register}" class="menu__account-btn menu__account-btn--signup">Registrarse</a>
+        <div class="menu__panel" id="menu-panel">
+            <div class="menu__nav">
+                <nav aria-label="Main navigation">
+                    <ul class="menu__list">
+                        <li class="menu__item"><a href="#" class="menu__link">Inicio</a></li>
+                        <li class="menu__item"><a href="#beneficios" class="menu__link">Beneficios</a></li>
+                        <li class="menu__item"><a href="#advantages" class="menu__link">Ventajas</a></li>
+                        <li class="menu__item"><a href="#about-us" class="menu__link">Sobre nosotros</a></li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="menu__account">
+                <a th:href="@{/login}" class="menu__account-btn menu__account-btn--signin">Iniciar Sesión</a>
+                <a th:href="@{/register}" class="menu__account-btn menu__account-btn--signup">Registrarse</a>
+            </div>
         </div>
     </header>
 
@@ -373,6 +382,7 @@
             class="absolute left-0 right-0 top-0 -z-10 m-auto h-[410px] w-[770px] rounded-full bg-purple-500 opacity-25 blur-[100px]">
         </div>
     </footer>
+    <script th:src="@{/js/menu.js}" defer></script>
 </body>
 
 </html>

@@ -247,3 +247,67 @@ body {
 .trust_bar__content p {
     font-size: 1.2rem;
 }
+
+/*Responsive - tablet y móviles*/
+@media (max-width: 900px) {
+    .trust_bar {
+        flex-wrap: wrap;
+        gap: 2rem 3rem;
+        padding: 0 2rem;
+    }
+}
+
+@media (max-width: 700px) {
+    .header {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem 2rem;
+        padding: 1.5rem 1.6rem;
+    }
+
+    .type {
+        padding-top: 1.5rem;
+    }
+
+    .type__welcome {
+        margin: 0 1.6rem;
+    }
+
+    .type__content {
+        width: 100%;
+        padding: 2rem 1.6rem;
+    }
+
+    .type__content h1,
+    .type__content h1 span {
+        font-size: 2.4rem;
+    }
+
+    .roles {
+        width: 100%;
+        padding: 0 1.6rem;
+    }
+
+    .roles__form {
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .roles__rol {
+        width: 100%;
+        max-width: 32rem;
+        height: auto;
+        padding: 3rem 2rem;
+    }
+
+    .trust_bar {
+        flex-direction: column;
+        flex-wrap: nowrap;
+        align-items: flex-start;
+        width: fit-content;
+        max-width: 100%;
+        gap: 1.6rem;
+        margin: 3rem auto 0;
+        padding: 0 1.6rem 3rem;
+    }
+}

@@ -334,3 +334,55 @@ select:focus {
     text-decoration: underline;
 }
 
+/*Responsive - tablet y móviles*/
+@media (max-width: 1024px) {
+    /*El panel con la imagen es decorativo: se oculta y el formulario ocupa todo el ancho*/
+    .container {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .hero {
+        display: none;
+    }
+
+    .form-panel {
+        padding: 1rem 0;
+    }
+}
+
+@media (max-width: 640px) {
+    .form-panel {
+        padding: 0.5rem 1.6rem 2rem;
+    }
+
+    .header {
+        margin: 0 0 1rem;
+        padding: 1.2rem 0;
+    }
+
+    .register {
+        padding: 2rem 0;
+    }
+
+    .register__form {
+        margin-top: 3rem;
+    }
+
+    /*Una sola columna; el espacio vertical lo da el margin-bottom de cada input*/
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    /*16px evita el zoom automático de iOS al enfocar un campo*/
+    input,
+    select {
+        font-size: 1.6rem;
+    }
+
+    .btn-submit {
+        margin-top: 2rem;
+        font-size: 1.5rem;
+    }
+}
