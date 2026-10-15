@@ -4,11 +4,13 @@ import com.project.HireConnect.model.Vacante;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
+import com.project.HireConnect.enums.VacanteEstado;
 
 import java.util.List;
 
 @Repository
 public interface VacanteRepository extends MongoRepository<Vacante, String> {
+       List<Vacante> findByEstado(VacanteEstado estado);
 
     
     @Query("{ $and: [ " +

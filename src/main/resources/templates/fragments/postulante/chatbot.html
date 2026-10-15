@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+    <div th:fragment="chatbot" class="hc-chat-root">
+        <link rel="stylesheet" th:href="@{/styles/fragments/postulante/chatbot.css}">
+
+        <button type="button" id="hcChatToggle" class="hc-chat__toggle" aria-label="Abrir asistente de empleo"
+            aria-expanded="false">
+            <i class="fa-solid fa-robot"></i>
+            <span>Asistente IA</span>
+        </button>
+
+        <section id="hcChatPanel" class="hc-chat__panel" aria-label="Asistente de empleo" hidden>
+            <header class="hc-chat__header">
+                <div class="hc-chat__title">
+                    <i class="fa-solid fa-robot"></i>
+                    <div>
+                        <strong>Asistente HireConnect</strong>
+                        <small>Mejora tu perfil y encuentra vacantes</small>
+                    </div>
+                </div>
+                <div class="hc-chat__actions">
+                    <button type="button" id="hcChatClear" title="Nueva conversación" aria-label="Nueva conversación">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                    <button type="button" id="hcChatClose" title="Cerrar" aria-label="Cerrar chat">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </header>
+
+            <div id="hcChatMessages" class="hc-chat__messages" aria-live="polite"></div>
+
+            <div class="hc-chat__chips" id="hcChatChips">
+                <button type="button" data-msg="¿Cómo puedo mejorar mi perfil?">Mejorar mi perfil</button>
+                <button type="button" data-msg="Recomiéndame vacantes según mi perfil">Vacantes para mí</button>
+            </div>
+
+            <div class="hc-chat__form">
+                <input type="text" id="hcChatInput" maxlength="1000" placeholder="Escribe tu pregunta..."
+                    autocomplete="off">
+                <button type="button" id="hcChatSend" aria-label="Enviar">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </section>
+
+        <script th:src="@{/js/chatbot.js}" th:attr="data-endpoint=@{/postulante/chat}"></script>
+    </div>
+
+</body>
+
+</html>
