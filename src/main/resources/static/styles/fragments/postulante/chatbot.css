@@ -4,7 +4,7 @@
     --hc-negro: var(--negro-1, #292528);
     --hc-gris: var(--gris-c, #cccccc);
     --hc-humo: var(--white-smoke, #F5F5F5);
-    --hc-left: 264px;
+    --hc-right: 40px;
     font-family: var(--font-satoshi, 'Satoshi'), sans-serif;
 }
 
@@ -21,7 +21,7 @@
 
 .hc-chat__toggle {
     position: fixed;
-    left: var(--hc-left);
+    right: var(--hc-right);
     bottom: 24px;
     z-index: 1000;
     display: flex;
@@ -51,11 +51,11 @@
 
 .hc-chat__panel {
     position: fixed;
-    left: var(--hc-left);
+    right: var(--hc-right);
     bottom: 84px;
     z-index: 1000;
     width: 360px;
-    max-width: calc(100vw - var(--hc-left) - 16px);
+    max-width: calc(100vw - var(--hc-right) - 16px);
     height: 520px;
     max-height: calc(100vh - 110px);
     display: flex;
@@ -278,7 +278,7 @@
 
 @media (max-width: 768px) {
     .hc-chat-root {
-        --hc-left: 16px;
+        --hc-right: 16px;
     }
 
     .hc-chat__toggle span {

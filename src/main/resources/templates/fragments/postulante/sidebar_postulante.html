@@ -15,56 +15,60 @@
 
     <aside th:fragment="sidebar (activeMenu)" class="sidebar">
 
-        <div class="sidebar__logo">
-            <h1>Hire<span class="sidebar__highlight">Connect</span></h1>
-        </div>
+    <div class="sidebar__logo">
+        <img class="sidebar__logo-img" th:src="@{/source/img/isotipo.png}" alt="HireConnect">
+        <h1>Hire<span class="sidebar__highlight">Connect</span></h1>
+    </div>
 
-        <nav class="sidebar__nav">
-            <ul>
-                <li>
-                    <a th:href="@{/postulante/home}" class="sidebar__link"
-                        th:classappend="${activeMenu == 'home'} ? 'sidebar__active' : ''">
-                        <i class="fa-solid fa-house"></i> Inicio
-                    </a>
-                </li>
+    <nav class="sidebar__nav" aria-label="Navegación del postulante">
+        <ul>
+            <li class="sidebar__label">Explorar</li>
 
-                <li>
-                    <a th:href="@{/postulante/vacantes}"
-                        th:classappend="${activeMenu == 'vacantes'} ? 'sidebar__active' : ''">
-                        <i class="fa-solid fa-briefcase"></i> Vacantes
-                    </a>
-                </li>
+            <li>
+                <a th:href="@{/postulante/home}" class="sidebar__link"
+                    th:classappend="${activeMenu == 'home'} ? 'sidebar__active' : ''">
+                    <i class="fa-solid fa-house"></i> <span class="sidebar__text">Inicio</span>
+                </a>
+            </li>
 
-                <li>
-                    <a th:href="@{/postulante/postulaciones}"
-                        th:classappend="${activeMenu == 'postulaciones'} ? 'sidebar__active' : ''">
-                        <i class="fa-solid fa-clipboard-list"></i> Mis Postulaciones
-                    </a>
-                </li>
+            <li>
+                <a th:href="@{/postulante/vacantes}"
+                    th:classappend="${activeMenu == 'vacantes'} ? 'sidebar__active' : ''">
+                    <i class="fa-solid fa-briefcase"></i> <span class="sidebar__text">Vacantes</span>
+                </a>
+            </li>
 
-                <li>
-                    <a th:href="@{/postulante/perfil}"
-                        th:classappend="${activeMenu == 'perfil'} ? 'sidebar__active' : ''">
-                        <i class="fa-solid fa-user-gear"></i> Mi Perfil
-                    </a>
-                </li>
+            <li>
+                <a th:href="@{/postulante/postulaciones}"
+                    th:classappend="${activeMenu == 'postulaciones'} ? 'sidebar__active' : ''">
+                    <i class="fa-solid fa-clipboard-list"></i> <span class="sidebar__text">Mis Postulaciones</span>
+                </a>
+            </li>
 
+            <li class="sidebar__label">Mi cuenta</li>
 
-                <li>
-                    <a th:href="@{/postulante/configuracion}"
-                        th:classappend="${activeMenu == 'configuracion'} ? 'sidebar__active' : ''">
-                        <i class="fa-solid fa-gear"></i> Configuración
-                    </a>
-                </li>
+            <li>
+                <a th:href="@{/postulante/perfil}"
+                    th:classappend="${activeMenu == 'perfil'} ? 'sidebar__active' : ''">
+                    <i class="fa-solid fa-user-gear"></i> <span class="sidebar__text">Mi Perfil</span>
+                </a>
+            </li>
 
-                <li>
-                    <a th:href="@{/logout}" class="sidebar__logout">
-                        <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    </aside>
+            <li>
+                <a th:href="@{/postulante/configuracion}"
+                    th:classappend="${activeMenu == 'configuracion'} ? 'sidebar__active' : ''">
+                    <i class="fa-solid fa-gear"></i> <span class="sidebar__text">Configuración</span>
+                </a>
+            </li>
+
+            <li>
+                <a th:href="@{/logout}" class="sidebar__logout">
+                    <i class="fa-solid fa-right-from-bracket"></i> <span class="sidebar__text">Cerrar Sesión</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</aside>
 
 </body>
 

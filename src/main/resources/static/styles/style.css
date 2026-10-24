@@ -66,6 +66,7 @@
 html {
     font-size: 10px;
     scroll-behavior: smooth;
+    scroll-padding-top: 8rem;
 }
 
 body {
@@ -172,6 +173,9 @@ input {
 }
 
 .menu {
+    position: sticky;
+    top: 0;
+    z-index: 100;
     background-color: var(--bg);
     border-bottom: 0.1rem solid var(--line);
 }
