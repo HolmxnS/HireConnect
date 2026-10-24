@@ -2,7 +2,13 @@ package com.project.HireConnect.controller;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,15 +30,20 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.project.HireConnect.dto.Notificacion;
 import com.project.HireConnect.dto.Paso1;
 import com.project.HireConnect.dto.Paso2;
+import com.project.HireConnect.dto.VacanteDestacada;
+import com.project.HireConnect.enums.EmpresaEstado;
 import com.project.HireConnect.enums.PostulanteGenero;
 import com.project.HireConnect.enums.PostulanteTipoDocumento;
 import com.project.HireConnect.enums.Rol;
+import com.project.HireConnect.enums.VacanteEstado;
 import com.project.HireConnect.model.Empresa;
 import com.project.HireConnect.model.Postulante;
+import com.project.HireConnect.model.Vacante;
 import com.project.HireConnect.service.EmailService;
 import com.project.HireConnect.service.EmpresaService;
 import com.project.HireConnect.service.NotificacionService;
 import com.project.HireConnect.service.PostulanteService;
+import com.project.HireConnect.service.VacanteService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -48,9 +59,14 @@ public class LoginController {
     private final EmpresaService empresaService;
     private final NotificacionService notificacionService;
     private final EmailService emailService;
+    private final VacanteService vacanteService;
+
+    // Cantidad de vacantes que se muestran en la landing
+    private static final int MAX_VACANTES_LANDING = 3;
 
     @GetMapping("/")
-    public String index() {
+    public String index(Model model) {
+        model.addAttribute("vacantesDestacadas", obtenerVacantesDestacadas());
         return "index";
     }
 
@@ -612,6 +628,34 @@ public class LoginController {
 
         redirectAttributes.addFlashAttribute("exito", "¡Perfil de empresa completado!");
         return "redirect:/empresa/home";
+    }
+
+    // Vacantes activas mas recientes para la landing (no se muestran las de empresas suspendidas)
+    private List<VacanteDestacada> obtenerVacantesDestacadas() {
+        List<Vacante> activas = vacanteService.buscarPorFiltros(null, null, null, null).stream()
+                .filter(v -> v != null && v.getEstado() == VacanteEstado.ACTIVA && v.getEmpresa() != null)
+                .sorted(Comparator.comparing(Vacante::getFechaPublicacion,
+                        Comparator.nullsLast(Comparator.<java.time.LocalDate>reverseOrder())))
+                .toList();
+
+        Map<String, Optional<Empresa>> empresas = new HashMap<>();
+        List<VacanteDestacada> destacadas = new ArrayList<>();
+
+        for (Vacante vacante : activas) {
+            if (destacadas.size() >= MAX_VACANTES_LANDING) {
+                break;
+            }
+            Optional<Empresa> empresa = empresas.computeIfAbsent(vacante.getEmpresa().getId(),
+                    empresaService::obtenerPorId);
+            if (empresa.isEmpty() || empresa.get().getEstado() == EmpresaEstado.SUSPENDIDA) {
+                continue;
+            }
+            destacadas.add(new VacanteDestacada(vacante,
+                    empresa.get().getNombreLegal(),
+                    empresa.get().getFoto(),
+                    empresa.get().getSector()));
+        }
+        return destacadas;
     }
 
     private void limpiarSesionOAuth(HttpSession session) {
