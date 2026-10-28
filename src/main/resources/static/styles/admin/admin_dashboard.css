@@ -714,7 +714,8 @@ main {
     color: #fff;
 }
 
-.hero__name { color: var(--violeta); }
+.hero__name { color: var(--violeta); 
+    font-size: 3.4rem;}
 
 .hero__subtitle {
     margin-bottom: 2.8rem;

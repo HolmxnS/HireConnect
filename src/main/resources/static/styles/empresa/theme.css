@@ -1,8 +1,4 @@
-/* ==========================================================================
-   HireConnect · Tema de la empresa
-   Se carga SIEMPRE al final de cada página de empresa.
-   Paleta del home · modo claro / oscuro · responsive.
-   ========================================================================== */
+
 
 :root {
     --morado-c: #8e22bb;
@@ -169,6 +165,7 @@ body .detalle {
 .text-primary,
 .dashboard__title span {
     color: var(--morado-c);
+    font-size: 2.8rem;
 }
 
 .main__title h2 {
