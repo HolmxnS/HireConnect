@@ -156,6 +156,7 @@ public class LoginController {
         try {
             emailService.enviarCodigoVerificacion(postulante.getEmail(), codigo);
         } catch (Exception e) {
+            e.printStackTrace();
             model.addAttribute("postulante", postulante);
             model.addAttribute("mostrarPaso2", true);
             model.addAttribute("error", "No se pudo enviar el código. Verifica tu correo.");
@@ -184,7 +185,7 @@ public class LoginController {
         return "verificar_correo";
     }
 
-    // verificar código 
+    // verificar código
     @PostMapping("/register/verificar-codigo")
     public String verificarCodigo(
             @RequestParam("codigo") String codigoIngresado,
@@ -234,7 +235,7 @@ public class LoginController {
                 limpiarSesionVerificacion(session);
                 limpiarSesionPaso1(session);
 
-            } else { 
+            } else {
                 Empresa empresa = (Empresa) session.getAttribute("verify_empresa");
 
                 empresa.setRol(Rol.ROLE_EMPRESA);
@@ -365,6 +366,7 @@ public class LoginController {
         try {
             emailService.enviarCodigoVerificacion(empresa.getEmail(), codigo);
         } catch (Exception e) {
+            e.printStackTrace();
             model.addAttribute("empresa", empresa);
             model.addAttribute("mostrarPaso2", true);
             model.addAttribute("error", "No se pudo enviar el código. Verifica tu correo.");
@@ -630,7 +632,8 @@ public class LoginController {
         return "redirect:/empresa/home";
     }
 
-    // Vacantes activas mas recientes para la landing (no se muestran las de empresas suspendidas)
+    // Vacantes activas mas recientes para la landing (no se muestran las de
+    // empresas suspendidas)
     private List<VacanteDestacada> obtenerVacantesDestacadas() {
         List<Vacante> activas = vacanteService.buscarPorFiltros(null, null, null, null).stream()
                 .filter(v -> v != null && v.getEstado() == VacanteEstado.ACTIVA && v.getEmpresa() != null)

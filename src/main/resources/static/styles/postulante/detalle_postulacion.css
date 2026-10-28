@@ -203,7 +203,7 @@ body {
 }
 
 .info__message.revision {
-    background-color: var(--primary-light);
+    /*background-color: var(--primary-light);*/
     border-color: var(--primary-color);
 }
 
@@ -289,7 +289,7 @@ body {
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
     color: var(--text-primary-600);
-    background-color: var(--primary-light);
+    /*background-color: var(--primary-light);*/
     font-weight: 600;
     font-size: 1.2rem;
     transition: background-color 0.15s ease;
