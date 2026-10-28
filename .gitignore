@@ -33,10 +33,3 @@ build/
 .vscode/
 
 /uploads/
-
-### Secretos ###
-.env
-*.log
-
-### Respaldos de base de datos ###
-backup/
