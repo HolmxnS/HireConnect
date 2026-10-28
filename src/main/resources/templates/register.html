@@ -4,6 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Tema: aplica el tema guardado (o el del sistema) antes de pintar para evitar parpadeo-->
+    <script>
+        (function () {
+            var theme = 'light';
+            try {
+                var saved = localStorage.getItem('hc-theme');
+                theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            } catch (e) { }
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
     <!--Styles-->
     <link rel="stylesheet" th:href="@{/styles/type-account.css}">
     <!--Fonts-->
@@ -12,126 +23,102 @@
     <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
     <!--Icons (font awesome kit)-->
     <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
     <title>Registro</title>
 </head>
 
 <body>
-    <main>
+    <main class="type">
 
-        <div class="header">
+        <header class="type__header">
+            <a class="type__logo" th:href="@{/}" aria-label="HireConnect, inicio">Hire<span
+                    class="type__logo-highlight">Connect</span></a>
 
-            <div class="header__redirect-home">
-                <a th:href="@{/}">
-                    <h1>Hire<span class="header__logo-higlight">Connect</span></h1>
+            <p class="type__login">
+                <span class="type__login-text">¿Ya tienes una cuenta?</span>
+                <a class="type__login-link" th:href="@{/login}">Inicia sesión</a>
+            </p>
+        </header>
+
+        <section class="type__body">
+
+            <div class="type__intro">
+                <h1 class="type__title">Selecciona tu tipo de cuenta</h1>
+                <p class="type__subtitle">Encuentra tu próxima oportunidad o publica talento para tu empresa.</p>
+            </div>
+
+            <!--Opciones: se elige una y se continúa con la flecha-->
+            <fieldset class="roles">
+                <legend class="roles__legend">Tipo de cuenta</legend>
+
+                <!--Postulante-->
+                <label class="roles__option">
+                    <input class="roles__input" type="radio" name="rol" value="postulante" checked
+                        th:attr="data-href=@{/register/postulante},data-oauth-href=@{/register/oauth/postulante}">
+                    <span class="roles__card">
+                        <span class="roles__icon" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
+                        <span class="roles__name">Postulante</span>
+                        <span class="roles__desc">Busco un nuevo empleo</span>
+                    </span>
+                </label>
+
+                <!--Empresa-->
+                <label class="roles__option">
+                    <input class="roles__input" type="radio" name="rol" value="empresa"
+                        th:attr="data-href=@{/register/empresa},data-oauth-href=@{/register/oauth/empresa}">
+                    <span class="roles__card">
+                        <span class="roles__icon" aria-hidden="true"><i class="fa-solid fa-building"></i></span>
+                        <span class="roles__name">Empresa</span>
+                        <span class="roles__desc">Busco talento</span>
+                    </span>
+                </label>
+            </fieldset>
+
+            <div class="type__actions">
+                <a class="type__back" th:href="@{/login}">Volver</a>
+
+                <!--Si viene de Google: formulario POST (el destino lo ajusta register.js según la opción elegida)-->
+                <form class="type__next-form" th:if="${oauthPending}" th:action="@{/register/oauth/postulante}"
+                    method="post" data-next-form>
+                    <button class="type__next" type="submit" aria-label="Continuar con el tipo de cuenta elegido"
+                        title="Continuar">
+                        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                    </button>
+                </form>
+
+                <!--Flujo normal: enlace GET (el destino lo ajusta register.js según la opción elegida)-->
+                <a class="type__next" th:unless="${oauthPending}" th:href="@{/register/postulante}" data-next-link
+                    aria-label="Continuar con el tipo de cuenta elegido" title="Continuar">
+                    <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
                 </a>
             </div>
 
-            <div class="header__redirect-login">
-                <p>¿Ya tienes una cuenta? <a th:href="@{/login}">Inicia Sesión</a></p>
-            </div>
-        </div>
-
-        <div class="type">
-
-            <div class="type__welcome">
-                <i class="fa-solid fa-briefcase"></i>
-                <p>Bienvenido a HireConnect</p>
-            </div>
-
-            <div class="type__content">
-                <h1>Encuentra tu próxima <span>oportunidad</span> o publica talento para <span>tu empresa.</span></h1>
-                <p>Seleccione su tipo de cuenta</p>
-            </div>
-            
-            <div class="roles">
-                <div class="roles__form">
-
-                    <!-- OPCIÓN POSTULANTE -->
-                    <div class="roles__rol">
-                        <i class="fa-solid fa-user rol-icon"></i>
-                        <h3>Postulante</h3>
-                        <p>Busco un nuevo empleo o una oportunidad profesional</p>
-
-                        <!-- 👇 Lógica condicional: OAuth vs Normal -->
-                        <th:block th:if="${oauthPending}">
-                            <!-- Si viene de Google: formulario POST -->
-                            <form th:action="@{/register/oauth/postulante}" method="post">
-                                <button type="submit" class="select-purple">
-                                    Seleccionar
-                                    <i class="fa-solid fa-arrow-right icon-arrow"></i>
-                                </button>
-                            </form>
-                        </th:block>
-
-                        <th:block th:unless="${oauthPending}">
-                            <!-- Flujo normal: enlace GET -->
-                            <a class="select-purple" th:href="@{/register/postulante}">
-                                Seleccionar
-                                <i class="fa-solid fa-arrow-right icon-arrow"></i>
-                            </a>
-                        </th:block>
+            <ul class="trust">
+                <li class="trust__item">
+                    <span class="trust__icon" aria-hidden="true"><i class="fa-solid fa-shield-halved"></i></span>
+                    <div class="trust__text">
+                        <strong class="trust__title">Seguro y confiable.</strong>
+                        <span class="trust__desc">Tus datos están protegidos.</span>
                     </div>
-
-                    <!-- OPCIÓN EMPRESA -->
-                    <div class="roles__rol">
-                        <i class="fa-solid fa-building rol-icon"></i>
-                        <h3>Empresa</h3>
-                        <p>Busco talento a través de ofertas de empleo</p>
-
-                        <!-- 👇 Lógica condicional: OAuth vs Normal -->
-                        <th:block th:if="${oauthPending}">
-                            <!-- Si viene de Google: formulario POST -->
-                            <form th:action="@{/register/oauth/empresa}" method="post">
-                                <button type="submit" class="select-white">
-                                    Seleccionar
-                                    <i class="fa-solid fa-arrow-right icon-arrow"></i>
-                                </button>
-                            </form>
-                        </th:block>
-
-                        <th:block th:unless="${oauthPending}">
-                            <!-- Flujo normal: enlace GET -->
-                            <a class="select-white" th:href="@{/register/empresa}">
-                                Seleccionar
-                                <i class="fa-solid fa-arrow-right icon-arrow"></i>
-                            </a>
-                        </th:block>
+                </li>
+                <li class="trust__item">
+                    <span class="trust__icon" aria-hidden="true"><i class="fa-solid fa-user-group"></i></span>
+                    <div class="trust__text">
+                        <strong class="trust__title">Miles de oportunidades.</strong>
+                        <span class="trust__desc">Conecta con el mejor talento.</span>
                     </div>
-
-                </div>
-            </div>
-
-            <div class="trust_bar">
-                <div class="trust_bar__card">
-                    <i class="fa-solid fa-shield-halved"></i>
-
-                    <div class="trust_bar__content">
-                        <h3>Seguro y confiable.</h3>
-                        <p>Tus datos están protegidos.</p>
+                </li>
+                <li class="trust__item">
+                    <span class="trust__icon" aria-hidden="true"><i class="fa-solid fa-bolt"></i></span>
+                    <div class="trust__text">
+                        <strong class="trust__title">Rápido y fácil.</strong>
+                        <span class="trust__desc">Crea tu cuenta en minutos.</span>
                     </div>
-                </div>
-
-                <div class="trust_bar__card">
-                    <i class="fa-solid fa-user-group"></i>
-
-                    <div class="trust_bar__content">
-                        <h3>Miles de oportunidades.</h3>
-                        <p>Conecta con el mejor talento.</p>
-                    </div>
-                </div>
-
-                <div class="trust_bar__card">
-                    <i class="fa-solid fa-bolt"></i>
-
-                    <div class="trust_bar__content">
-                        <h3>Rápido y fácil.</h3>
-                        <p>Crea tu cuenta en minutos.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+                </li>
+            </ul>
+        </section>
     </main>
+
+    <script th:src="@{/js/register.js}"></script>
 </body>
 
 </html>

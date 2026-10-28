@@ -246,15 +246,15 @@ input {
     font-size: 1.6rem;
 }
 
-.menu__theme-icon--sun {
+.menu__theme .menu__theme-icon--sun {
     display: none;
 }
 
-:root[data-theme="dark"] .menu__theme-icon--sun {
-    display: block;
+:root[data-theme="dark"] .menu__theme .menu__theme-icon--sun {
+    display: inline-block;
 }
 
-:root[data-theme="dark"] .menu__theme-icon--moon {
+:root[data-theme="dark"] .menu__theme .menu__theme-icon--moon {
     display: none;
 }
 

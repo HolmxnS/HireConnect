@@ -2,99 +2,124 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<!--Styles-->
-	<link rel="stylesheet" th:href="@{/styles/login.css}">
-	<link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
-	<!--Fonts-->
-	<link rel="stylesheet" th:href="@{/styles/satoshi.css}">
-	<link rel="stylesheet" th:href="@{/styles/clash-display.css}">
-	<!--Icons-->
-	<script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
-	<title>Iniciar sesión</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Tema: aplica el tema guardado (o el del sistema) antes de pintar para evitar parpadeo-->
+    <script>
+        (function () {
+            var theme = 'light';
+            try {
+                var saved = localStorage.getItem('hc-theme');
+                theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            } catch (e) { }
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+    <!--Styles-->
+    <link rel="stylesheet" th:href="@{/styles/login.css}">
+    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
+    <!--Fonts-->
+    <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
+    <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
+    <!--Icons-->
+    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
+    <title>Iniciar sesión</title>
 </head>
 
 <body>
-	<main class="login">
+    <main class="login">
 
-		<div th:if="${param.error}" class="login__error">
-			<i class="fa-solid fa-circle-exclamation"></i>
-			<p>Correo o contraseña incorrectos</p>
-		</div>
+        <!--Columna del formulario-->
+        <section class="login__panel">
+            <header class="login__top">
+                <a class="login__logo" th:href="@{/}" aria-label="Ir al inicio">
+                    <i class="fa-solid fa-bolt" aria-hidden="true"></i>
+                </a>
+            </header>
 
-		<a class="login__icon" th:href="@{/}">
-			<div class="login__logo">
-				<i class="fa-solid fa-bolt"></i>
-			</div>
-		</a>
+            <div class="login__content">
 
-		<div class="login__welcome">
-			<div class="login__welcome-container">
-				<p>Bienvenido a</p>
-				<a th:href="@{/}">
-					<h1>Hire<span class="login__logo-highlight">Connect</span>
-					</h1>
-				</a>
-			</div>
-			<p>Porfavor, ingrese sus datos para iniciar sesión</p>
-		</div>
+                <div th:if="${param.error}" class="login__alert login__alert--error" role="alert">
+                    <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                    <p>Correo o contraseña incorrectos</p>
+                </div>
 
-		<div class="login__form form">
-			<form th:action="@{/login}" method="post">
-				<div class="form__input">
-					<label for="email">Email</label>
-					<input type="email" id="email" name="username" required>
-				</div>
+                <div th:if="${error}" class="login__alert login__alert--error" role="alert">
+                    <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                    <p th:text="${error}">Error</p>
+                </div>
 
-				<div class="form__input">
-					<label for="password">Contraseña</label>
-					<input type="password" id="password" name="password" minlength="6" required>
-				</div>
+                <div th:if="${exito}" class="login__alert login__alert--success" role="status">
+                    <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                    <p th:text="${exito}">Listo</p>
+                </div>
 
-				<div class="form__remember-pass"> <!--editar el nombre de la clase-->
+                <div class="login__welcome">
+                    <h1 class="login__title">Bienvenido a Hire<span class="login__title-highlight">Connect</span></h1>
+                    <p class="login__subtitle">Por favor, ingresa tus datos para iniciar sesión</p>
+                </div>
 
-					<a th:href="@{/forgot-password}" class="form__forgot">¿Olvidé mi contraseña?</a>
-				</div>
+                <a href="/oauth2/authorization/google" class="login__google">
+                    <svg class="login__google-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                        viewBox="0 0 16 16" aria-hidden="true">
+                        <g fill="none" fill-rule="evenodd" clip-rule="evenodd">
+                            <path fill="#f44336"
+                                d="M7.209 1.061c.725-.081 1.154-.081 1.933 0a6.57 6.57 0 0 1 3.65 1.82a100 100 0 0 0-1.986 1.93q-1.876-1.59-4.188-.734q-1.696.78-2.362 2.528a78 78 0 0 1-2.148-1.658a.26.26 0 0 0-.16-.027q1.683-3.245 5.26-3.86"
+                                opacity=".987" />
+                            <path fill="#ffc107"
+                                d="M1.946 4.92q.085-.013.161.027a78 78 0 0 0 2.148 1.658A7.6 7.6 0 0 0 4.04 7.99q.037.678.215 1.331L2 11.116Q.527 8.038 1.946 4.92"
+                                opacity=".997" />
+                            <path fill="#448aff"
+                                d="M12.685 13.29a26 26 0 0 0-2.202-1.74q1.15-.812 1.396-2.228H8.122V6.713q3.25-.027 6.497.055q.616 3.345-1.423 6.032a7 7 0 0 1-.51.49"
+                                opacity=".999" />
+                            <path fill="#43a047"
+                                d="M4.255 9.322q1.23 3.057 4.51 2.854a3.94 3.94 0 0 0 1.718-.626q1.148.812 2.202 1.74a6.62 6.62 0 0 1-4.027 1.684a6.4 6.4 0 0 1-1.02 0Q3.82 14.524 2 11.116z"
+                                opacity=".993" />
+                        </g>
+                    </svg>
+                    <span>Continuar con Google</span>
+                </a>
 
-				<div class="form__btn">
-					<button type="submit">Iniciar Sesión</button>
-				</div>
-			</form>
-		</div>
+                <div class="login__divider"><span>o</span></div>
 
-		<div class="login__divider">Or sign in with</div>
+                <form class="form" th:action="@{/login}" method="post">
+                    <div class="form__field">
+                        <label class="form__label" for="email">Email</label>
+                        <input class="form__input" type="email" id="email" name="username"
+                            placeholder="Ingresa tu correo" autocomplete="username" required>
+                    </div>
 
-		<div class="login__third-party">
-			<div class="login__social">
-				<a href="/oauth2/authorization/google" class="btn-google">
-					<svg xmlns="http://www.w3.org/2000/svg" width="2.5em" height="2.5em" viewBox="0 0 16 16">
-						<title xmlns="">google</title>
-						<g fill="none" fill-rule="evenodd" clip-rule="evenodd">
-							<path fill="#f44336"
-								d="M7.209 1.061c.725-.081 1.154-.081 1.933 0a6.57 6.57 0 0 1 3.65 1.82a100 100 0 0 0-1.986 1.93q-1.876-1.59-4.188-.734q-1.696.78-2.362 2.528a78 78 0 0 1-2.148-1.658a.26.26 0 0 0-.16-.027q1.683-3.245 5.26-3.86"
-								opacity=".987" />
-							<path fill="#ffc107"
-								d="M1.946 4.92q.085-.013.161.027a78 78 0 0 0 2.148 1.658A7.6 7.6 0 0 0 4.04 7.99q.037.678.215 1.331L2 11.116Q.527 8.038 1.946 4.92"
-								opacity=".997" />
-							<path fill="#448aff"
-								d="M12.685 13.29a26 26 0 0 0-2.202-1.74q1.15-.812 1.396-2.228H8.122V6.713q3.25-.027 6.497.055q.616 3.345-1.423 6.032a7 7 0 0 1-.51.49"
-								opacity=".999" />
-							<path fill="#43a047"
-								d="M4.255 9.322q1.23 3.057 4.51 2.854a3.94 3.94 0 0 0 1.718-.626q1.148.812 2.202 1.74a6.62 6.62 0 0 1-4.027 1.684a6.4 6.4 0 0 1-1.02 0Q3.82 14.524 2 11.116z"
-								opacity=".993" />
-						</g>
-					</svg>
-					<span>Google</span>
-				</a>
-			</div>
-		</div>
+                    <div class="form__field">
+                        <label class="form__label" for="password">Contraseña</label>
+                        <input class="form__input" type="password" id="password" name="password"
+                            placeholder="Ingresa tu contraseña" autocomplete="current-password" minlength="6"
+                            required>
+                    </div>
 
-		<div class="login__create-acc">
-			<p>¿No tienes cuenta?</p>
-			<a th:href="@{/register}">Crear una cuenta</a>
-		</div>
-	</main>
+                    <div class="form__help">
+                        <a th:href="@{/forgot-password}" class="form__forgot">¿Olvidé mi contraseña?</a>
+                    </div>
+
+                    <button class="form__submit" type="submit">Iniciar sesión</button>
+                </form>
+
+                <p class="login__create-acc">
+                    ¿No tienes cuenta?
+                    <a class="login__create-link" th:href="@{/register}">Crear una cuenta</a>
+                </p>
+            </div>
+
+            <footer class="login__footer">
+                <a class="login__footer-link" th:href="@{/}">Volver al inicio</a>
+                <span class="login__footer-copy">© HireConnect</span>
+            </footer>
+        </section>
+
+        <!--Columna de la imagen (decorativa)-->
+        <aside class="login__art" aria-hidden="true">
+            <img class="login__art-img" th:src="@{/source/img/login-art.png}" alt="">
+        </aside>
+    </main>
 </body>
 
 </html>
