@@ -501,3 +501,176 @@
         min-width: 100%;
     }
 }
+/* ==========================================================================
+   HireConnect · Admin · Empresas
+   Tarjetas de resumen, filtros y tabla de empresas.
+   Se carga ANTES de theme.css (igual que en postulante y empresa).
+   ========================================================================== */
+
+/* ---------- Tarjetas de métricas (KPI) ---------- */
+.kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(17.5rem, 1fr));
+    gap: 1.6rem;
+}
+
+.kpi {
+    display: flex;
+    align-items: center;
+    gap: 1.6rem;
+    padding: 2rem 2.2rem;
+    background: var(--pc-surface);
+    border: 1px solid var(--pc-line);
+    border-radius: var(--pc-radius);
+    box-shadow: var(--pc-shadow);
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+
+.kpi:hover {
+    transform: translateY(-.4rem);
+    border-color: rgba(142, 34, 187, .35);
+    box-shadow: var(--pc-shadow-hover);
+}
+
+.kpi__icon {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 5rem;
+    height: 5rem;
+    border-radius: 1.4rem;
+    background: var(--lila);
+    color: var(--morado-c);
+    font-size: 2rem;
+}
+
+.kpi__icon--ok { background: var(--pc-ok-bg); color: var(--pc-ok); }
+.kpi__icon--bad { background: var(--pc-bad-bg); color: var(--pc-bad); }
+.kpi__icon--info { background: var(--pc-info-bg); color: var(--pc-info); }
+
+.kpi__body { display: flex; flex-direction: column; min-width: 0; }
+
+.kpi__number {
+    font-family: var(--font-clash);
+    font-size: 3.2rem;
+    font-weight: 600;
+    line-height: 1.1;
+    color: var(--negro-1);
+}
+
+.kpi__label {
+    font-size: 1.3rem;
+    font-weight: 500;
+    line-height: 1.3;
+    color: var(--gris-o);
+}
+
+/* ---------- Barra de filtros ---------- */
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+.search {
+    position: relative;
+    flex: 1 1 28rem;
+    max-width: 48rem;
+}
+
+.search i {
+    position: absolute;
+    left: 1.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.3rem;
+    color: var(--morado-c);
+    pointer-events: none;
+}
+
+.search input,
+.select {
+    width: 100%;
+    height: 4.6rem;
+    border: 1px solid var(--pc-line);
+    border-radius: 99rem;
+    background: var(--pc-surface);
+    color: var(--negro-1);
+    font-family: inherit;
+    font-size: 1.4rem;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.search input { padding: 0 2rem 0 4.4rem; }
+.select { width: auto; padding: 0 2rem; cursor: pointer; }
+
+.search input:focus,
+.select:focus {
+    outline: none;
+    border-color: var(--morado-c);
+    box-shadow: 0 0 0 .4rem rgba(142, 34, 187, .12);
+}
+
+/* ---------- Tablas ---------- */
+.table-panel { padding: 0; overflow: hidden; }
+
+.table-scroll { overflow-x: auto; max-height: 60rem; overflow-y: auto; }
+
+.table {
+    width: 100%;
+    min-width: 64rem;
+    border-collapse: collapse;
+}
+
+.table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    padding: 1.4rem 2rem;
+    background: var(--lila);
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    text-align: left;
+    white-space: nowrap;
+    color: var(--gris-o);
+}
+
+.table td {
+    padding: 1.6rem 2rem;
+    border-bottom: 1px solid var(--pc-line);
+    vertical-align: middle;
+}
+
+.table tbody tr:last-child td { border-bottom: none; }
+.table tbody tr:hover { background: var(--lila); }
+
+.table__strong { font-weight: 700; }
+.table__muted { color: var(--gris-o); }
+
+.table__actions { display: flex; flex-wrap: wrap; gap: .8rem; }
+
+.table__empty {
+    padding: 5rem 2rem !important;
+    text-align: center;
+    color: var(--gris-o);
+}
+
+@media (max-width: 700px) {
+    .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem; }
+    .kpi { flex-direction: column; align-items: flex-start; gap: 1.2rem; padding: 1.8rem; }
+    .kpi__number { font-size: 2.6rem; }
+}
+
+@media (max-width: 340px) {
+    .kpis { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 700px) {
+    .toolbar { flex-direction: column; align-items: stretch; }
+    .search { max-width: none; flex-basis: auto; }
+    .select { width: 100%; }
+}
