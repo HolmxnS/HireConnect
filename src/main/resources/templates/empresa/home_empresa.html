@@ -7,6 +7,8 @@
     <!--Styles-->
     <link rel="stylesheet" th:href="@{/styles/fragments/empresa/sidebar.css}">
     <link rel="stylesheet" th:href="@{/styles/empresa/home_empresa.css}">
+    <link rel="stylesheet" th:href="@{/styles/empresa/theme.css}">
+    <script th:src="@{/js/theme.js}"></script>
     <!--Fonts-->
     <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
     <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
@@ -20,69 +22,88 @@
 <body>
     <div th:replace="~{fragments/empresa/sidebar_empresa :: sidebar('home')}"></div>
 
-    <main class="main">
+    <main class="main home">
 
-        <section class="main__welcome-section" th:if="${faltantes.isEmpty()}">
-
-            <div class="welcome__content">
-                <h1>
-                    Bienvenido a la Plataforma
-                    <span th:text="${empresa.nombreLegal}"></span>
-                </h1>
-
-                <p>
+        <!-- Bienvenida -->
+        <section class="hero">
+            <div class="hero__text">
+                <span class="hero__eyebrow"><i class="fa-solid fa-wand-magic-sparkles"></i> Panel de empresa</span>
+                <h1 class="hero__title">Hola, <span class="hero__name" th:text="${empresa.nombreLegal}">Empresa</span></h1>
+                <p class="hero__subtitle">
                     Publica vacantes, gestiona candidatos y encuentra el talento ideal más rápido.
                 </p>
+                <div class="hero__actions">
+                    <a th:href="@{/empresa/vacantes/nueva}" class="hero__btn hero__btn--solid">
+                        <i class="fa-solid fa-plus"></i> Publicar vacante
+                    </a>
+                    <a th:href="@{/empresa/postulaciones}" class="hero__btn hero__btn--ghost">
+                        Ver postulaciones
+                    </a>
+                </div>
             </div>
+            <img class="hero__logo" th:src="@{/source/img/isotipo.png}" alt="" aria-hidden="true">
         </section>
 
-        <!-- CARD PERFIL INCOMPLETO -->
-        <div class="profile-card" th:if="${!faltantes.isEmpty()}">
-
+        <!-- Perfil incompleto -->
+        <section class="profile-card" th:if="${!faltantes.isEmpty()}">
             <div class="profile-card__top">
                 <i class="fa-solid fa-circle-exclamation"></i>
-                <span>PERFIL INCOMPLETO</span>
+                <span>Perfil incompleto</span>
             </div>
 
             <div class="profile-card__body">
-
                 <div class="profile-card__content">
-
                     <h2>Completa tu perfil empresarial</h2>
-
                     <p>
                         Tu empresa aún tiene información pendiente.
-                        Completa estos campos para mejorar la confianza
-                        de los postulantes.
+                        Completa estos campos para mejorar la confianza de los postulantes.
                     </p>
 
                     <ul class="profile-card__list">
-
                         <li th:each="item : ${faltantes}">
                             <i class="fa-solid fa-check"></i>
                             <span th:text="${item}"></span>
                         </li>
-
                     </ul>
 
                     <a th:href="@{/empresa/editar}" class="profile-card__button">
-
-                        Completar perfil
-                        <i class="fa-solid fa-arrow-right"></i>
-
+                        Completar perfil <i class="fa-solid fa-arrow-right"></i>
                     </a>
-
                 </div>
 
                 <div class="profile-card__illustration">
                     <i class="fa-regular fa-id-card"></i>
                 </div>
-
             </div>
-        </div>
+        </section>
 
-
-        <div class="main__blur"></div>
+        <!-- Accesos rápidos -->
+        <section class="quick" aria-label="Accesos rápidos">
+            <a th:href="@{/empresa/vacantes/nueva}" class="quick__card">
+                <span class="quick__icon"><i class="fa-solid fa-plus-circle"></i></span>
+                <span class="quick__body">
+                    <strong>Crear vacante</strong>
+                    <small>Publica una oferta y busca nuevo talento</small>
+                </span>
+                <i class="fa-solid fa-arrow-right quick__arrow"></i>
+            </a>
+            <a th:href="@{/empresa/vacantes}" class="quick__card">
+                <span class="quick__icon"><i class="fa-solid fa-clipboard-list"></i></span>
+                <span class="quick__body">
+                    <strong>Gestionar vacantes</strong>
+                    <small>Edita, cierra o reactiva tus ofertas</small>
+                </span>
+                <i class="fa-solid fa-arrow-right quick__arrow"></i>
+            </a>
+            <a th:href="@{/empresa/postulaciones}" class="quick__card">
+                <span class="quick__icon"><i class="fa-solid fa-users"></i></span>
+                <span class="quick__body">
+                    <strong>Ver postulaciones</strong>
+                    <small>Revisa y responde a los candidatos</small>
+                </span>
+                <i class="fa-solid fa-arrow-right quick__arrow"></i>
+            </a>
+        </section>
     </main>
 
     <script th:src="@{/js/filter.js}"></script>

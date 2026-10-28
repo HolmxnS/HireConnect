@@ -61,6 +61,14 @@
                 </a>
             </li>
 
+            <li class="sidebar__theme-item">
+                <button type="button" class="sidebar__theme" data-theme-toggle aria-label="Cambiar a modo oscuro">
+                    <i class="fa-solid fa-moon"></i><i class="fa-solid fa-sun"></i>
+                    <span class="sidebar__text theme-label--dark">Modo oscuro</span>
+                    <span class="sidebar__text theme-label--light">Modo claro</span>
+                </button>
+            </li>
+
             <li>
                 <a th:href="@{/logout}" class="sidebar__logout">
                     <i class="fa-solid fa-right-from-bracket"></i> <span class="sidebar__text">Cerrar Sesión</span>

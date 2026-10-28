@@ -35,9 +35,11 @@
     --gray-border: var(--pc-line);
     --bg-page: var(--pc-bg);
     --bg-detalle: var(--lila);
-    --bg-card: var(--blanco);
+    --bg-card: var(--pc-surface);
 
     --pc-bg: #faf7fc;
+    --pc-surface: #ffffff;
+    --pc-header-bg: rgba(255, 255, 255, .86);
     --pc-line: #ece4f1;
     --pc-radius: 1.6rem;
     --pc-shadow: 0 .1rem .2rem rgba(18, 11, 23, .04), 0 .8rem 2.4rem rgba(142, 34, 187, .06);
@@ -126,7 +128,7 @@ body:has(.header-container) .main {
     left: 24rem;
     min-height: 7.2rem;
     padding: 1.1rem 4rem;
-    background: rgba(255, 255, 255, .86);
+    background: var(--pc-header-bg);
     -webkit-backdrop-filter: blur(1.2rem);
     backdrop-filter: blur(1.2rem);
     border-bottom: 1px solid var(--pc-line);
@@ -154,7 +156,7 @@ body:has(.header-container) .main {
 }
 
 .search-bar-google:focus-within {
-    background: var(--blanco);
+    background: var(--pc-surface);
     border-color: var(--morado-c);
     box-shadow: 0 0 0 .4rem rgba(142, 34, 187, .12);
 }
@@ -180,7 +182,7 @@ body:has(.header-container) .main {
     font-weight: 600;
     border: 1px solid var(--pc-line);
     border-radius: 99rem;
-    background: var(--blanco);
+    background: var(--pc-surface);
 }
 
 .filter-trigger-btn:hover {
@@ -241,7 +243,7 @@ body:has(.header-container) .main {
 .recommendation-card,
 .no__vacancies-message,
 .not__applicants {
-    background: var(--blanco);
+    background: var(--pc-surface);
     border: 1px solid var(--pc-line);
     border-radius: var(--pc-radius);
     box-shadow: var(--pc-shadow);
@@ -308,7 +310,7 @@ textarea,
 select {
     border: 1px solid var(--pc-line);
     border-radius: 1.2rem;
-    background: var(--blanco);
+    background: var(--pc-surface);
     box-shadow: none;
     color: var(--negro-1);
 }
@@ -488,7 +490,7 @@ select:focus {
 .profile-tabs {
     gap: .6rem;
     padding: .6rem;
-    background: var(--blanco);
+    background: var(--pc-surface);
     border: 1px solid var(--pc-line);
     border-radius: 99rem;
     width: fit-content;
@@ -539,7 +541,7 @@ select:focus {
 .settings h5 { color: var(--negro-1); }
 
 /* ---------- Detalle de vacante / postulación ---------- */
-.details {
+body > .details {
     margin-left: 24rem;
     max-width: none;
     padding: 3.2rem 4rem 6rem;
@@ -548,7 +550,7 @@ select:focus {
 .details__card,
 .similar-jobs,
 .similar-job-card {
-    background: var(--blanco);
+    background: var(--pc-surface);
     border: 1px solid var(--pc-line);
     border-radius: var(--pc-radius);
     box-shadow: var(--pc-shadow);
@@ -595,11 +597,812 @@ select:focus {
         padding: 1rem 1.8rem;
     }
 
-    .details {
+    body > .details {
         margin-left: 7.6rem;
         padding: 2.4rem 1.8rem 5rem;
     }
 
     .vacancies { grid-template-columns: 1fr; }
     .table-container { overflow-x: auto; }
+}
+
+/* ==========================================================================
+   ASISTENTE IA a la derecha
+   (el CSS del chat se carga después del tema: por eso el selector más específico)
+   ========================================================================== */
+.hc-chat-root .hc-chat__toggle {
+    left: auto;
+    right: 2.4rem;
+    bottom: 2.4rem;
+}
+
+.hc-chat-root .hc-chat__panel {
+    left: auto;
+    right: 2.4rem;
+    bottom: 8.4rem;
+    max-width: calc(100vw - 4.8rem);
+}
+
+/* ==========================================================================
+   MODO CLARO / OSCURO
+   ========================================================================== */
+:root[data-theme="dark"] {
+    --morado-c: #b04ad6;
+    --morado-h: #c26be3;
+    --violeta: #d9a3f0;
+    --lila: #2a1838;
+    --humo: #241a2d;
+    --gris-c: #3a2d45;
+    --gris-c-2: #8d7f99;
+    --gris-o: #b9acc6;
+    --gris-n: #d9cfe3;
+    --negro-1: #f4eff8;
+    --negro-2: #f4eff8;
+    --white-smoke: #241a2d;
+    --crimson: #ff6b86;
+
+    --pc-bg: #120b17;
+    --pc-surface: #1b1322;
+    --pc-line: #2f2238;
+    --pc-header-bg: rgba(18, 11, 23, .86);
+    --pc-shadow: 0 .1rem .2rem rgba(0, 0, 0, .3), 0 .8rem 2.4rem rgba(0, 0, 0, .25);
+    --pc-shadow-hover: 0 .2rem .4rem rgba(0, 0, 0, .35), 0 1.4rem 3.2rem rgba(176, 74, 214, .22);
+    --pc-ok: #4fd1a1;
+    --pc-ok-bg: rgba(79, 209, 161, .13);
+    --pc-warn: #d9a3f0;
+    --pc-warn-bg: rgba(199, 128, 230, .15);
+    --pc-bad: #ff8aa0;
+    --pc-bad-bg: rgba(255, 107, 134, .13);
+    color-scheme: dark;
+}
+
+/* Superficies (tarjetas, paneles, modales) */
+:root[data-theme="dark"] .vacancies__card,
+:root[data-theme="dark"] .profile-card,
+:root[data-theme="dark"] .settings,
+:root[data-theme="dark"] .settings--danger,
+:root[data-theme="dark"] .recommendation-card,
+:root[data-theme="dark"] .no__vacancies-message,
+:root[data-theme="dark"] .not__applicants,
+:root[data-theme="dark"] .quick__card,
+:root[data-theme="dark"] .job-card,
+:root[data-theme="dark"] .empty,
+:root[data-theme="dark"] .details__card,
+:root[data-theme="dark"] .similar-jobs,
+:root[data-theme="dark"] .similar-job-card,
+:root[data-theme="dark"] .info__card,
+:root[data-theme="dark"] .modal__content,
+:root[data-theme="dark"] .modal-content,
+:root[data-theme="dark"] .filter-panel,
+:root[data-theme="dark"] .profile-tabs,
+:root[data-theme="dark"] .form-input,
+:root[data-theme="dark"] .form__input,
+:root[data-theme="dark"] textarea,
+:root[data-theme="dark"] select,
+:root[data-theme="dark"] input[type="text"],
+:root[data-theme="dark"] input[type="email"],
+:root[data-theme="dark"] input[type="password"],
+:root[data-theme="dark"] input[type="tel"],
+:root[data-theme="dark"] input[type="date"] {
+    background: var(--pc-surface);
+    color: var(--negro-1);
+}
+
+:root[data-theme="dark"] .table-container {
+    background: var(--pc-surface);
+}
+
+:root[data-theme="dark"] .table tbody tr:hover {
+    background: rgba(255, 255, 255, .04);
+}
+
+:root[data-theme="dark"] .form-input.readonly {
+    background: var(--lila);
+}
+
+:root[data-theme="dark"] .modal,
+:root[data-theme="dark"] .content-overlay {
+    background: rgba(0, 0, 0, .7);
+}
+
+:root[data-theme="dark"] .filter-card,
+:root[data-theme="dark"] .filter-chip {
+    background: var(--pc-surface);
+    border-color: var(--pc-line);
+    color: var(--negro-1);
+}
+
+:root[data-theme="dark"] .filter-card--active,
+:root[data-theme="dark"] .filter-chip--active {
+    background: var(--lila);
+    color: var(--morado-c);
+    border-color: var(--morado-c);
+}
+
+:root[data-theme="dark"] .hero__btn--solid {
+    background: #fff;
+    color: #8e22bb;
+}
+
+/* Asistente IA en oscuro */
+:root[data-theme="dark"] .hc-chat-root {
+    --hc-humo: #120b17;
+    --hc-gris: #3a2d45;
+    --hc-negro: #f4eff8;
+}
+
+:root[data-theme="dark"] .hc-chat-root .hc-chat__panel,
+:root[data-theme="dark"] .hc-chat-root .hc-msg--bot,
+:root[data-theme="dark"] .hc-chat-root .hc-chat__chips,
+:root[data-theme="dark"] .hc-chat-root .hc-chat__form {
+    background: var(--pc-surface);
+    color: var(--negro-1);
+}
+
+:root[data-theme="dark"] .hc-chat-root .hc-chat__chips button {
+    background: transparent;
+    color: var(--violeta);
+}
+
+:root[data-theme="dark"] .hc-chat-root .hc-chat__chips button:hover {
+    background: var(--morado-c);
+    color: #fff;
+}
+
+:root[data-theme="dark"] .hc-chat-root .hc-chat__form input {
+    background: var(--lila);
+    color: var(--negro-1);
+    border-color: var(--pc-line);
+}
+
+/* ==========================================================================
+   RESPONSIVE · todas las páginas del postulante
+   Breakpoints: 1100 (tablet grande) · 900 (tablet, sidebar compacto)
+                700 (móvil, barra inferior) · 400 (móvil pequeño)
+   ========================================================================== */
+
+/* Los modales deben quedar por encima del sidebar */
+.modal,
+.content-overlay {
+    z-index: 100;
+}
+
+.confirm-modal-style {
+    z-index: 101;
+}
+
+/* ---------- Tablet grande (≤ 1100px) ---------- */
+@media (max-width: 1100px) {
+
+    /* Detalle de vacante: columna única, "similares" debajo */
+    .details__layout {
+        flex-direction: column;
+    }
+
+    .details__main {
+        width: 100%;
+    }
+
+    .similar-jobs {
+        width: 100%;
+        position: static;
+        height: auto;
+        max-height: none;
+    }
+
+    .details__grid,
+    .details__vacancy {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    /* Detalle de postulación */
+    .info {
+        display: block;
+    }
+}
+
+/* ---------- Tablet (≤ 900px): sidebar compacto de íconos ---------- */
+@media (max-width: 900px) {
+    header.header {
+        margin-left: 7.6rem;
+    }
+
+    .search-bar-google {
+        max-width: none;
+    }
+
+    .filter-panel {
+        width: 36rem;
+    }
+}
+
+/* ---------- Móvil (≤ 700px): barra de navegación inferior ---------- */
+@media (max-width: 700px) {
+
+    /* ===== Navegación: tab bar fija abajo ===== */
+    .sidebar {
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: 6.6rem;
+        flex-direction: row;
+        align-items: stretch;
+        padding: 0 .6rem env(safe-area-inset-bottom);
+        border-right: none;
+        border-top: 1px solid var(--pc-line);
+        background: var(--pc-header-bg);
+        -webkit-backdrop-filter: blur(1rem);
+        backdrop-filter: blur(1rem);
+        box-shadow: 0 -.4rem 2rem rgba(18, 11, 23, .06);
+        transform: none;
+        z-index: 50;
+    }
+
+    .sidebar__logo,
+    .sidebar__label {
+        display: none;
+    }
+
+    .sidebar__nav {
+        flex: 1;
+    }
+
+    .sidebar ul {
+        flex-direction: row;
+        align-items: stretch;
+        justify-content: space-around;
+        gap: 0;
+    }
+
+    .sidebar ul li {
+        flex: 1;
+        display: flex;
+        min-width: 0;
+    }
+
+    .sidebar ul li.sidebar__theme-item,
+    .sidebar ul li:last-child {
+        margin-top: 0;
+        padding-top: 0;
+        border-top: none;
+    }
+
+    .sidebar ul li a,
+    .sidebar ul li .sidebar__theme {
+        flex-direction: column;
+        justify-content: center;
+        gap: .2rem;
+        width: 100%;
+        height: 100%;
+        padding: 0 .2rem;
+        border-radius: 1.2rem;
+        font-size: 1rem;
+        line-height: 1.1;
+        text-align: center;
+    }
+
+    .sidebar__text {
+        display: block;
+        font-size: 1rem;
+    }
+
+    .sidebar .sidebar__theme .theme-label--light {
+        display: none;
+    }
+
+    :root[data-theme="dark"] .sidebar .sidebar__theme .theme-label--dark {
+        display: none;
+    }
+
+    :root[data-theme="dark"] .sidebar .sidebar__theme .theme-label--light {
+        display: block;
+    }
+
+    .sidebar ul li a i,
+    .sidebar ul li .sidebar__theme i {
+        width: 3rem;
+        height: 2.6rem;
+        font-size: 1.6rem;
+    }
+
+    .sidebar .sidebar__active::before {
+        left: 25%;
+        right: 25%;
+        top: 0;
+        bottom: auto;
+        width: auto;
+        height: .3rem;
+        border-radius: 0 0 .4rem .4rem;
+    }
+
+    /* ===== Contenido: sin margen lateral, espacio para la barra inferior ===== */
+    body main,
+    body .main,
+    body main.content,
+    body > .details {
+        margin-left: 0;
+        padding: 2rem 1.6rem 10rem;
+    }
+
+    body:has(.header-container) main,
+    body:has(.header-container) .main {
+        margin-top: 7.2rem;
+    }
+
+    .main__title,
+    .page-title {
+        font-size: 2.2rem;
+        margin-bottom: 1.8rem;
+    }
+
+    .main__title i,
+    .main__title .icon,
+    .page-title i {
+        width: 3.6rem;
+        height: 3.6rem;
+        font-size: 1.5rem;
+    }
+
+    /* ===== Barra superior / buscador ===== */
+    .header-container {
+        left: 0;
+        min-height: 6.4rem;
+        padding: 1rem 1.6rem;
+    }
+
+    .header-content {
+        gap: 1rem;
+    }
+
+    .search-wrapper {
+        min-width: 0;
+    }
+
+    .search-main {
+        max-width: none;
+    }
+
+    .search-bar-google {
+        height: 4.4rem;
+        padding: 0 .4rem 0 1.4rem;
+    }
+
+    .search-bar-google input {
+        min-width: 0;
+        font-size: 1.5rem;
+    }
+
+    .filter-trigger-btn {
+        height: 3.6rem;
+        padding: 0 1.2rem;
+    }
+
+    .filter-trigger-btn span:not(.filter-badge) {
+        display: none;
+    }
+
+    .active-filters {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: .2rem;
+    }
+
+    .profile-box img,
+    .profile-box__placeholder {
+        width: 3.8rem;
+        height: 3.8rem;
+    }
+
+    /* Panel de filtros a pantalla completa */
+    .filter-panel {
+        width: 100vw;
+        height: 100dvh;
+    }
+
+    /* ===== Inicio ===== */
+    .hero {
+        padding: 2.8rem 2rem;
+        border-radius: 2rem;
+    }
+
+    .hero__subtitle {
+        font-size: 1.5rem;
+        margin-bottom: 2.2rem;
+    }
+
+    .hero__actions {
+        flex-direction: column;
+    }
+
+    .hero__btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .quick {
+        margin: 1.6rem 0 3rem;
+    }
+
+    .reco__head {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .reco__head h2 {
+        font-size: 2.2rem;
+    }
+
+    .reco__grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .job-card {
+        padding: 2rem;
+    }
+
+    /* ===== Vacantes ===== */
+    .vacancies {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1.4rem;
+    }
+
+    .vacancies__card {
+        padding: 2rem;
+    }
+
+    .vacancies__header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .vacancies__info {
+        gap: 1rem 1.6rem;
+    }
+
+    .vacancies__btns {
+        flex-direction: column;
+    }
+
+    .vacancies__btns .btn {
+        width: 100%;
+    }
+
+    .modal__content {
+        width: calc(100vw - 3.2rem);
+        min-width: 0;
+        padding: 2.4rem;
+    }
+
+    /* ===== Mis postulaciones: la tabla pasa a tarjetas ===== */
+    .table-container {
+        padding: 0;
+        margin: 0;
+        overflow: visible;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+    }
+
+    .table,
+    .table tbody,
+    .table tr {
+        display: block;
+        width: 100%;
+    }
+
+    .table thead {
+        display: none;
+    }
+
+    .table tbody tr {
+        padding: 1.6rem;
+        margin-bottom: 1.4rem;
+        background: var(--pc-surface);
+        border: 1px solid var(--pc-line);
+        border-radius: var(--pc-radius);
+        box-shadow: var(--pc-shadow);
+    }
+
+    .table tbody td:nth-child(n) {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.2rem;
+        width: 100%;
+        padding: .7rem 0;
+        border: none;
+        text-align: right;
+        font-size: 1.4rem;
+    }
+
+    .table tbody td:nth-child(n)::before {
+        flex-shrink: 0;
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        color: var(--gris-o);
+        text-align: left;
+    }
+
+    .table tbody td:nth-child(1)::before {
+        content: "Vacante";
+    }
+
+    .table tbody td:nth-child(2)::before {
+        content: "Empresa";
+    }
+
+    .table tbody td:nth-child(3)::before {
+        content: "Estado";
+    }
+
+    .table tbody td:nth-child(4)::before {
+        content: none;
+    }
+
+    .table tbody td.table__field-action {
+        margin-top: .8rem;
+        padding-top: 1.4rem;
+        border-top: 1px solid var(--pc-line);
+        gap: 1rem;
+    }
+
+    .table__action-view,
+    .table__action-delete,
+    .form__delete {
+        flex: 1;
+    }
+
+    .table__action-view,
+    .table__action-delete {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .not__applicants {
+        padding: 2.8rem 2rem;
+    }
+
+    /* ===== Perfil ===== */
+    .profile-tabs {
+        width: 100%;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        border-radius: 1.6rem;
+    }
+
+    .profile-tab {
+        padding: .9rem 1.6rem;
+        flex-shrink: 0;
+    }
+
+    .profile-card {
+        padding: 1.8rem 1.6rem;
+    }
+
+    .profile-card h5 {
+        font-size: 2rem;
+    }
+
+    .profile-banner {
+        height: auto;
+        margin-bottom: 1.6rem;
+    }
+
+    .profile-banner__background {
+        height: 10rem;
+        padding: 1.6rem;
+    }
+
+    .profile-banner__content {
+        position: static;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 1.2rem;
+        margin-top: -6rem;
+    }
+
+    .profile-avatar-large,
+    .photo-placeholder {
+        width: 12rem;
+        height: 12rem;
+    }
+
+    .profile-details {
+        padding-bottom: 0;
+        align-items: center;
+    }
+
+    .profile-details h2 {
+        font-size: 2.2rem;
+    }
+
+    .photo-actions {
+        position: static;
+        margin: 1rem 0 0;
+        text-align: center;
+    }
+
+    .photo-actions a {
+        display: inline-block;
+        padding: 1rem 2.4rem;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .btn-submit-save,
+    .btn-upload-cv {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .cv-upload-form .flex {
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .modal-content {
+        width: calc(100vw - 3.2rem);
+        max-width: 42rem;
+        padding: 2rem;
+    }
+
+    .modal-actions {
+        flex-direction: column-reverse;
+        gap: 1rem;
+    }
+
+    .modal-actions .btn {
+        width: 100%;
+    }
+
+    /* ===== Configuración ===== */
+    .settings {
+        padding: 2rem 1.6rem;
+        margin: 0 0 1.6rem;
+    }
+
+    .settings .settings__description {
+        padding: 0;
+        font-size: 1.4rem;
+        margin-bottom: 2rem;
+    }
+
+    .form {
+        padding: 0;
+    }
+
+    .form__input {
+        width: 100%;
+    }
+
+    .form__actions {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .form__btn-save,
+    .form__btn-delete {
+        width: 100%;
+    }
+
+    .modal__actions {
+        flex-direction: column-reverse;
+        gap: 1rem;
+    }
+
+    .modal__btn-cancel,
+    .modal__btn-confirm-delete {
+        width: 100%;
+    }
+
+    /* ===== Detalle de vacante ===== */
+    .details__card {
+        padding: 2rem 1.6rem;
+    }
+
+    .details__vacancy h1 {
+        font-size: 2.2rem;
+    }
+
+    .details__grid,
+    .details__vacancy {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1.2rem;
+    }
+
+    .details__postulate,
+    .btn-inactive {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .details__action .flex-end {
+        justify-content: stretch;
+    }
+
+    .similar-jobs {
+        padding: 1.6rem;
+    }
+
+    /* ===== Detalle de postulación ===== */
+    header.header {
+        margin-left: 0;
+        padding: 0 1.6rem;
+    }
+
+    .header h1 {
+        font-size: 2.2rem;
+    }
+
+    .info__card {
+        padding: 2rem 1.6rem;
+    }
+
+    .details__actions {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .btn-ver-completa {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+
+    /* ===== Asistente IA: por encima de la barra inferior ===== */
+    .hc-chat-root .hc-chat__toggle {
+        right: 1.6rem;
+        bottom: 8.4rem;
+    }
+
+    .hc-chat-root .hc-chat__panel {
+        right: 1.6rem;
+        left: auto;
+        bottom: 14.4rem;
+        width: calc(100vw - 3.2rem);
+        max-width: none;
+        max-height: calc(100dvh - 17rem);
+    }
+}
+
+/* ---------- Móvil pequeño (≤ 400px) ---------- */
+@media (max-width: 400px) {
+
+    body main,
+    body .main,
+    body main.content,
+    body > .details {
+        padding-inline: 1.2rem;
+    }
+
+    .header-container {
+        padding-inline: 1.2rem;
+    }
+
+    .hero__title {
+        font-size: 3rem;
+    }
+
+    .sidebar__text {
+        font-size: .9rem;
+    }
+
+    .job-card__footer {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1.2rem;
+    }
+
+    .job-card__btn {
+        justify-content: center;
+    }
 }
