@@ -42,6 +42,9 @@ body {
     left: 0;
     width: 24rem;
     height: 100vh;
+    height: 100dvh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
     display: flex;
     flex-direction: column;
     padding: 2.4rem 1.6rem;
@@ -83,8 +86,7 @@ body {
 .sidebar__nav {
     display: flex;
     flex-direction: column;
-    flex: 1;
-    min-height: 0;
+    flex: 1 0 auto;
     height: auto;
 }
 
@@ -244,5 +246,40 @@ body {
 
     .sidebar .sidebar__active::before {
         left: -1rem;
+    }
+}
+
+/* Rail de íconos en pantallas bajas (celular en horizontal): todo cabe o hace scroll */
+@media (min-width: 701px) and (max-width: 900px) and (max-height: 620px) {
+    .sidebar {
+        padding: 1rem .8rem;
+    }
+
+    .sidebar__logo {
+        padding: 0 0 1rem;
+        margin-bottom: .6rem;
+    }
+
+    .sidebar__logo-img {
+        height: 2.8rem;
+    }
+
+    .sidebar ul {
+        gap: .2rem;
+    }
+
+    .sidebar ul li a,
+    .sidebar ul li .sidebar__theme {
+        height: 4rem;
+    }
+
+    .sidebar ul li a i,
+    .sidebar ul li .sidebar__theme i {
+        width: 2.8rem;
+        height: 2.8rem;
+    }
+
+    .sidebar ul li.sidebar__theme-item {
+        padding-top: .6rem;
     }
 }

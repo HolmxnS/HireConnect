@@ -446,3 +446,77 @@ body {
 .modal__btn:hover {
     background: #9400D3;
 }
+
+/* ==========================================================================
+   RESPONSIVE · Verificar correo
+   ========================================================================== */
+@media (max-width: 900px) {
+    .container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+    }
+
+    /* El panel con imagen es decorativo: se oculta en tablet y móvil */
+    .hero {
+        display: none;
+    }
+
+    .form-panel {
+        min-height: 100vh;
+        min-height: 100dvh;
+        padding: 1rem 2rem 3rem;
+    }
+
+    .header {
+        margin: 0 0 1.6rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .form-panel {
+        padding: 1rem 1.6rem 3rem;
+    }
+
+    .header {
+        padding: 1.4rem 0;
+    }
+
+    .header__logo h1,
+    .header__logo-higlight {
+        font-size: 2.2rem;
+    }
+
+    .verify {
+        padding: 2.4rem 0;
+    }
+
+    .verify__title {
+        font-size: 2.2rem;
+    }
+
+    /* 6 casillas + separador: se reparten el ancho disponible */
+    .code-inputs {
+        width: 100%;
+        justify-content: center;
+        gap: .6rem;
+    }
+
+    .code-input {
+        flex: 1 1 0;
+        width: auto;
+        min-width: 0;
+        max-width: 5.5rem;
+        height: 5.6rem;
+        font-size: 2.2rem;
+    }
+
+    .code-inputs__separator {
+        margin: 0;
+        font-size: 2rem;
+    }
+
+    .modal {
+        padding: 3rem 2rem;
+    }
+}

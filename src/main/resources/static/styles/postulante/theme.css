@@ -1406,3 +1406,45 @@ body > .details {
         justify-content: center;
     }
 }
+
+/* En el perfil, el CSS de la página escondía el sidebar (<= 767px) y no hay botón para abrirlo */
+@media (max-width: 767px) {
+    .sidebar {
+        transform: none;
+    }
+}
+
+
+/* ==========================================================================
+   Barra inferior en celulares angostos (<= 480px): solo íconos
+   Así caben las 7 opciones (incluido tema y Cerrar sesión) sin que se corten.
+   ========================================================================== */
+@media (max-width: 480px) {
+    .sidebar {
+        padding-inline: .2rem;
+    }
+
+    .sidebar .sidebar__text,
+    .sidebar .sidebar__theme .sidebar__text,
+    :root[data-theme="dark"] .sidebar .sidebar__theme .theme-label--light,
+    :root[data-theme="dark"] .sidebar .sidebar__theme .theme-label--dark {
+        display: none;
+    }
+
+    .sidebar ul li a,
+    .sidebar ul li .sidebar__theme {
+        padding: 0;
+    }
+
+    .sidebar ul li a i,
+    .sidebar ul li .sidebar__theme i {
+        width: min(100%, 4.4rem);
+        height: 3.8rem;
+        font-size: 1.9rem;
+    }
+
+    /* Cerrar sesión siempre reconocible */
+    .sidebar ul li a.sidebar__logout {
+        color: var(--crimson);
+    }
+}

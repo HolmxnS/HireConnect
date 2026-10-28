@@ -25,21 +25,21 @@
             <li class="sidebar__label">Explorar</li>
 
             <li>
-                <a th:href="@{/postulante/home}" class="sidebar__link"
+                <a th:href="@{/postulante/home}" class="sidebar__link" title="Inicio" aria-label="Inicio"
                     th:classappend="${activeMenu == 'home'} ? 'sidebar__active' : ''">
                     <i class="fa-solid fa-house"></i> <span class="sidebar__text">Inicio</span>
                 </a>
             </li>
 
             <li>
-                <a th:href="@{/postulante/vacantes}"
+                <a th:href="@{/postulante/vacantes}" title="Vacantes" aria-label="Vacantes"
                     th:classappend="${activeMenu == 'vacantes'} ? 'sidebar__active' : ''">
                     <i class="fa-solid fa-briefcase"></i> <span class="sidebar__text">Vacantes</span>
                 </a>
             </li>
 
             <li>
-                <a th:href="@{/postulante/postulaciones}"
+                <a th:href="@{/postulante/postulaciones}" title="Mis Postulaciones" aria-label="Mis Postulaciones"
                     th:classappend="${activeMenu == 'postulaciones'} ? 'sidebar__active' : ''">
                     <i class="fa-solid fa-clipboard-list"></i> <span class="sidebar__text">Mis Postulaciones</span>
                 </a>
@@ -48,14 +48,14 @@
             <li class="sidebar__label">Mi cuenta</li>
 
             <li>
-                <a th:href="@{/postulante/perfil}"
+                <a th:href="@{/postulante/perfil}" title="Mi Perfil" aria-label="Mi Perfil"
                     th:classappend="${activeMenu == 'perfil'} ? 'sidebar__active' : ''">
                     <i class="fa-solid fa-user-gear"></i> <span class="sidebar__text">Mi Perfil</span>
                 </a>
             </li>
 
             <li>
-                <a th:href="@{/postulante/configuracion}"
+                <a th:href="@{/postulante/configuracion}" title="Configuración" aria-label="Configuración"
                     th:classappend="${activeMenu == 'configuracion'} ? 'sidebar__active' : ''">
                     <i class="fa-solid fa-gear"></i> <span class="sidebar__text">Configuración</span>
                 </a>
@@ -70,7 +70,7 @@
             </li>
 
             <li>
-                <a th:href="@{/logout}" class="sidebar__logout">
+                <a th:href="@{/logout}" class="sidebar__logout" title="Cerrar Sesión" aria-label="Cerrar Sesión">
                     <i class="fa-solid fa-right-from-bracket"></i> <span class="sidebar__text">Cerrar Sesión</span>
                 </a>
             </li>
