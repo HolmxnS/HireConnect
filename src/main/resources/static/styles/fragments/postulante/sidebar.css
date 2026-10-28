@@ -1,248 +1,423 @@
+/*
+    Menu lateral del postulante.
+    Todo lo del menu y la barra superior usa solo las variables --hc-*, asi las
+    variables de cada pagina (--morado-c, --negro-1...) no lo afectan.
+*/
+
+/*Variables heredadas: algunas paginas dependen de ellas, se dejan igual*/
 :root {
-    --morado-c: #8e22bb;
-    --morado-h: #7c1da4;
-    --violeta: #c780e6;
-    --lila: #f6f1f9;
-    --blanco: #ffffff;
-    --gris-o: #51465a;
-    --negro-1: #120b17;
-    --crimson: #d6314f;
-    --pc-line: #ece4f1;
-    --pc-surface: #ffffff;
-    --font-satoshi: 'Satoshi', 'Segoe UI', system-ui, sans-serif;
-    --font-clash: 'ClashDisplay', 'Segoe UI', system-ui, sans-serif;
+  --morado-c: #8e22bb;
+  --morado-h: #7c1da4;
+  --violeta: #c780e6;
+  --lila: #f6f1f9;
+  --blanco: #ffffff;
+  --gris-o: #51465a;
+  --negro-1: #120b17;
+  --crimson: #d6314f;
+  --pc-line: #ece4f1;
+  --pc-surface: #ffffff;
+  --font-satoshi: "Satoshi", "Segoe UI", system-ui, sans-serif;
+  --font-clash: "ClashDisplay", "Segoe UI", system-ui, sans-serif;
 }
 
 :root[data-theme="dark"] {
-    --morado-c: #b04ad6;
-    --morado-h: #c26be3;
-    --violeta: #d9a3f0;
-    --lila: #2a1838;
-    --gris-o: #b9acc6;
-    --negro-1: #f4eff8;
-    --crimson: #ff6b86;
-    --pc-line: #2f2238;
-    --pc-surface: #1b1322;
-    color-scheme: dark;
+  --morado-c: #b04ad6;
+  --morado-h: #c26be3;
+  --violeta: #d9a3f0;
+  --lila: #2a1838;
+  --gris-o: #b9acc6;
+  --negro-1: #f4eff8;
+  --crimson: #ff6b86;
+  --pc-line: #2f2238;
+  --pc-surface: #1b1322;
+  color-scheme: dark;
+}
+
+/*Variables del layout (claro)*/
+:root {
+  --sidebar-w: 24rem;
+  --sidebar-w-collapsed: 7.6rem;
+  --header-h: 7.1rem;
+
+  --hc-surface: #ffffff;
+  --hc-line: #ece4f1;
+  --hc-soft: #f6f1f9;
+  --hc-text: #120b17;
+  --hc-muted: #51465a;
+  --hc-faint: #aa9fb3;
+  --hc-accent: #8e22bb;
+  --hc-accent-ink: #8e22bb;
+  --hc-on-accent: #ffffff;
+  --hc-danger: #d6314f;
+  --hc-ok: #1c8a5a;
+  --hc-warn: #b7791f;
+  --hc-ring: rgba(142, 34, 187, 0.18);
+  --hc-shadow: 0 1.2rem 3.2rem rgba(18, 11, 23, 0.14);
+}
+
+/*Variables del layout (oscuro)*/
+:root[data-theme="dark"] {
+  --hc-surface: #150f1b;
+  --hc-line: #2b2133;
+  --hc-soft: #241830;
+  --hc-text: #f4eff8;
+  --hc-muted: #b9acc6;
+  --hc-faint: #8c7f99;
+  --hc-accent: #b04ad6;
+  --hc-accent-ink: #d9a3f0;
+  --hc-danger: #ff6b86;
+  --hc-ok: #4fd1a1;
+  --hc-warn: #f2c06b;
+  --hc-ring: rgba(176, 74, 214, 0.28);
+  --hc-shadow: 0 1.2rem 3.2rem rgba(0, 0, 0, 0.55);
+}
+
+/*Plegado en escritorio: el ancho del menu lo leen la barra superior y las paginas*/
+@media (min-width: 901px) {
+  :root.is-sidebar-collapsed {
+    --sidebar-w: var(--sidebar-w-collapsed);
+  }
+}
+
+/*En movil el menu es un panel que se desliza, no ocupa espacio*/
+@media (max-width: 900px) {
+  :root {
+    --sidebar-w: 0rem;
+  }
 }
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    font-family: var(--font-satoshi);
+  font-family: var(--font-satoshi);
 }
 
+/*Los iconos (i o svg del kit de Font Awesome) toman el tamano de su contenedor*/
+.sidebar i,
+.sidebar svg,
+.sidebar-opener i,
+.sidebar-opener svg {
+  font-size: inherit;
+}
+
+/*Menu*/
 .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 24rem;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    padding: 2.4rem 1.6rem;
-    background: var(--pc-surface);
-    border-right: 1px solid var(--pc-line);
-    z-index: 30;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: var(--sidebar-w);
+  display: flex;
+  flex-direction: column;
+  padding: 1.6rem 1.6rem 2rem;
+  background: var(--hc-surface);
+  border-right: 1px solid var(--hc-line);
+  z-index: 30;
+  transition:
+    width 0.25s ease,
+    transform 0.25s ease,
+    background-color 0.3s ease;
 }
 
 .sidebar__logo {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    width: auto;
-    padding: 0 1rem 2.4rem;
-    margin: 0 0 1.2rem;
-    border-bottom: 1px solid var(--pc-line);
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0 0.4rem 1.8rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--hc-line);
+}
+
+.sidebar__toggle,
+.sidebar-opener {
+  width: 4.4rem;
+  height: 4.4rem;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border: none;
+  border-radius: 1.2rem;
+  background: transparent;
+  color: var(--hc-muted);
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.sidebar__toggle:hover,
+.sidebar-opener:hover {
+  background: var(--hc-soft);
+  color: var(--hc-accent-ink);
+}
+
+.sidebar__toggle-icon,
+.sidebar-opener__icon {
+  display: inline-flex;
+  font-size: 1.8rem;
+}
+
+.sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  min-width: 0;
+  text-decoration: none;
 }
 
 .sidebar__logo-img {
-    height: 3.6rem;
-    width: auto;
-    display: block;
+  height: 3.2rem;
+  width: auto;
+  display: block;
 }
 
-.sidebar__logo h1 {
-    font-family: var(--font-clash);
-    font-size: 2.1rem;
-    font-weight: 700;
-    letter-spacing: -.01em;
-    padding: 0;
-    color: var(--negro-1);
+.sidebar__brand-name {
+  font-family: var(--font-clash);
+  font-size: 2.1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  color: var(--hc-text);
 }
 
 .sidebar__highlight {
-    color: var(--morado-c);
-    font-size: inherit;
+  font-size: inherit;
+  color: var(--hc-accent);
 }
 
+/*Navegacion*/
 .sidebar__nav {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 0;
-    height: auto;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 .sidebar ul {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    gap: .4rem;
-    padding: 0;
-    height: auto;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 0.4rem;
 }
 
 .sidebar__label {
-    padding: 1.6rem 1.2rem .6rem;
-    font-size: 1.1rem;
-    font-weight: 700;
-    letter-spacing: .1em;
-    text-transform: uppercase;
-    color: #aa9fb3;
+  padding: 1.6rem 1.2rem 0.6rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--hc-faint);
 }
 
-.sidebar ul li a,
-.sidebar ul li .sidebar__theme {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 1.2rem;
-    width: 100%;
-    height: 4.6rem;
-    padding: 0 1.2rem;
-    border: none;
-    border-radius: 1.2rem;
-    background: transparent;
-    text-decoration: none;
-    font-family: inherit;
-    font-size: 1.4rem;
-    font-weight: 600;
-    color: var(--gris-o);
-    cursor: pointer;
-    text-align: left;
-    transition: background .2s ease, color .2s ease;
+.sidebar__link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  width: 100%;
+  height: 4.6rem;
+  padding: 0 1.2rem;
+  border-radius: 1.2rem;
+  text-decoration: none;
+  font-family: var(--font-satoshi);
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--hc-muted);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
-.sidebar ul li a i,
-.sidebar ul li .sidebar__theme i {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    width: 3.2rem;
-    height: 3.2rem;
-    margin: 0;
-    border-radius: .9rem;
-    font-size: 1.4rem;
-    background: transparent;
-    transition: background .2s ease, color .2s ease;
+.sidebar__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 0.9rem;
+  font-size: 1.4rem;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
-.sidebar ul li a:hover,
-.sidebar ul li .sidebar__theme:hover {
-    background: var(--lila);
-    color: var(--morado-c);
+.sidebar__text {
+  font-size: 1.4rem;
+  white-space: nowrap;
 }
 
-.sidebar ul li a:hover i,
-.sidebar ul li .sidebar__theme:hover i {
-    background: var(--pc-surface);
+.sidebar__link:hover {
+  background: var(--hc-soft);
+  color: var(--hc-accent-ink);
+}
+
+.sidebar__link:hover .sidebar__icon {
+  background: var(--hc-surface);
 }
 
 .sidebar .sidebar__active,
-.sidebar ul li a.sidebar__active:hover {
-    background: var(--lila);
-    color: var(--morado-c);
+.sidebar .sidebar__active:hover {
+  background: var(--hc-soft);
+  color: var(--hc-accent-ink);
 }
 
-.sidebar .sidebar__active i {
-    background: var(--morado-c);
-    color: #fff;
+.sidebar .sidebar__active .sidebar__icon {
+  background: var(--hc-accent);
+  color: var(--hc-on-accent);
 }
 
+/*Barrita del item activo*/
 .sidebar .sidebar__active::before {
-    content: "";
+  content: "";
+  position: absolute;
+  left: -1.6rem;
+  top: 1rem;
+  bottom: 1rem;
+  width: 0.4rem;
+  border-radius: 0 0.4rem 0.4rem 0;
+  background: var(--hc-accent);
+}
+
+/*Cerrar sesion, siempre abajo*/
+.sidebar .sidebar__bottom {
+  margin-top: auto;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--hc-line);
+}
+
+.sidebar .sidebar__logout:hover {
+  background: rgba(214, 49, 79, 0.12);
+  color: var(--hc-danger);
+}
+
+.sidebar__link:focus-visible,
+.sidebar__toggle:focus-visible,
+.sidebar-opener:focus-visible,
+.sidebar__brand:focus-visible {
+  outline: 0.2rem solid var(--hc-accent);
+  outline-offset: 0.2rem;
+}
+
+/*Boton de abrir y fondo oscuro: solo se usan en movil*/
+.sidebar-opener {
+  display: none;
+}
+
+.sidebar-overlay {
+  display: none;
+}
+
+@media (min-width: 901px) {
+  .is-sidebar-collapsed .sidebar {
+    padding-inline: 1.4rem;
+  }
+
+  .is-sidebar-collapsed .sidebar__logo {
+    justify-content: center;
+    padding-inline: 0;
+  }
+
+  .is-sidebar-collapsed .sidebar__brand,
+  .is-sidebar-collapsed .sidebar__text {
+    display: none;
+  }
+
+  /*Las etiquetas de seccion pasan a ser una linea fina*/
+  .is-sidebar-collapsed .sidebar__label {
+    height: 0.1rem;
+    margin: 1.2rem 1rem;
+    padding: 0;
+    overflow: hidden;
+    font-size: 0;
+    background: var(--hc-line);
+  }
+
+  .is-sidebar-collapsed .sidebar__link {
+    justify-content: center;
+    width: 4.8rem;
+    margin-inline: auto;
+    padding: 0;
+  }
+
+  .is-sidebar-collapsed .sidebar .sidebar__active::before {
+    left: -1.4rem;
+  }
+
+  /*Tooltip con el nombre al pasar el mouse o enfocar con teclado*/
+  .is-sidebar-collapsed .sidebar__link::after {
+    content: attr(data-label);
     position: absolute;
-    left: -1.6rem;
-    top: 1rem;
-    bottom: 1rem;
-    width: .4rem;
-    border-radius: 0 .4rem .4rem 0;
-    background: var(--morado-c);
+    left: calc(100% + 1.6rem);
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0.6rem 1rem;
+    border-radius: 0.8rem;
+    background: var(--hc-text);
+    color: var(--hc-surface);
+    font-size: 1.2rem;
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+  }
+
+  .is-sidebar-collapsed .sidebar__link:hover::after,
+  .is-sidebar-collapsed .sidebar__link:focus-visible::after {
+    opacity: 1;
+  }
 }
 
-/* Botón de tema: muestra luna en claro y sol en oscuro */
-.sidebar ul li.sidebar__theme-item {
-    margin-top: auto;
-    padding-top: 1.2rem;
-    border-top: 1px solid var(--pc-line);
-}
-
-.sidebar .sidebar__theme .fa-sun,
-.sidebar .sidebar__theme .theme-label--light {
-    display: none;
-}
-
-:root[data-theme="dark"] .sidebar .sidebar__theme .fa-sun {
-    display: inline-flex;
-}
-
-:root[data-theme="dark"] .sidebar .sidebar__theme .fa-moon,
-:root[data-theme="dark"] .sidebar .sidebar__theme .theme-label--dark {
-    display: none;
-}
-
-:root[data-theme="dark"] .sidebar .sidebar__theme .theme-label--light {
-    display: inline;
-}
-
-/* Cerrar sesión */
-.sidebar ul li:last-child {
-    margin-top: .4rem;
-}
-
-.sidebar ul li a.sidebar__logout:hover {
-    background: rgba(214, 49, 79, .12);
-    color: var(--crimson);
-}
-
-.sidebar ul li a.sidebar__logout:hover i {
-    background: var(--pc-surface);
-}
-
-/* Tablet / móvil: barra compacta solo con íconos */
+/*Movil y tablet: el menu es un panel que se desliza*/
 @media (max-width: 900px) {
-    .sidebar {
-        width: 7.6rem;
-        padding: 2rem 1rem;
-        align-items: center;
-    }
+  .sidebar {
+    width: 26rem;
+    max-width: 85vw;
+    transform: translateX(-100%);
+    z-index: 40;
+  }
 
-    .sidebar__logo {
-        padding: 0 0 1.8rem;
-        justify-content: center;
-    }
+  .is-sidebar-open .sidebar {
+    transform: none;
+    box-shadow: var(--hc-shadow);
+  }
 
-    .sidebar__logo h1,
-    .sidebar__label,
-    .sidebar__text {
-        display: none;
-    }
+  .sidebar .sidebar__active::before {
+    left: -1.6rem;
+  }
 
-    .sidebar ul li a,
-    .sidebar ul li .sidebar__theme {
-        justify-content: center;
-        padding: 0;
-        height: 4.8rem;
-    }
+  .sidebar-opener {
+    position: fixed;
+    top: 1.35rem;
+    left: 1.2rem;
+    z-index: 25;
+    display: grid;
+  }
 
-    .sidebar .sidebar__active::before {
-        left: -1rem;
-    }
+  .is-sidebar-open .sidebar-opener {
+    display: none;
+  }
+
+  .is-sidebar-open .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 35;
+    background: rgba(9, 8, 11, 0.5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .sidebar__link,
+  .sidebar__icon,
+  .sidebar__toggle {
+    transition: none;
+  }
 }

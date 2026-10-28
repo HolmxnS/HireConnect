@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!--Styles-->
     <link rel="stylesheet" th:href="@{/styles/fragments/postulante/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/styles/fragments/postulante/header.css}">
     <link rel="stylesheet" th:href="@{/styles/postulante/configuracion_postulante.css}">
     <link rel="stylesheet" th:href="@{/styles/postulante/theme.css}">
     <script th:src="@{/js/theme.js}"></script>
@@ -23,6 +24,7 @@
     <div id="sidebar-overlay" class="content-overlay hidden md:hidden" onclick="toggleSidebar()"></div>
 
     <div th:replace="~{fragments/postulante/sidebar_postulante :: sidebar ('configuracion')}" id="sidebar"></div>
+    <div th:replace="~{fragments/postulante/header_postulante :: menu-fragment(false)}"></div>
 
     <main class="main">
         <h2 class="main__title">

@@ -15,9 +15,12 @@ import java.util.Optional;
 public class PostulacionService {
 
     private final PostulacionRepository postulacionRepository;
+    private final NotificacionPostulanteService notificacionService;
 
-    public PostulacionService(PostulacionRepository postulacionRepository) {
+    public PostulacionService(PostulacionRepository postulacionRepository,
+            NotificacionPostulanteService notificacionService) {
         this.postulacionRepository = postulacionRepository;
+        this.notificacionService = notificacionService;
     }
 
     public long contarPostulacionesDeHoy() {
@@ -70,9 +73,10 @@ public class PostulacionService {
         return postulacionRepository.save(postulacion);
     }
 
-    // eliminar postulacion por id
+    // eliminar postulacion por id (tambien sus avisos, que ya no apuntan a nada)
     public void eliminar(String id) {
         postulacionRepository.deleteById(id);
+        notificacionService.eliminarPorPostulacion(id);
     }
 
     // Verificar si una postulacion ya existe
@@ -93,8 +97,15 @@ public class PostulacionService {
             throw new RuntimeException("Estado inválido: " + nuevoEstado);
         }
 
+        boolean cambio = postulacion.getEstado() != estadoEnum;
+
         postulacion.setEstado(estadoEnum);
         postulacionRepository.save(postulacion);
+
+        // Avisa al postulante solo si el estado realmente cambio
+        if (cambio) {
+            notificacionService.notificarCambioEstado(postulacion, estadoEnum);
+        }
     }
 
     public Optional<Postulacion> ultimaPostulacion(Postulante postulante) {

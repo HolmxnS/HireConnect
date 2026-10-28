@@ -1,84 +1,121 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--Styles-->
+    <link
+      rel="stylesheet"
+      th:href="@{/styles/fragments/postulante/sidebar.css}"
+    />
+    <link
+      rel="stylesheet"
+      th:href="@{/styles/fragments/postulante/header.css}"
+    />
+    <link
+      rel="stylesheet"
+      th:href="@{/styles/postulante/mis_postulaciones.css}"
+    />
+    <link rel="stylesheet" th:href="@{/styles/postulante/theme.css}" />
+    <script th:src="@{/js/theme.js}"></script>
+    <!--Fonts-->
+    <link rel="stylesheet" th:href="@{/styles/satoshi.css}" />
+    <link rel="stylesheet" th:href="@{/styles/clash-display.css}" />
+    <!--Icons-->
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      th:href="@{/source/img/hireconnect.png}"
+    />
+    <script
+      src="https://kit.fontawesome.com/e71256cba2.js"
+      crossorigin="anonymous"
+    ></script>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!--Styles-->
-  <link rel="stylesheet" th:href="@{/styles/fragments/postulante/sidebar.css}">
-  <link rel="stylesheet" th:href="@{/styles/fragments/postulante/header.css}">
-  <link rel="stylesheet" th:href="@{/styles/postulante/mis_postulaciones.css}">
-  <link rel="stylesheet" th:href="@{/styles/postulante/theme.css}">
-  <script th:src="@{/js/theme.js}"></script>
-  <!--Fonts-->
-  <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
-  <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
-  <!--Icons-->
-  <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
-  <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
+    <title>Mis Postulaciones</title>
+  </head>
 
-  <title>Mis Postulaciones</title>
-</head>
+  <body>
+    <div
+      th:replace="~{fragments/postulante/sidebar_postulante :: sidebar ('postulaciones')}"
+    ></div>
 
-<body>
+    <div
+      th:replace="~{fragments/postulante/header_postulante :: menu-fragment(false)}"
+    ></div>
+    <div
+      th:replace="~{fragments/postulante/header_postulante :: menu-fragment(false)}"
+    ></div>
+    
+    <main class="main">
+      <h2 class="main__title">
+        <i class="fa-solid fa-clipboard-list icon"></i> Mis Postulaciones
+      </h2>
 
-  <div th:replace="~{fragments/postulante/sidebar_postulante :: sidebar ('postulaciones')}"></div>
-
-  <div th:replace="~{fragments/postulante/header_postulante :: menu-fragment(false)}"></div>
-
-  <main class="main">
-    <h2 class="main__title">
-      <i class="fa-solid fa-clipboard-list icon"></i> Mis Postulaciones
-    </h2>
-
-    <section class="table-container">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Vacante</th>
-            <th>Empresa</th>
-            <th>Estado</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr th:each="postulacion : ${postulaciones}">
-            <td th:text="${postulacion.vacante.titulo}"></td>
-            <td th:text="${postulacion.vacante.empresa.nombre}"></td>
-            <td>
-              <span th:text="${postulacion.estado.descripcion}" th:classappend="${postulacion.estado.descripcion == 'En revision' ? 'estado-aplicado' :
+      <section class="table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Vacante</th>
+              <th>Empresa</th>
+              <th>Estado</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="postulacion : ${postulaciones}">
+              <td th:text="${postulacion.vacante.titulo}"></td>
+              <td th:text="${postulacion.vacante.empresa.nombre}"></td>
+              <td>
+                <span
+                  th:text="${postulacion.estado.descripcion}"
+                  th:classappend="${postulacion.estado.descripcion == 'En revision' ? 'estado-aplicado' :
                                     postulacion.estado.descripcion == 'RECHAZADO' ? 'estado-rechazado' :
-                                    'estado-aceptado'}" class="table__status"></span>
-            </td>
-            <td class="table__field-action">
-              <a th:href="@{/postulante/postulacion/detalle/{id}(id=${postulacion.id}, postulanteId=${postulante.id})}"
-                class="table__action-view">
-                <i class="fa-solid fa-eye"></i> Ver
-              </a>
+                                    'estado-aceptado'}"
+                  class="table__status"
+                ></span>
+              </td>
+              <td class="table__field-action">
+                <a
+                  th:href="@{/postulante/postulacion/detalle/{id}(id=${postulacion.id}, postulanteId=${postulante.id})}"
+                  class="table__action-view"
+                >
+                  <i class="fa-solid fa-eye"></i> Ver
+                </a>
 
-              <form th:action="@{/postulante/eliminar/{id}(id=${postulacion.id})}" method="post"
-                onsubmit="return confirm('¿Seguro que deseas retirar tu postulación?');" class="form__delete">
-                <button type="submit" class="table__action-delete">
-                  <i class="fa-solid fa-trash-can"></i> Eliminar
-                </button>
-              </form>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
+                <form
+                  th:action="@{/postulante/eliminar/{id}(id=${postulacion.id})}"
+                  method="post"
+                  onsubmit="
+                    return confirm(
+                      '¿Seguro que deseas retirar tu postulación?',
+                    );
+                  "
+                  class="form__delete"
+                >
+                  <button type="submit" class="table__action-delete">
+                    <i class="fa-solid fa-trash-can"></i> Eliminar
+                  </button>
+                </form>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
 
-    <div th:if="${postulaciones.isEmpty()}" class="not__applicants">
-      <i class="fa-regular fa-folder-open not__icon"></i>
-      <h3>Aún no has aplicado a ninguna vacante.</h3>
-      <p>¡Explora nuestras ofertas y encuentra tu próximo empleo!</p>
-      <a th:href="@{/postulante/vacantes}" class="link-explorer">Explorar Vacantes</a>
-    </div>
-  </main>
+      <div th:if="${postulaciones.isEmpty()}" class="not__applicants">
+        <i class="fa-regular fa-folder-open not__icon"></i>
+        <h3>Aún no has aplicado a ninguna vacante.</h3>
+        <p>¡Explora nuestras ofertas y encuentra tu próximo empleo!</p>
+        <a th:href="@{/postulante/vacantes}" class="link-explorer"
+          >Explorar Vacantes</a
+        >
+      </div>
+    </main>
 
-  <script th:src="@{/js/filter.js}"></script>
-      <!-- Chat IA -->
+    <script th:src="@{/js/filter.js}"></script>
+    <!-- Chat IA -->
     <div th:replace="~{fragments/postulante/chatbot :: chatbot}"></div>
-</body>
-
+  </body>
 </html>

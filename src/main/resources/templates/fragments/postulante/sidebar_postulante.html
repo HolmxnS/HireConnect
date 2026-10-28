@@ -8,75 +8,100 @@
     <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
     <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
     <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
-    <title>Dashboard Postulante</title>
+    <title>Sidebar Postulante</title>
 </head>
 
 <body>
 
-    <aside th:fragment="sidebar (activeMenu)" class="sidebar">
+    <!--
+        Menu lateral del postulante.
+        Uso: <div th:replace="~{fragments/postulante/sidebar_postulante :: sidebar ('vacantes')}"></div>
+        activeMenu acepta: vacantes | postulaciones (o mis_postulaciones) | perfil | configuracion
+    -->
+    <th:block th:fragment="sidebar (activeMenu)">
 
-    <div class="sidebar__logo">
-        <img class="sidebar__logo-img" th:src="@{/source/img/isotipo.png}" alt="HireConnect">
-        <h1>Hire<span class="sidebar__highlight">Connect</span></h1>
-    </div>
+        <!--Aplica el estado plegado antes de pintar para que no haya parpadeo (solo en escritorio)-->
+        <script>
+            (function () {
+                try {
+                    if (window.matchMedia('(min-width: 901px)').matches && localStorage.getItem('hc-sidebar') === 'collapsed') {
+                        document.documentElement.classList.add('is-sidebar-collapsed');
+                    }
+                } catch (e) { }
+            })();
+        </script>
 
-    <nav class="sidebar__nav" aria-label="Navegación del postulante">
-        <ul>
-            <li class="sidebar__label">Explorar</li>
+        <!--Boton para abrir el menu en movil (en escritorio queda oculto)-->
+        <button type="button" class="sidebar-opener" id="sidebarOpener" aria-label="Abrir menú" aria-controls="sidebar"
+            aria-expanded="false">
+            <span class="sidebar-opener__icon"><i class="fa-solid fa-bars"></i></span>
+        </button>
 
-            <li>
-                <a th:href="@{/postulante/home}" class="sidebar__link"
-                    th:classappend="${activeMenu == 'home'} ? 'sidebar__active' : ''">
-                    <i class="fa-solid fa-house"></i> <span class="sidebar__text">Inicio</span>
-                </a>
-            </li>
+        <aside class="sidebar" id="sidebar" aria-label="Menú principal">
 
-            <li>
-                <a th:href="@{/postulante/vacantes}"
-                    th:classappend="${activeMenu == 'vacantes'} ? 'sidebar__active' : ''">
-                    <i class="fa-solid fa-briefcase"></i> <span class="sidebar__text">Vacantes</span>
-                </a>
-            </li>
-
-            <li>
-                <a th:href="@{/postulante/postulaciones}"
-                    th:classappend="${activeMenu == 'postulaciones'} ? 'sidebar__active' : ''">
-                    <i class="fa-solid fa-clipboard-list"></i> <span class="sidebar__text">Mis Postulaciones</span>
-                </a>
-            </li>
-
-            <li class="sidebar__label">Mi cuenta</li>
-
-            <li>
-                <a th:href="@{/postulante/perfil}"
-                    th:classappend="${activeMenu == 'perfil'} ? 'sidebar__active' : ''">
-                    <i class="fa-solid fa-user-gear"></i> <span class="sidebar__text">Mi Perfil</span>
-                </a>
-            </li>
-
-            <li>
-                <a th:href="@{/postulante/configuracion}"
-                    th:classappend="${activeMenu == 'configuracion'} ? 'sidebar__active' : ''">
-                    <i class="fa-solid fa-gear"></i> <span class="sidebar__text">Configuración</span>
-                </a>
-            </li>
-
-            <li class="sidebar__theme-item">
-                <button type="button" class="sidebar__theme" data-theme-toggle aria-label="Cambiar a modo oscuro">
-                    <i class="fa-solid fa-moon"></i><i class="fa-solid fa-sun"></i>
-                    <span class="sidebar__text theme-label--dark">Modo oscuro</span>
-                    <span class="sidebar__text theme-label--light">Modo claro</span>
+            <div class="sidebar__logo">
+                <button type="button" class="sidebar__toggle" id="sidebarToggle" aria-label="Ocultar menú"
+                    aria-controls="sidebar" aria-expanded="true">
+                    <span class="sidebar__toggle-icon"><i class="fa-solid fa-bars"></i></span>
                 </button>
-            </li>
-
-            <li>
-                <a th:href="@{/logout}" class="sidebar__logout">
-                    <i class="fa-solid fa-right-from-bracket"></i> <span class="sidebar__text">Cerrar Sesión</span>
+                <a class="sidebar__brand" th:href="@{/postulante/vacantes}" aria-label="HireConnect, ir a vacantes">
+                    <img class="sidebar__logo-img" th:src="@{/source/img/isotipo.png}" alt="">
+                    <span class="sidebar__brand-name">Hire<span class="sidebar__highlight">Connect</span></span>
                 </a>
-            </li>
-        </ul>
-    </nav>
-</aside>
+            </div>
+
+            <nav class="sidebar__nav" aria-label="Navegación del postulante">
+                <ul>
+                    <li>
+                        <a th:href="@{/postulante/vacantes}" class="sidebar__link" data-label="Vacantes"
+                            th:classappend="${activeMenu == 'vacantes'} ? 'sidebar__active'"
+                            th:attr="aria-current=${activeMenu == 'vacantes'} ? 'page'">
+                            <span class="sidebar__icon"><i class="fa-solid fa-briefcase"></i></span>
+                            <span class="sidebar__text">Vacantes</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a th:href="@{/postulante/postulaciones}" class="sidebar__link" data-label="Mis Postulaciones"
+                            th:classappend="${activeMenu == 'postulaciones' or activeMenu == 'mis_postulaciones'} ? 'sidebar__active'"
+                            th:attr="aria-current=${activeMenu == 'postulaciones' or activeMenu == 'mis_postulaciones'} ? 'page'">
+                            <span class="sidebar__icon"><i class="fa-solid fa-clipboard-list"></i></span>
+                            <span class="sidebar__text">Mis Postulaciones</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a th:href="@{/postulante/perfil}" class="sidebar__link" data-label="Mi Perfil"
+                            th:classappend="${activeMenu == 'perfil'} ? 'sidebar__active'"
+                            th:attr="aria-current=${activeMenu == 'perfil'} ? 'page'">
+                            <span class="sidebar__icon"><i class="fa-solid fa-user-gear"></i></span>
+                            <span class="sidebar__text">Mi Perfil</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a th:href="@{/postulante/configuracion}" class="sidebar__link" data-label="Configuración"
+                            th:classappend="${activeMenu == 'configuracion'} ? 'sidebar__active'"
+                            th:attr="aria-current=${activeMenu == 'configuracion'} ? 'page'">
+                            <span class="sidebar__icon"><i class="fa-solid fa-gear"></i></span>
+                            <span class="sidebar__text">Configuración</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar__bottom">
+                        <a th:href="@{/logout}" class="sidebar__link sidebar__logout" data-label="Cerrar Sesión">
+                            <span class="sidebar__icon"><i class="fa-solid fa-right-from-bracket"></i></span>
+                            <span class="sidebar__text">Cerrar Sesión</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <script th:src="@{/js/layout_postulante.js}" defer></script>
+    </th:block>
 
 </body>
 
