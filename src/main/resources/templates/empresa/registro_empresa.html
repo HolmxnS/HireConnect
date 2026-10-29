@@ -20,10 +20,11 @@
     <!--Fonts-->
     <link rel="stylesheet" th:href="@{/styles/satoshi.css}" />
     <link rel="stylesheet" th:href="@{/styles/clash-display.css}" />
-    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
+    <link rel="icon" type="image/svg+xml" sizes="any" th:href="@{/source/img/favicon.svg}">
     <!--Icons (font awesome kit)-->
     <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
     <title>Registro - Empresa</title>
+    <link rel="stylesheet" th:href="@{/styles/brand.css}" />
 </head>
 
 <body>
@@ -33,8 +34,8 @@
         <section class="signup__panel">
 
             <header class="signup__top">
-                <a class="signup__logo" th:href="@{/}" aria-label="Ir al inicio">
-                    <i class="fa-solid fa-bolt" aria-hidden="true"></i>
+                <a class="signup__logo hc-logo-badge" th:href="@{/}" aria-label="Ir al inicio">
+                    <span class="hc-logo-mark" aria-hidden="true"><img th:src="@{/source/img/isotipo.png}" alt="" /></span>
                 </a>
             </header>
 
@@ -82,12 +83,6 @@
                     <!--Paso 1: informacion legal-->
                     <div id="step-1" class="form__step">
 
-                        <h2 class="form__section">
-                            <span class="form__section-icon" aria-hidden="true"><i
-                                    class="fa-solid fa-building"></i></span>
-                            Información legal
-                        </h2>
-
                         <div class="form__row">
                             <div class="form__field">
                                 <label class="form__label" for="nombreLegal">Nombre legal de la empresa</label>
@@ -129,12 +124,6 @@
 
                     <!--Paso 2: contacto y cuenta-->
                     <div id="step-2" class="form__step" hidden>
-
-                        <h2 class="form__section">
-                            <span class="form__section-icon" aria-hidden="true"><i
-                                    class="fa-solid fa-envelope"></i></span>
-                            Contacto
-                        </h2>
 
                         <div class="form__row">
                             <div class="form__field">

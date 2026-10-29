@@ -1,0 +1,161 @@
+/* Isotipo oficial: reutiliza el archivo del sidebar sin modificar la imagen. */
+.hc-logo-mark {
+    position: relative;
+    display: inline-block;
+    flex: none;
+    width: 2.4rem;
+    height: 3.5rem;
+    overflow: hidden;
+    vertical-align: middle;
+}
+
+/* Se encuadra el PNG original y se conserva su proporción, sin estirarlo. */
+.hc-logo-mark > img {
+    position: absolute;
+    left: -17%;
+    top: -47%;
+    width: 134%;
+    height: auto;
+    max-width: none;
+    display: block;
+    /* Contorno mínimo para reforzar los trazos sin un halo difuminado. */
+    filter: drop-shadow(.2px 0 0 #8e22bb) drop-shadow(-.2px 0 0 #8e22bb);
+}
+
+.menu__logo, .type__logo, .footer__logo, .hc-logo-wordmark {
+    display: inline-flex;
+    align-items: center;
+    gap: .8rem;
+}
+
+.hc-logo-name { white-space: nowrap; }
+
+.login__logo.hc-logo-badge,
+.signup__logo.hc-logo-badge,
+.recover__logo.hc-logo-badge {
+    width: 5.2rem;
+    height: 5.6rem;
+    background: transparent;
+    border-radius: 0;
+}
+
+.hc-logo-wordmark .hc-logo-mark { width: 2.4rem; height: 3.5rem; }
+
+@media (max-width: 480px) {
+    .menu__logo { gap: .6rem; }
+    .menu__logo .hc-logo-mark { width: 2.2rem; height: 3.2rem; }
+}
+
+/* Marca más ligera y legible en ambos temas. */
+.menu__logo,
+.type__logo,
+.footer__logo,
+.sidebar__logo h1.hc-logo-wordmark,
+.sidebar__brand-name,
+.hc-logo-wordmark {
+    font-weight: 600;
+    letter-spacing: 0;
+}
+
+.hc-logo-name span,
+.hc-logo-wordmark > span:not(.hc-logo-mark) span {
+    font-weight: inherit;
+}
+
+:root[data-theme="dark"] .hc-logo-mark > img,
+:root[data-theme="dark"] .sidebar__logo-img {
+    filter: brightness(0) invert(1) drop-shadow(.2px 0 0 #fff) drop-shadow(-.2px 0 0 #fff);
+}
+
+:root[data-theme="dark"] .menu__logo,
+:root[data-theme="dark"] .type__logo,
+:root[data-theme="dark"] .footer__logo,
+:root[data-theme="dark"] .sidebar__logo h1.hc-logo-wordmark,
+:root[data-theme="dark"] .sidebar__brand-name,
+:root[data-theme="dark"] .hc-logo-wordmark {
+    color: #f6f1f9;
+}
+
+:root[data-theme="dark"] .menu__logo-highlight,
+:root[data-theme="dark"] .type__logo-highlight,
+:root[data-theme="dark"] .footer__logo-highlight,
+:root[data-theme="dark"] .hc-logo-wordmark .header__logo-higlight,
+:root[data-theme="dark"] .hc-logo-wordmark .logo-higlight,
+:root[data-theme="dark"] .sidebar__highlight {
+    color: #d19ae8;
+}
+
+/* Tamaño compacto y peso intermedio para el nombre de la marca. */
+.menu__logo { font-size: 2.2rem; }
+.type__logo { font-size: 2.4rem; }
+.footer__logo { font-size: 2.3rem; }
+.sidebar__logo h1.hc-logo-wordmark,
+.sidebar__brand-name { font-size: 2rem; }
+.hc-logo-wordmark .sidebar__highlight,
+.hc-logo-wordmark .header__logo-higlight,
+.hc-logo-wordmark .logo-higlight { font-size: inherit; }
+.sidebar__logo-img { height: 3rem; }
+@media (max-width: 480px) { .menu__logo { font-size: 2rem; } }
+
+/* Reserva fija: el tamaño y desplazamiento visual del isotipo no afectan al formulario. */
+.login__top,
+.signup__top {
+    flex: 0 0 5.6rem;
+    height: 5.6rem;
+}
+
+.login__logo.hc-logo-badge,
+.signup__logo.hc-logo-badge,
+.recover__logo.hc-logo-badge {
+    position: relative;
+    width: 5.6rem;
+    height: 5.6rem;
+    margin: 0;
+    border: 1px solid #eadff0;
+    border-radius: 1.4rem;
+    background: #f6f1f9;
+    transition: none;
+}
+
+/* El desplazamiento relativo conserva el espacio original del encabezado. */
+.login__logo.hc-logo-badge {
+    top: calc(2.8rem + 45px);
+}
+
+.login__logo.hc-logo-badge .hc-logo-mark,
+.signup__logo.hc-logo-badge .hc-logo-mark,
+.recover__logo.hc-logo-badge .hc-logo-mark {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 2.4rem;
+    height: 3.5rem;
+    transform: translate(-50%, -50%);
+}
+
+.login__logo.hc-logo-badge:hover,
+.signup__logo.hc-logo-badge:hover,
+.recover__logo.hc-logo-badge:hover {
+    transform: none;
+}
+
+/* El isotipo conserva el morado original sobre una base clara, también en dark. */
+.signup__logo.hc-logo-badge { top: 3.2rem; }
+
+.login__logo.hc-logo-badge .hc-logo-mark > img,
+.signup__logo.hc-logo-badge .hc-logo-mark > img,
+.recover__logo.hc-logo-badge .hc-logo-mark > img {
+    filter: none;
+}
+
+:root[data-theme="dark"] .login__logo.hc-logo-badge,
+:root[data-theme="dark"] .signup__logo.hc-logo-badge,
+:root[data-theme="dark"] .recover__logo.hc-logo-badge {
+    background: #f6f1f9;
+    border-color: #f6f1f9;
+}
+
+@media (max-height: 720px) {
+    .login__logo.hc-logo-badge { top: 2rem; }
+    .signup__logo.hc-logo-badge { top: 1rem; }
+}

@@ -20,18 +20,19 @@
     <!--Fonts-->
     <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
     <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
-    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
+    <link rel="icon" type="image/svg+xml" sizes="any" th:href="@{/source/img/favicon.svg}">
     <!--Icons (font awesome kit)-->
     <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
-    <title>Registro</title>
+    <title>Elige tu cuenta | HireConnect</title>
+    <link rel="stylesheet" th:href="@{/styles/brand.css}" />
 </head>
 
 <body>
     <main class="type">
 
         <header class="type__header">
-            <a class="type__logo" th:href="@{/}" aria-label="HireConnect, inicio">Hire<span
-                    class="type__logo-highlight">Connect</span></a>
+            <a class="type__logo" th:href="@{/}" aria-label="HireConnect, inicio"><span class="hc-logo-mark" aria-hidden="true"><img th:src="@{/source/img/isotipo.png}" alt="" /></span><span class="hc-logo-name">Hire<span
+                    class="type__logo-highlight">Connect</span></span></a>
 
             <p class="type__login">
                 <span class="type__login-text">¿Ya tienes una cuenta?</span>
@@ -42,8 +43,8 @@
         <section class="type__body">
 
             <div class="type__intro">
-                <h1 class="type__title">Selecciona tu tipo de cuenta</h1>
-                <p class="type__subtitle">Encuentra tu próxima oportunidad o publica talento para tu empresa.</p>
+                <h1 class="type__title">¿Cómo quieres usar HireConnect?</h1>
+                <p class="type__subtitle">Elige una cuenta para buscar empleo o gestionar las vacantes de tu empresa.</p>
             </div>
 
             <!--Opciones: se elige una y se continúa con la flecha-->
@@ -57,7 +58,7 @@
                     <span class="roles__card">
                         <span class="roles__icon" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
                         <span class="roles__name">Postulante</span>
-                        <span class="roles__desc">Busco un nuevo empleo</span>
+                        <span class="roles__desc">Explora vacantes y postúlate con tu perfil.</span>
                     </span>
                 </label>
 
@@ -68,13 +69,13 @@
                     <span class="roles__card">
                         <span class="roles__icon" aria-hidden="true"><i class="fa-solid fa-building"></i></span>
                         <span class="roles__name">Empresa</span>
-                        <span class="roles__desc">Busco talento</span>
+                        <span class="roles__desc">Publica vacantes y gestiona tus candidatos.</span>
                     </span>
                 </label>
             </fieldset>
 
             <div class="type__actions">
-                <a class="type__back" th:href="@{/login}">Volver</a>
+                <a class="type__back" th:href="@{/}">Volver al inicio</a>
 
                 <!--Si viene de Google: formulario POST (el destino lo ajusta register.js según la opción elegida)-->
                 <form class="type__next-form" th:if="${oauthPending}" th:action="@{/register/oauth/postulante}"
@@ -96,22 +97,22 @@
                 <li class="trust__item">
                     <span class="trust__icon" aria-hidden="true"><i class="fa-solid fa-shield-halved"></i></span>
                     <div class="trust__text">
-                        <strong class="trust__title">Seguro y confiable.</strong>
-                        <span class="trust__desc">Tus datos están protegidos.</span>
+                        <strong class="trust__title">Acceso verificado</strong>
+                        <span class="trust__desc">Confirma tu correo para activar tu cuenta.</span>
                     </div>
                 </li>
                 <li class="trust__item">
                     <span class="trust__icon" aria-hidden="true"><i class="fa-solid fa-user-group"></i></span>
                     <div class="trust__text">
-                        <strong class="trust__title">Miles de oportunidades.</strong>
-                        <span class="trust__desc">Conecta con el mejor talento.</span>
+                        <strong class="trust__title">Todo en un lugar</strong>
+                        <span class="trust__desc">Gestiona tus postulaciones o vacantes.</span>
                     </div>
                 </li>
                 <li class="trust__item">
                     <span class="trust__icon" aria-hidden="true"><i class="fa-solid fa-bolt"></i></span>
                     <div class="trust__text">
-                        <strong class="trust__title">Rápido y fácil.</strong>
-                        <span class="trust__desc">Crea tu cuenta en minutos.</span>
+                        <strong class="trust__title">Registro paso a paso</strong>
+                        <span class="trust__desc">Completa tus datos y empieza a conectar.</span>
                     </div>
                 </li>
             </ul>

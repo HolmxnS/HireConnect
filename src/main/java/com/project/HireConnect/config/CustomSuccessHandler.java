@@ -40,7 +40,7 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
             else if (esEmpresa) {
                 redirectURL = "/empresa/home"; 
             } else if (esPersona) {
-                redirectURL = "/postulante/home"; 
+                redirectURL = "/postulante/vacantes";
             } else {
                 redirectURL = "/home"; 
             }

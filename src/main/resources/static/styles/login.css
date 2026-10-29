@@ -126,6 +126,8 @@ a {
 }
 
 .login__content {
+    position: relative;
+    top: -1.2rem;
     width: 100%;
     max-width: 40rem;
     margin-block: auto;

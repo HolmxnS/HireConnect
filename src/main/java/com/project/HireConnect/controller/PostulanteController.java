@@ -68,18 +68,10 @@ public class PostulanteController {
         return postulanteService.buscarPorEmail(authentication.getName());
     }
 
-    // Inicio
-    @GetMapping({ "/home" })
-    public String homePostulantes(Authentication authentication, Model model) {
-        Optional<Postulante> optPostulante = getAuthenticatedPostulante(authentication);
-        if (optPostulante.isPresent()) {
-            Postulante postulante = optPostulante.get();
-            model.addAttribute("postulante", postulante);
-            model.addAttribute("vacantesRecomendadas",
-                    vacanteService.recomendarVacantes(postulante.getHabilidades()));
-        }
-        model.addAttribute("activeMenu", "home");
-        return "postulante/homePostulante";
+    // Compatibilidad con marcadores y enlaces antiguos.
+    @GetMapping("/home")
+    public String redirigirInicio() {
+        return "redirect:/postulante/vacantes";
     }
 
     @GetMapping("/vacantes/sugerencias")
@@ -130,7 +122,8 @@ public class PostulanteController {
         }
 
         model.addAttribute("postulante", postulante);
-        model.addAttribute("vacantes", vacantes);
+        model.addAttribute("vacantes", vacantes.stream()
+                .filter(v -> v.getEstado() == VacanteEstado.ACTIVA).toList());
         model.addAttribute("activeMenu", "vacantes");
         return "postulante/vacantePostulante";
     }
@@ -344,7 +337,7 @@ public class PostulanteController {
 
         if (optPerfilCompleto.isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Perfil no encontrado o incompleto.");
-            return "redirect:/postulante/home";
+            return "redirect:/postulante/vacantes";
         }
 
         model.addAttribute("postulante", optPerfilCompleto.get());
@@ -492,7 +485,7 @@ public class PostulanteController {
         Optional<Postulante> optPostulante = getAuthenticatedPostulante(authentication);
         if (optPostulante.isEmpty() || !optPostulante.get().getId().equals(id)) {
             redirectAttributes.addFlashAttribute("error", "Acceso denegado.");
-            return "redirect:/postulante/home";
+            return "redirect:/postulante/vacantes";
         }
 
         Postulante postulante = postulanteService.buscarPorId(id).get();
@@ -516,7 +509,7 @@ public class PostulanteController {
         Optional<Postulante> optPostulante = getAuthenticatedPostulante(authentication);
         if (optPostulante.isEmpty() || !optPostulante.get().getId().equals(id)) {
             redirectAttributes.addFlashAttribute("error", "Acceso denegado.");
-            return "redirect:/postulante/home";
+            return "redirect:/postulante/vacantes";
         }
 
         Postulante postulante = postulanteService.buscarPorId(id).get();
@@ -549,7 +542,7 @@ public class PostulanteController {
         Optional<Postulante> optPostulanteAuth = getAuthenticatedPostulante(authentication);
         if (optPostulanteAuth.isEmpty() || !optPostulanteAuth.get().getId().equals(id)) {
             redirectAttributes.addFlashAttribute("error", "Acceso denegado.");
-            return "redirect:/postulante/home";
+            return "redirect:/postulante/vacantes";
         }
 
         Optional<Postulante> opt = postulanteService.buscarPorId(id);
@@ -588,7 +581,7 @@ public class PostulanteController {
         Optional<Postulante> optPostulante = getAuthenticatedPostulante(authentication);
         if (optPostulante.isEmpty() || !optPostulante.get().getId().equals(id)) {
             redirectAttributes.addFlashAttribute("error", "Acceso denegado.");
-            return "redirect:/postulante/home";
+            return "redirect:/postulante/vacantes";
         }
 
         postulanteService.buscarPorId(id).ifPresent(postulante -> {
@@ -616,7 +609,7 @@ public class PostulanteController {
         Optional<Postulante> optPostulante = getAuthenticatedPostulante(authentication);
         if (optPostulante.isEmpty() || !optPostulante.get().getId().equals(id)) {
             redirectAttributes.addFlashAttribute("error", "Acceso denegado.");
-            return "redirect:/postulante/home";
+            return "redirect:/postulante/vacantes";
         }
 
         Postulante postulante = postulanteService.buscarPorId(id).orElseThrow();
@@ -641,7 +634,7 @@ public class PostulanteController {
         Optional<Postulante> optPostulante = getAuthenticatedPostulante(authentication);
         if (optPostulante.isEmpty() || !optPostulante.get().getId().equals(id)) {
             redirectAttributes.addFlashAttribute("error", "Acceso denegado.");
-            return "redirect:/postulante/home";
+            return "redirect:/postulante/vacantes";
         }
 
         Postulante postulante = postulanteService.buscarPorId(id).orElseThrow();
@@ -707,7 +700,7 @@ public class PostulanteController {
         Optional<Postulante> optPostulanteAuth = getAuthenticatedPostulante(authentication);
         if (optPostulanteAuth.isEmpty() || !optPostulanteAuth.get().getId().equals(id)) {
             redirectAttributes.addFlashAttribute("error", "Acceso denegado para subir CV.");
-            return "redirect:/postulante/home";
+            return "redirect:/postulante/vacantes";
         }
 
         try {

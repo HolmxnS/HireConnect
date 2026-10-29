@@ -106,37 +106,8 @@
 
   actualizarBotonesMenu();
 
-  /* ---------- Tema ----------
-       theme.js ya cambia el tema con [data-theme-toggle]. Si por algun motivo no lo hizo
-       en este clic, se cambia aqui, asi nunca se alterna dos veces. */
-  function etiquetaTema() {
-    var oscuro = root.getAttribute("data-theme") === "dark";
-    Array.prototype.forEach.call(
-      document.querySelectorAll(".topbar__theme"),
-      function (boton) {
-        var texto = oscuro ? "Cambiar a modo claro" : "Cambiar a modo oscuro";
-        boton.setAttribute("aria-label", texto);
-        boton.setAttribute("title", texto);
-      },
-    );
-  }
-
-  document.addEventListener("click", function (e) {
-    var boton = e.target.closest && e.target.closest(".topbar__theme");
-    if (!boton) return;
-
-    var antes = root.getAttribute("data-theme");
-    setTimeout(function () {
-      if (root.getAttribute("data-theme") === antes) {
-        var nuevo = antes === "dark" ? "light" : "dark";
-        root.setAttribute("data-theme", nuevo);
-        guardar("hc-theme", nuevo);
-      }
-      etiquetaTema();
-    }, 0);
-  });
-
-  etiquetaTema();
+  // theme.js gestiona el tema y las etiquetas de [data-theme-toggle].
+  // No registrar otro cambio aquí: un segundo listener revierte el mismo clic.
 
   /* ---------- Notificaciones ---------- */
   var caja = document.querySelector("[data-notif]");

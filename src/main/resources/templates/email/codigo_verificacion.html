@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verifica tu correo | HireConnect</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f6f1f9;font-family:Arial,Helvetica,sans-serif;color:#2b2233;">
+    <div style="display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;">Completa tu registro en HireConnect. Tu código de verificación vence en 10 minutos.</div>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#f6f1f9" style="background-color:#f6f1f9;">
+        <tr>
+            <td align="center" bgcolor="#8e22bb" style="padding:36px 16px 48px;background-color:#8e22bb;">
+                <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="width:100%;max-width:600px;">
+                    <tr>
+                        <td style="padding:0 0 24px 4px;color:#ffffff;font-size:28px;font-weight:bold;letter-spacing:-1px;">Hire<span style="color:#ead3f4;">Connect</span></td>
+                    </tr>
+                    <tr>
+                        <td align="center" bgcolor="#ffffff" style="padding:40px 24px;background-color:#ffffff;border-radius:12px;">
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                                <tr><td align="center" bgcolor="#f6f1f9" style="width:64px;height:64px;background-color:#f6f1f9;border-radius:16px;color:#8e22bb;font-size:32px;">&#9993;</td></tr>
+                            </table>
+                            <p style="margin:24px 0 10px;font-size:12px;font-weight:bold;letter-spacing:2px;color:#8e22bb;">UN PASO MÁS PARA COMENZAR</p>
+                            <h1 style="margin:0 0 16px;font-size:28px;line-height:36px;color:#2b2233;">¡Verifica tu correo!</h1>
+                            <p style="margin:0;font-size:16px;line-height:26px;color:#51465a;">Gracias por unirte a HireConnect.<br>Ingresa este código en la pantalla de verificación<br>para completar tu registro.</p>
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:28px auto 20px;">
+                                <tr>
+                                    <td align="center" bgcolor="#f6f1f9" style="padding:20px 24px;background-color:#f6f1f9;border:1px solid #ead3f4;border-radius:10px;">
+                                        <p style="margin:0 0 10px;font-size:11px;font-weight:bold;letter-spacing:2px;color:#51465a;">TU CÓDIGO DE VERIFICACIÓN</p>
+                                        <p th:text="${codigo}" style="margin:0;font-family:'Courier New',monospace;font-size:36px;line-height:44px;font-weight:bold;letter-spacing:7px;color:#7c1da4;">000000</p>
+                                    </td>
+                                </tr>
+                            </table>
+                            <p style="margin:0;font-size:14px;line-height:22px;color:#51465a;">Este código es válido durante <strong style="color:#2b2233;">10 minutos</strong>.</p>
+                            <p style="margin:12px 0 0;font-size:13px;line-height:21px;color:#51465a;">Por tu seguridad, no lo compartas con nadie.</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td align="center" style="padding:20px 16px 36px;">
+                <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="width:100%;max-width:600px;">
+                    <tr>
+                        <td bgcolor="#ffffff" style="padding:22px 24px;background-color:#ffffff;border-radius:10px;border:1px solid #ead3f4;">
+                            <p style="margin:0 0 6px;font-size:14px;font-weight:bold;color:#2b2233;">¿No solicitaste este registro?</p>
+                            <p style="margin:0;font-size:13px;line-height:21px;color:#51465a;">Puedes ignorar este mensaje. No se creará una cuenta sin verificar el código.</p>
+                        </td>
+                    </tr>
+                    <tr><td align="center" style="padding:24px 12px 0;font-size:12px;line-height:20px;color:#75687d;">El equipo de HireConnect<br>Este correo se envía automáticamente. No respondas a este mensaje.</td></tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

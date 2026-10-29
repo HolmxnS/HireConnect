@@ -40,7 +40,7 @@ public class DashboardController {
         }
         Optional<Postulante> optPostulante = postulanteService.buscarPorEmail(email);
         if (optPostulante.isPresent()) {
-            return "redirect:/postulante/home";
+            return "redirect:/postulante/vacantes";
         }
         
         Optional<Empresa> optEmpresa = empresaService.buscarPorEmailEmpresa(email);

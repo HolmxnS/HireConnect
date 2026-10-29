@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" th:href="@{/styles/postulante/registro_postulante.css}" />
     <title>Completar Perfil - HireConnect</title>
+    <link rel="stylesheet" th:href="@{/styles/brand.css}" />
 </head>
 <body>
     <div class="container">
         <div class="form-panel">
             <header class="header">
                 <div class="header__logo">
-                    <a th:href="@{/}"><h1>Hire<span class="header__logo-higlight">Connect</span></h1></a>
+                    <a th:href="@{/}"><h1 class="hc-logo-wordmark"><span class="hc-logo-mark" aria-hidden="true"><img th:src="@{/source/img/isotipo.png}" alt="" /></span><span>Hire<span class="header__logo-higlight">Connect</span></span></h1></a>
                 </div>
             </header>
 
@@ -99,7 +100,7 @@
                     </form>
 
                     <div class="card__footer">
-                        <a th:href="@{/postulante/home}">← Volver al inicio</a>
+                        <a th:href="@{/postulante/vacantes}">← Ver vacantes</a>
                     </div>
                 </div>
             </main>

@@ -9,6 +9,7 @@
     <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
     <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
     <title>Sidebar Postulante</title>
+    <link rel="stylesheet" th:href="@{/styles/brand.css}" />
 </head>
 
 <body>
@@ -45,7 +46,7 @@
                     <span class="sidebar__toggle-icon"><i class="fa-solid fa-bars"></i></span>
                 </button>
                 <a class="sidebar__brand" th:href="@{/postulante/vacantes}" aria-label="HireConnect, ir a vacantes">
-                    <img class="sidebar__logo-img" th:src="@{/source/img/isotipo.png}" alt="">
+                    <span class="hc-logo-mark" aria-hidden="true"><img th:src="@{/source/img/isotipo.png}" alt="" /></span>
                     <span class="sidebar__brand-name">Hire<span class="sidebar__highlight">Connect</span></span>
                 </a>
             </div>

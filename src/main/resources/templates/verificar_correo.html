@@ -1,101 +1,88 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+        (function () {
+            var theme = 'light';
+            try {
+                var saved = localStorage.getItem('hc-theme');
+                theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            } catch (e) { }
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+    <link rel="stylesheet" th:href="${tipoRegistro == 'EMPRESA'} ? @{/styles/empresa/registro_empresa.css} : @{/styles/postulante/registro_postulante.css}" />
     <link rel="stylesheet" th:href="@{/styles/check_email.css}" />
     <link rel="stylesheet" th:href="@{/styles/satoshi.css}" />
     <link rel="stylesheet" th:href="@{/styles/clash-display.css}" />
-    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
+    <link rel="icon" type="image/svg+xml" sizes="any" th:href="@{/source/img/favicon.svg}" />
     <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
     <title>Verificar correo – HireConnect</title>
-    <style>
-
-    </style>
+    <link rel="stylesheet" th:href="@{/styles/brand.css}" />
 </head>
-
 <body>
-    <div class="container">
-        <div class="hero" th:classappend="${tipoRegistro == 'EMPRESA'} ? 'hero--empresa' : 'hero--postulante'">
-            <h2 class="hero__title">Casi listo. Solo falta un paso.</h2>
-            <p class="hero__info">Verificamos tu correo para asegurarnos de que eres tú. Es rápido y seguro.</p>
-        </div>
-
-        <div class="form-panel">
-            <header class="header">
-                <div class="header__logo">
-                    <a th:href="@{/}">
-                        <h1>Hire<span class="header__logo-higlight">Connect</span></h1>
-                    </a>
-                </div>
-                <span class="header__step">Paso 3 de 3</span>
+    <main class="signup">
+        <section class="signup__panel" aria-labelledby="verify-title">
+            <header class="signup__top">
+                <a class="signup__logo hc-logo-badge" th:href="@{/}" aria-label="Ir al inicio">
+                    <span class="hc-logo-mark" aria-hidden="true"><img th:src="@{/source/img/isotipo.png}" alt="" /></span>
+                </a>
             </header>
-
-            <main class="main">
-                <div class="verify">
-                    <i class="fa-solid fa-envelope-circle-check verify__icon"></i>
-                    <h2 class="verify__title">Revisa tu correo</h2>
-                    <p class="verify__subtitle">
-                        Enviamos un código de 6 dígitos a
-                        <span class="verify__email" th:text="${emailDestino}">correo@ejemplo.com</span>.
-                        El código expira en 10 minutos.
+            <div class="signup__content">
+                <ol class="stepper" data-step="3" aria-label="Progreso del registro">
+                    <li class="stepper__step">
+                        <span class="stepper__circle">1</span>
+                        <span class="stepper__label" th:text="${tipoRegistro == 'EMPRESA'} ? 'Datos de la empresa' : 'Datos personales'">Datos personales</span>
+                    </li>
+                    <li class="stepper__step">
+                        <span class="stepper__circle">2</span><span class="stepper__label">Cuenta</span>
+                    </li>
+                    <li class="stepper__step" aria-current="step">
+                        <span class="stepper__circle">3</span><span class="stepper__label">Verificación</span>
+                    </li>
+                </ol>
+                <div class="signup__intro">
+                    <h1 class="signup__title" id="verify-title">Revisa tu correo</h1>
+                    <p class="signup__subtitle" id="verify-description">Enviamos un código de 6 dígitos a<br>
+                        <strong class="verify__email" th:text="${emailDestino}">correo@ejemplo.com</strong>.
                     </p>
-                    <div th:if="${error}" class="flash-alert flash-alert--error">
-                        <span th:text="${error}"></span>
-                    </div>
-                    <div th:if="${exito}" class="flash-alert flash-alert--success">
-                        <i class="fa-solid fa-circle-check"></i>
-                        <span th:text="${exito}"></span>
-                    </div>
-
-                    <form th:action="@{/register/verificar-codigo}" method="post" id="verifyForm">
-                        <div class="code-inputs">
-                            <input class="code-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]"
-                                autocomplete="off" id="c1" />
-                            <input class="code-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]"
-                                autocomplete="off" id="c2" />
-                            <input class="code-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]"
-                                autocomplete="off" id="c3" />
-                            <span class="code-inputs__separator">—</span>
-                            <input class="code-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]"
-                                autocomplete="off" id="c4" />
-                            <input class="code-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]"
-                                autocomplete="off" id="c5" />
-                            <input class="code-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]"
-                                autocomplete="off" id="c6" />
-                        </div>
-                        <input type="hidden" name="codigo" id="codigoCompleto" />
-                        <button type="submit" class="btn-verify" id="btnVerify" disabled>
-                            <i class="fa-solid fa-shield-check"></i> Verificar código
-                        </button>
-                    </form>
-
-                    <p class="resend">
-                        ¿No llegó el código?
-                    <form th:action="@{/register/reenviar-codigo}" method="post" style="display:inline">
-                        <button type="submit" class="resend__btn" id="btnResend">Reenviar código</button>
-                    </form>
-                    </p>
-                    <p class="resend" id="timerText" style="display:none">
-                        Puedes reenviar en <span class="resend__timer" id="countdown">60</span>s
-                    </p>
-
-                    <div class="card__footer">
-                        <p th:if="${tipoRegistro == 'EMPRESA'}">
-                            ¿Quieres usar otro correo?
-                            <a th:href="@{/register/empresa}">Volver al registro de empresa</a>
-                        </p>
-                        <p th:unless="${tipoRegistro == 'EMPRESA'}">
-                            ¿Quieres usar otro correo?
-                            <a th:href="@{/register/postulante}">Volver al registro</a>
-                        </p>
-                    </div>
                 </div>
-            </main>
-        </div>
-    </div>
-
+                <div class="verify">
+                    <div th:if="${error}" class="flash-alert flash-alert--error" role="alert"><span th:text="${error}"></span></div>
+                    <div th:if="${exito}" class="flash-alert flash-alert--success" role="status"><span th:text="${exito}"></span></div>
+                    <form th:action="@{/register/verificar-codigo}" method="post" id="verifyForm" aria-describedby="verify-description">
+                        <div class="code-inputs" role="group" aria-label="Código de verificación de seis dígitos">
+                            <input class="code-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off" id="c1" aria-label="Dígito 1 de 6" />
+                            <input class="code-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off" id="c2" aria-label="Dígito 2 de 6" />
+                            <input class="code-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off" id="c3" aria-label="Dígito 3 de 6" />
+                            <span class="code-inputs__separator" aria-hidden="true">—</span>
+                            <input class="code-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off" id="c4" aria-label="Dígito 4 de 6" />
+                            <input class="code-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off" id="c5" aria-label="Dígito 5 de 6" />
+                            <input class="code-input" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off" id="c6" aria-label="Dígito 6 de 6" />
+                        </div>
+                        <p class="verify__expiry">El código expira en <strong>10 minutos</strong>.</p>
+                        <input type="hidden" name="codigo" id="codigoCompleto" />
+                        <button type="submit" class="form__submit btn-verify" id="btnVerify" disabled>Verificar código <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+                    </form>
+                    <div class="resend">
+                        <p>¿No llegó el código?</p>
+                        <form th:action="@{/register/reenviar-codigo}" method="post">
+                            <button type="submit" class="resend__btn" id="btnResend">Reenviar código</button>
+                        </form>
+                    </div>
+                    <p class="resend" id="timerText" style="display:none">Puedes reenviar en <span class="resend__timer" id="countdown">60</span>s</p>
+                    <p class="signup__footer">¿Quieres usar otro correo?
+                        <a class="signup__footer-link" th:href="${tipoRegistro == 'EMPRESA'} ? @{/register/empresa} : @{/register/postulante}">Volver al registro</a>
+                    </p>
+                </div>
+            </div>
+        </section>
+        <aside class="signup__art" aria-hidden="true">
+            <img class="signup__art-img" th:src="@{/source/img/login-art.png}" alt="" />
+        </aside>
+    </main>
     <!-- Modal: código incorrecto -->
     <div id="modal-error" class="modal-overlay" aria-hidden="true">
         <div class="modal">
@@ -111,5 +98,4 @@
 
     <script th:src="@{/js/verificar_codigo.js}"></script>
 </body>
-
 </html>

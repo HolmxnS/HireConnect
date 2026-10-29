@@ -31,7 +31,7 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
         } 
         // persona
         else if (authorities.stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_PERSONA"))) {
-            redirectUrl = "/postulante/home"; 
+            redirectUrl = "/postulante/vacantes";
         } 
         response.sendRedirect(request.getContextPath() + redirectUrl);
     }

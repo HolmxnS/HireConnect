@@ -493,7 +493,7 @@ public class LoginController {
                 .orElseThrow(() -> new RuntimeException("Postulante no encontrado"));
 
         if (postulante.isPerfilCompleto()) {
-            return "redirect:/postulante/home";
+            return "redirect:/postulante/vacantes";
         }
 
         model.addAttribute("postulante", postulante);
@@ -518,7 +518,7 @@ public class LoginController {
 
         if (existente.isPerfilCompleto()) {
             redirectAttributes.addFlashAttribute("error", "El perfil ya está completo. Contacta soporte para cambios.");
-            return "redirect:/postulante/home";
+            return "redirect:/postulante/vacantes";
         }
 
         if (postulanteActualizado.getTipoDocumento() == null) {
@@ -556,7 +556,7 @@ public class LoginController {
         postulanteService.guardar(existente);
 
         redirectAttributes.addFlashAttribute("exito", "¡Perfil de postulante completado!");
-        return "redirect:/postulante/home";
+        return "redirect:/postulante/vacantes";
     }
 
     @GetMapping("/empresa/completar_perfil_empresa")
@@ -638,7 +638,9 @@ public class LoginController {
         List<Vacante> activas = vacanteService.buscarPorFiltros(null, null, null, null).stream()
                 .filter(v -> v != null && v.getEstado() == VacanteEstado.ACTIVA && v.getEmpresa() != null)
                 .sorted(Comparator.comparing(Vacante::getFechaPublicacion,
-                        Comparator.nullsLast(Comparator.<java.time.LocalDate>reverseOrder())))
+                        Comparator.nullsLast(Comparator.<java.time.LocalDate>reverseOrder()))
+                        // MongoDB ObjectIds provide creation order for same-day publications.
+                        .thenComparing(Vacante::getId, Comparator.nullsLast(Comparator.reverseOrder())))
                 .toList();
 
         Map<String, Optional<Empresa>> empresas = new HashMap<>();

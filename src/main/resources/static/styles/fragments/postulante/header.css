@@ -51,10 +51,10 @@
   align-items: center;
   gap: 0.8rem;
   height: 4.8rem;
-  padding: 0 0.6rem 0 0.6rem;
+  padding: 0 .6rem;
   background: var(--hc-soft);
-  border: 1px solid transparent;
-  border-radius: 10rem;
+  border: 1px solid var(--hc-line);
+  border-radius: 1.2rem;
   transition:
     border-color 0.15s ease,
     box-shadow 0.15s ease,
@@ -99,9 +99,9 @@
   display: grid;
   place-items: center;
   border: none;
-  border-radius: 50%;
+  border-radius: .8rem;
   background: transparent;
-  color: var(--hc-muted);
+  color: var(--hc-accent-ink);
   cursor: pointer;
   transition:
     background-color 0.15s ease,
@@ -1003,4 +1003,71 @@
   .filter-overlay {
     transition: none;
   }
+}
+/* El buscador conserva espacio propio en pantallas estrechas. */
+@media (max-width: 640px) {
+  .vacancy-browser { --header-h: 13rem; }
+  .header-container--search .header-content {
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem 1.6rem;
+  }
+  .header-container--search .topbar-actions {
+    order: 0;
+    margin-left: auto;
+  }
+  .header-container--search .search-wrapper {
+    order: 1;
+    flex: 0 0 100%;
+    max-width: none;
+  }
+  .header-container--search .search-bar-google { height: 4.6rem; }
+  .header-container--search .search-bar-google input[type="text"] { height: 4.2rem; }
+  .vacancy-browser > main { margin-top: calc(var(--header-h) + 1.6rem); }
+}
+
+/* Vacantes: barra superior estable, sin desplazamiento animado al recargar. */
+.vacancy-browser .header-container {
+  animation: none;
+  transition: none;
+}
+
+/* Vacantes reserva el espacio del header desde el primer renderizado. */
+body.vacancy-browser main.main {
+  margin-top: calc(var(--header-h, 7.1rem) + 1.6rem);
+}
+
+/* Sesión activa de la cuenta que está usando la aplicación. */
+.profile-box > a {
+  position: relative;
+}
+
+.profile-box__online {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 1.2rem;
+  height: 1.2rem;
+  border: .2rem solid var(--hc-surface);
+  border-radius: 50%;
+  background: #22c55e;
+  pointer-events: none;
+}
+
+.profile-box__online::after {
+  content: '';
+  position: absolute;
+  inset: -.2rem;
+  border: .15rem solid #22c55e;
+  border-radius: inherit;
+  animation: profile-online-pulse 2.4s ease-out infinite;
+}
+
+@keyframes profile-online-pulse {
+  0% { transform: scale(1); opacity: .65; }
+  75%, 100% { transform: scale(1.8); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .profile-box__online::after { animation: none; opacity: 0; }
 }

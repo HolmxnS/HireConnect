@@ -14,13 +14,14 @@
   <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
   <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
   <!--Icons-->
-  <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
-  <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
+  <link rel="icon" type="image/svg+xml" sizes="any" th:href="@{/source/img/favicon.svg}">
+  <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous" defer></script>
 
   <title>Vacantes Disponibles - HireConnect</title>
+    <link rel="stylesheet" th:href="@{/styles/brand.css}" />
 </head>
 
-<body>
+<body class="vacancy-browser">
   <div th:if="${error}" class="modal" id="errorModal">
     <div class="modal__container">
       <div class="modal__content">
@@ -48,6 +49,8 @@
   </div>
 
   <div th:replace="~{fragments/postulante/sidebar_postulante :: sidebar ('vacantes')}"></div>
+
+  <div th:replace="~{fragments/postulante/header_postulante :: menu-fragment(true)}"></div>
 
   <main class="main">
 
@@ -123,7 +126,6 @@
       <p class="no-vacancies-text">Intenta ajustar tus criterios de búsqueda o vuelve más tarde.</p>
     </div>
 
-    <div th:replace="~{fragments/postulante/header_postulante :: menu-fragment(true)}"></div>
 
   </main>
 

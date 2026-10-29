@@ -15,6 +15,7 @@
     var orden = slides.slice();
     var timer = null;
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var mobile = window.matchMedia('(max-width: 860px)');
 
     function pintar() {
         orden.forEach(function (slide, i) {
@@ -23,10 +24,10 @@
 
             slide.classList.remove('offers__slide--center', 'offers__slide--right', 'offers__slide--left');
             slide.classList.add('offers__slide--' + pos);
-            slide.setAttribute('aria-hidden', activa ? 'false' : 'true');
+            slide.setAttribute('aria-hidden', mobile.matches || activa ? 'false' : 'true');
 
             Array.prototype.forEach.call(slide.querySelectorAll('a, button'), function (el) {
-                if (activa) {
+                if (mobile.matches || activa) {
                     el.removeAttribute('tabindex');
                 } else {
                     el.setAttribute('tabindex', '-1');
@@ -49,7 +50,7 @@
     }
 
     function iniciar() {
-        if (timer || reduceMotion.matches || document.hidden) return;
+        if (timer || mobile.matches || reduceMotion.matches || document.hidden || carrusel.contains(document.activeElement)) return;
         timer = setInterval(siguiente, INTERVALO);
     }
 
@@ -75,13 +76,33 @@
     //Si se toca la vacante de atras, pasa al frente
     slides.forEach(function (slide) {
         slide.addEventListener('click', function (e) {
-            if (!slide.classList.contains('offers__slide--center')) {
+            if (!mobile.matches && !slide.classList.contains('offers__slide--center')) {
                 e.preventDefault();
                 traerAlCentro(slide);
             }
         });
     });
 
-    pintar();
-    iniciar();
+    function adaptar() {
+        detener();
+        pintar();
+        if (mobile.matches) {
+            carrusel.setAttribute('tabindex', '0');
+            carrusel.setAttribute('aria-label', 'Vacantes recientes. Desliza o usa las flechas para explorar.');
+        } else {
+            carrusel.removeAttribute('tabindex');
+            carrusel.setAttribute('aria-label', 'Vacantes recientes');
+            carrusel.scrollLeft = 0;
+            iniciar();
+        }
+    }
+    carrusel.addEventListener('keydown', function (e) {
+        if (!mobile.matches || e.target !== carrusel || (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft')) return;
+        e.preventDefault();
+        carrusel.scrollBy({ left: (e.key === 'ArrowRight' ? 1 : -1) * (slides[0].getBoundingClientRect().width + 16),
+            behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+    });
+    mobile.addEventListener('change', adaptar);
+    reduceMotion.addEventListener('change', adaptar);
+    adaptar();
 })();

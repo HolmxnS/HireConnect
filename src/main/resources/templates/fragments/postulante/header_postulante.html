@@ -6,7 +6,8 @@
       rel="stylesheet"
       th:href="@{/styles/fragments/postulante/header.css}"
     />
-  </head>
+      <link rel="stylesheet" th:href="@{/styles/brand.css}" />
+</head>
 
   <body>
     <!--
@@ -274,7 +275,7 @@
       </div>
 
       <!-- Barra superior -->
-      <div class="header-container">
+      <div class="header-container" th:classappend="${mostrarBusqueda} ? 'header-container--search' : ''">
         <div class="header-content">
           <div th:if="${mostrarBusqueda}" class="search-wrapper">
             <div class="search-main">
@@ -324,7 +325,7 @@
                     type="text"
                     id="buscador"
                     name="filtro"
-                    placeholder="Buscar vacantes..."
+                    placeholder="Cargo o palabra clave"
                     aria-label="Buscar vacantes"
                     th:value="${filtro}"
                   />
@@ -431,8 +432,7 @@
             <div class="profile-box">
               <a
                 th:href="@{/postulante/perfil}"
-                aria-label="Mi perfil"
-                title="Mi perfil"
+                th:attr="aria-label=${postulante != null} ? 'Mi perfil · En línea' : 'Mi perfil',title=${postulante != null} ? 'Mi perfil · En línea' : 'Mi perfil'"
               >
                 <img
                   th:if="${postulante?.foto != null}"
@@ -445,6 +445,7 @@
                 >
                   <i class="fa-solid fa-user"></i>
                 </div>
+                <span th:if="${postulante != null}" class="profile-box__online" aria-hidden="true"></span>
               </a>
             </div>
           </div>

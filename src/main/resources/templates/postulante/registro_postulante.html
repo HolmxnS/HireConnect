@@ -20,10 +20,11 @@
     <!--Fonts-->
     <link rel="stylesheet" th:href="@{/styles/satoshi.css}" />
     <link rel="stylesheet" th:href="@{/styles/clash-display.css}" />
-    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
+    <link rel="icon" type="image/svg+xml" sizes="any" th:href="@{/source/img/favicon.svg}">
     <!--Icons (font awesome kit)-->
     <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
     <title>Registro - Postulante</title>
+    <link rel="stylesheet" th:href="@{/styles/brand.css}" />
 </head>
 
 <body>
@@ -33,8 +34,8 @@
         <section class="signup__panel">
 
             <header class="signup__top">
-                <a class="signup__logo" th:href="@{/}" aria-label="Ir al inicio">
-                    <i class="fa-solid fa-bolt" aria-hidden="true"></i>
+                <a class="signup__logo hc-logo-badge" th:href="@{/}" aria-label="Ir al inicio">
+                    <span class="hc-logo-mark" aria-hidden="true"><img th:src="@{/source/img/isotipo.png}" alt="" /></span>
                 </a>
             </header>
 

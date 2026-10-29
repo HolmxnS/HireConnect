@@ -134,12 +134,14 @@ a {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 3.2rem;
-    padding: 1.6rem 2rem 4rem;
+    gap: 3.6rem;
+    padding: 2.4rem 2rem 4rem;
 }
 
 .type__intro {
+    width: 100%;
     max-width: 56rem;
+    margin-inline: auto;
     text-align: center;
 }
 
@@ -151,7 +153,7 @@ a {
     font-size: 3.4rem;
     font-weight: 600;
     line-height: 1.15;
-    word-spacing: 0.1em;
+    text-wrap: balance;
 }
 
 /*Subrayado morado corto*/
@@ -168,7 +170,11 @@ a {
 }
 
 .type__subtitle {
-    margin-top: 1.4rem;
+    max-width: 44ch;
+    margin: 2rem auto 0;
+    text-align: center;
+    text-wrap: balance;
+    line-height: 1.7;
     font-size: 1.6rem;
     color: var(--muted);
 }
@@ -210,8 +216,8 @@ a {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.6rem;
-    padding: 1.6rem;
+    gap: 1rem;
+    padding: 2rem 1.6rem;
     text-align: center;
     background-color: var(--surface);
     color: var(--fg);
@@ -247,6 +253,10 @@ a {
 }
 
 .roles__desc {
+    max-width: 20ch;
+    line-height: 1.6;
+    text-align: center;
+    text-wrap: balance;
     font-size: 1.3rem;
     color: var(--muted);
     transition: color 0.25s ease;
@@ -327,17 +337,20 @@ a {
 
 /*Beneficios*/
 .trust {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 2rem 4rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+    max-width: 78rem;
+    gap: 2rem 3.2rem;
     margin-top: 0.8rem;
     list-style: none;
 }
 
 .trust__item {
     display: flex;
+    flex-direction: column;
     align-items: center;
+    text-align: center;
     gap: 1.2rem;
 }
 
@@ -356,6 +369,10 @@ a {
 .trust__text {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    gap: .8rem;
+    line-height: 1.7;
+    text-wrap: balance;
 }
 
 .trust__title {
@@ -394,9 +411,8 @@ a {
     }
 
     .trust {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1.6rem;
+        grid-template-columns: 1fr;
+        gap: 2rem;
     }
 }
 

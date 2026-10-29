@@ -20,10 +20,11 @@
     <!--Fonts-->
     <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
     <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
-    <link rel="icon" type="image/png" sizes="32x32" th:href="@{/source/img/hireconnect.png}">
+    <link rel="icon" type="image/svg+xml" sizes="any" th:href="@{/source/img/favicon.svg}">
     <!--Icons (font awesome kit)-->
     <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
     <title>Inicio</title>
+    <link rel="stylesheet" th:href="@{/styles/brand.css}" />
 </head>
 
 <body>
@@ -31,10 +32,10 @@
     <!--Menu-->
     <header class="menu">
         <div class="menu__container">
-            <a th:href="@{/}" class="menu__logo" aria-label="HireConnect, inicio">Hire<span
-                    class="menu__logo-highlight">Connect</span></a>
+            <a th:href="@{/}" class="menu__logo" aria-label="HireConnect, inicio"><span class="hc-logo-mark" aria-hidden="true"><img th:src="@{/source/img/isotipo.png}" alt="" /></span><span class="hc-logo-name">Hire<span
+                    class="menu__logo-highlight">Connect</span></span></a>
 
-            <nav class="menu__nav" aria-label="Main navigation">
+            <nav class="menu__nav" id="landing-navigation" aria-label="Navegación principal">
                 <ul class="menu__list">
                     <li class="menu__item"><a href="#ofertas" class="menu__link">Ofertas</a></li>
                     <li class="menu__item"><a href="#pasos" class="menu__link">Cómo funciona</a></li>
@@ -43,15 +44,21 @@
                 </ul>
             </nav>
 
-            <div class="menu__actions">
                 <button class="menu__theme" id="theme-toggle" type="button"
                     aria-label="Cambiar entre modo claro y oscuro" title="Cambiar tema">
                     <i class="fa-solid fa-moon menu__theme-icon menu__theme-icon--moon"></i>
                     <i class="fa-solid fa-sun menu__theme-icon menu__theme-icon--sun"></i>
                 </button>
+
+            <div class="menu__actions" id="landing-account-actions">
+
                 <a th:href="@{/login}" class="btn btn--ghost">Ingresar</a>
                 <a th:href="@{/register}" class="btn btn--solid">Registrarme</a>
             </div>
+            <button class="menu__toggle" type="button" aria-expanded="false"
+                aria-controls="landing-navigation landing-account-actions" aria-label="Abrir menú">
+                <span></span><span></span><span></span>
+            </button>
         </div>
     </header>
 
@@ -61,11 +68,10 @@
         <section class="hero" id="inicio">
             <div class="hero__container">
                 <div class="hero__content">
-                    <p class="hero__eyebrow">Bolsa de empleo</p>
-                    <h1 class="hero__title">Bienvenido, encuentra el trabajo que <span class="hero__highlight">te está
-                            esperando</span></h1>
-                    <p class="hero__text">Busca entre miles de vacantes verificadas, postúlate en minutos y sigue el
-                        estado de cada proceso desde un solo lugar.</p>
+                    <p class="hero__eyebrow">Conecta con nuevas oportunidades</p>
+                    <h1 class="hero__title">Tu próximo empleo <span class="hero__highlight">empieza aquí.</span></h1>
+                    <p class="hero__text">Explora vacantes, encuentra la que va contigo y sigue tus postulaciones
+                        desde un solo lugar.</p>
 
                     <form class="hero__search" th:action="@{/register}" method="get" role="search">
                         <label class="hero__search-label" for="hero-search-input">Cargo o palabra clave</label>
@@ -94,8 +100,8 @@
         <section class="offers" id="ofertas">
             <div class="offers__container">
                 <div class="section-head">
-                    <h2 class="section-head__title">Ofertas destacadas</h2>
-                    <p class="section-head__text">Las vacantes más recientes publicadas por las empresas en HireConnect.</p>
+                    <h2 class="section-head__title">Ofertas recientes</h2>
+                    <p class="section-head__text">Explora las últimas vacantes activas publicadas en HireConnect.</p>
                 </div>
 
                 <div class="offers__empty" th:if="${#lists.isEmpty(vacantesDestacadas)}">
@@ -105,8 +111,9 @@
                     <a th:href="@{/register/empresa}" class="btn btn--solid">Publicar una vacante</a>
                 </div>
 
+                <p class="offers__hint" th:if="${#lists.size(vacantesDestacadas) > 1}">Desliza para explorar las ofertas <span aria-hidden="true">↔</span></p>
                 <div class="offers__carousel" data-carousel th:unless="${#lists.isEmpty(vacantesDestacadas)}"
-                    role="region" aria-roledescription="carrusel" aria-label="Vacantes destacadas">
+                    role="region" aria-roledescription="carrusel" aria-label="Vacantes recientes">
                     <div class="offers__slide" th:each="item, iter : ${vacantesDestacadas}"
                         th:classappend="'offers__slide--' + ${iter.index == 0 ? 'center' : (iter.index == 1 ? 'right' : 'left')}">
                         <article class="offer-card">
@@ -191,7 +198,7 @@
         <div class="footer__container">
             <div class="footer__grid">
                 <div class="footer__about">
-                    <a th:href="@{/}" class="footer__logo">Hire<span class="footer__logo-highlight">Connect</span></a>
+                    <a th:href="@{/}" class="footer__logo"><span class="hc-logo-mark" aria-hidden="true"><img th:src="@{/source/img/isotipo.png}" alt="" /></span><span class="hc-logo-name">Hire<span class="footer__logo-highlight">Connect</span></span></a>
                     <p class="footer__text">Conectamos a quienes buscan trabajo con las empresas que están contratando.
                     </p>
                 </div>
@@ -243,6 +250,7 @@
     
     <script th:src="@{/js/app.js}"></script>
     <script th:src="@{/js/vacantes-carousel.js}"></script>
+    <script th:src="@{/js/scroll-reveal.js}"></script>
 </body>
 
 </html>
