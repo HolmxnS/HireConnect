@@ -82,8 +82,8 @@
                                         <h2 tabindex="-1" data-vacancy-title th:id="${'vacancy-title-' + vacante.id}"
                                             th:text="${vacante.titulo}"></h2>
 
-                                        <div class="prediction-card"
-                                            th:if="${probabilidad != null and probabilidad > 0}">
+                                        <div class="prediction-card" data-prediction hidden
+                                            th:attr="data-url=@{/postulante/vacante/{id}/prediccion(id=${vacante.id})}">
                                             <div class="prediction-header">
                                                 <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
                                                 <h3>Estimación de Selección</h3>
@@ -91,20 +91,9 @@
                                             <div class="prediction-body">
                                                 <p class="percentage">
                                                     Probabilidad estimada de contratación:
-                                                    <strong th:text="${probabilidad} + '%'">0%</strong>
+                                                    <strong data-prediction-value>Calculando…</strong>
                                                 </p>
-                                                <span class="badge badge-alta" th:if="${compatibilidad == 'Alta'}">
-                                                    <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
-                                                    Compatibilidad Alta
-                                                </span>
-                                                <span class="badge badge-media" th:if="${compatibilidad == 'Media'}">
-                                                    <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
-                                                    Compatibilidad Media
-                                                </span>
-                                                <span class="badge badge-baja" th:if="${compatibilidad == 'Baja'}">
-                                                    <i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>
-                                                    Compatibilidad Baja
-                                                </span>
+                                                <span class="badge" data-prediction-badge hidden></span>
                                             </div>
                                         </div>
                                     </div>
