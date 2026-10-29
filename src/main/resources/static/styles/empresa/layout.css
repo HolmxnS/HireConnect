@@ -1,0 +1,8 @@
+@import url("../fragments/postulante/header.css");
+body:has(.company-header) main, body:has(.company-header) .main, body:has(.company-header) .content, body:has(.company-header) .detalle { margin-left: var(--sidebar-w); margin-top: var(--header-h); min-height: calc(100dvh - var(--header-h)); padding-bottom: 4rem; }
+.company-header__title { font: 600 1.3rem var(--font-satoshi); color: var(--hc-muted); }
+.company-header__actions { display: flex; align-items: center; gap: 1.8rem; margin-left: auto; }
+.company-theme-toggle { width: 4rem; height: 4rem; border: 1px solid var(--hc-line); border-radius: 50%; background: var(--hc-soft); color: var(--hc-accent-ink); font-size: 1.7rem; cursor: pointer; }
+@media(max-width:900px) { .company-header .header-content { padding-left: 6.4rem; } }
+html[data-reduce-motion] *, html[data-reduce-motion] *::before, html[data-reduce-motion] *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+@media(prefers-reduced-motion:reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }

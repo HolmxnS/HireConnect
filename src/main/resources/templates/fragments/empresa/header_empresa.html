@@ -1,0 +1,16 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es"><body>
+<header class="header-container company-header" th:fragment="header">
+  <div class="header-content">
+    <span class="company-header__title">Espacio de empresa</span>
+    <div class="company-header__actions">
+      <button type="button" class="company-theme-toggle" data-theme-toggle aria-label="Cambiar tema"><i class="fa-solid fa-circle-half-stroke" aria-hidden="true"></i></button>
+      <div class="profile-box"><a th:href="@{/empresa/editar}" aria-label="Mi perfil" title="Mi perfil">
+        <img th:if="${empresa != null and not #strings.isEmpty(empresa.foto)}" th:src="${empresa.foto}" alt="Foto de la empresa" />
+        <span th:unless="${empresa != null and not #strings.isEmpty(empresa.foto)}" class="profile-box__placeholder"><i class="fa-solid fa-building" aria-hidden="true"></i></span>
+        <span class="profile-box__online" aria-hidden="true"></span>
+      </a></div>
+    </div>
+  </div>
+</header>
+</body></html>

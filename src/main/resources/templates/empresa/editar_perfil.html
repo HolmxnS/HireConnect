@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" th:href="@{/styles/empresa/editar_perfil.css}">
     <link rel="stylesheet" th:href="@{/styles/fragments/empresa/sidebar.css}">
     <link rel="stylesheet" th:href="@{/styles/empresa/theme.css}">
     <script th:src="@{/js/theme.js}"></script>
@@ -15,54 +14,35 @@
 
     <title>Perfil - Empresa</title>
     <link rel="stylesheet" th:href="@{/styles/brand.css}" />
+    <link rel="stylesheet" th:href="@{/styles/empresa/layout.css}" />
+    <link rel="stylesheet" th:href="@{/styles/postulante/perfil_postulante.css}" />
+    <link rel="stylesheet" th:href="@{/styles/empresa/perfil.css}" />
 </head>
 
-<body>
+<body class="profile-page company-profile">
     <div th:replace="~{fragments/empresa/sidebar_empresa :: sidebar('perfil')}"></div>
+    <div th:replace="~{fragments/empresa/header_empresa :: header}"></div>
 
     <main class="content">
-        <div class="content__title">
-            <h1>Mi Perfil</h1>
+        <p th:if="${success}" th:text="${success}" class="settings-notice" role="status"></p>
+        <p th:if="${error}" th:text="${error}" class="settings-notice settings-notice--error" role="alert"></p>
+      <section class="profile-hero" aria-label="Mi perfil">
+        <div class="profile-hero__cover" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="profile-hero__body">
+          <button type="button" class="profile-avatar-large" id="profileAvatarClickArea" aria-label="Cambiar foto de perfil">
+            <img th:if="${not #strings.isEmpty(empresa.foto)}" th:src="${empresa.foto}" alt="" id="profileImage" />
+            <span th:if="${#strings.isEmpty(empresa.foto)}" class="photo-placeholder"><i class="fa-solid fa-user" aria-hidden="true"></i></span>
+            <span class="upload-overlay" aria-hidden="true"><i class="fa-solid fa-camera"></i></span>
+          </button>
+          <form th:action="@{/empresa/subirFoto(id=${empresa.id})}" method="post" enctype="multipart/form-data" id="fotoUploadForm" th:data-photo-url="@{/empresa/foto}" hidden><input type="file" name="file" accept="image/jpeg,image/png" id="fileInput" aria-label="Foto de perfil" /></form>
+          <div class="profile-hero__identity"><h1 th:text="${empresa.nombreLegal}"></h1><p class="profile-hero__title" th:text="${#strings.isEmpty(empresa.sector) ? 'Empresa' : empresa.sector}"></p><p class="profile-hero__email" th:text="${empresa.email}"></p></div>
+          <div class="profile-hero__actions"><button type="button" class="profile-delete-photo" data-photo-remove th:hidden="${#strings.isEmpty(empresa.foto)}">Quitar foto</button></div>
         </div>
-
-        <div class="profile-banner">
-            <div class="profile-banner__background">
-            </div>
-
-            <div class="profile-banner__content">
-                <div class="profile-banner__avatar" id="profileAvatarClickArea">
-                    <img th:if="${empresa.foto != null}" th:src="@{${empresa.foto}}" alt="Foto de Perfil"
-                        id="profileImage">
-
-                    <div class="profile-banner__upload-overlay"><i class="fas fa-camera"></i></div>
-
-                    <div th:if="${empresa.foto == null}" class="profile-banner__photo-placeholder">
-                        <i class="fa-solid fa-user"></i>
-                    </div>
-
-                    <form th:action="@{/empresa/subirFoto(id=${empresa.id})}" method="post"
-                        enctype="multipart/form-data" id="fotoUploadForm">
-                        <input type="file" name="file" accept="image/*" id="fileInput">
-                    </form>
-                </div>
-
-                <div class="profile-banner__details">
-                    <h2 th:text="${empresa.nombreLegal}">Cuenta empresa</h2>
-                    <p th:text="${empresa.email}">El correo de la empresa</p>
-                </div>
-            </div>
-
-            <div class="profile-banner__photo-actions">
-                <a th:if="${empresa.foto != null and empresa.foto != ''}"
-                    th:href="@{/empresa/eliminarFoto(id=${empresa.id})}" class="delete">Eliminar
-                    Foto</a>
-            </div>
-
-        </div>
-
+      </section>
+      <p class="profile-photo-feedback" data-photo-feedback role="status" aria-live="polite" hidden></p>
         <div class="profile profile-section">
             <div class="profile__container">
-                <h3>Informacion Basica</h3>
+                <h3>Información de la empresa</h3>
                 <div class="profile__field">
                     <form th:action="@{/empresa/guardar-perfil}" th:object="${empresa}" method="post"
                         enctype="multipart/form-data" id="empresaForm">
@@ -83,7 +63,7 @@
                                 <p class="error" th:if="${#fields.hasErrors('sector')}" th:errors="*{sector}"></p>
                             </div>
                             <div class="form__field">
-                                <label for="email">Email de Contacto</label>
+                                <label for="email">Correo de contacto</label>
                                 <input type="email" th:field="*{email}" id="email" readonly>
                             </div>
                             <div class="form__field">
@@ -125,7 +105,17 @@
 
     </main>
 
-    <script th:src="@{/js/foto.js}"></script>
+    <dialog class="profile-photo-dialog" aria-labelledby="photo-dialog-title">
+      <h2 id="photo-dialog-title">Ajusta tu foto</h2>
+      <p>Arrastra la imagen o usa las flechas para encuadrarla.</p>
+      <canvas width="512" height="512" data-photo-canvas aria-label="Vista previa de la foto"></canvas>
+      <label for="photoZoom">Zoom</label>
+      <input id="photoZoom" type="range" min="1" max="3" step="0.01" value="1" />
+      <p data-photo-editor-message role="status" aria-live="polite"></p>
+      <div class="profile-photo-dialog__actions"><button type="button" data-photo-cancel>Cancelar</button><button type="button" class="profile-edit-button" data-photo-save>Guardar foto</button></div>
+    </dialog>
+    <script th:src="@{/js/perfil_foto.js}" defer></script>
+
 
 </body>
 

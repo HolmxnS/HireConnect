@@ -8,68 +8,97 @@
     <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
     <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
     <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
-    <title>Dashboard Empresa</title>
+    <title>Sidebar Empresa</title>
     <link rel="stylesheet" th:href="@{/styles/brand.css}" />
 </head>
 
 <body>
 
-    <aside th:fragment="sidebar (activeMenu)" class="sidebar">
+    <!-- activeMenu identifica la opción seleccionada. -->
+    <th:block th:fragment="sidebar (activeMenu)">
 
-        <div class="sidebar__logo">
-            <h1 class="hc-logo-wordmark"><span class="hc-logo-mark" aria-hidden="true"><img th:src="@{/source/img/isotipo.png}" alt="" /></span><span>Hire<span class="sidebar__highlight">Connect</span></span></h1>
-        </div>
+        <!--Aplica el estado plegado antes de pintar para que no haya parpadeo (solo en escritorio)-->
+        <script>
+            (function () {
+                try {
+                    if (window.matchMedia('(min-width: 901px)').matches && localStorage.getItem('hc-sidebar') === 'collapsed') {
+                        document.documentElement.classList.add('is-sidebar-collapsed');
+                    }
+                } catch (e) { }
+            })();
+        </script>
 
-        <nav class="sidebar__nav" aria-label="Navegación de la empresa">
-            <ul>
-                <li class="sidebar__label">Gestión</li>
+        <button type="button" class="sidebar-opener" id="sidebarOpener" aria-label="Abrir menú" aria-controls="sidebar"
+            aria-expanded="false">
+            <span class="sidebar-opener__icon"><i class="fa-solid fa-bars"></i></span>
+        </button>
 
-                <li>
-                    <a th:href="@{/empresa/home}" class="sidebar__link" title="Inicio" aria-label="Inicio"
-                        th:classappend="${activeMenu == 'home'} ? 'sidebar__active' : ''">
-                        <i class="fa-solid fa-house"></i> <span class="sidebar__text">Inicio</span>
-                    </a>
-                </li>
+        <aside class="sidebar" id="sidebar" aria-label="Menú principal">
 
-                <li>
-                    <a th:href="@{/empresa/vacante}" title="Vacantes" aria-label="Vacantes"
-                        th:classappend="${activeMenu == 'vacantes'} ? 'sidebar__active' : ''">
-                        <i class="fa-solid fa-briefcase"></i> <span class="sidebar__text">Vacantes</span>
-                    </a>
-                </li>
+            <div class="sidebar__logo">
+                <button type="button" class="sidebar__toggle" id="sidebarToggle" aria-label="Ocultar menú"
+                    aria-controls="sidebar" aria-expanded="true">
+                    <span class="sidebar__toggle-icon"><i class="fa-solid fa-bars"></i></span>
+                </button>
+                <a class="sidebar__brand" th:href="@{/empresa/home}" aria-label="HireConnect, ir al inicio">
+                    <span class="hc-logo-mark" aria-hidden="true"><img th:src="@{/source/img/isotipo.png}" alt="" /></span>
+                    <span class="sidebar__brand-name">Hire<span class="sidebar__highlight">Connect</span></span>
+                </a>
+            </div>
 
-                <li class="sidebar__label">Mi cuenta</li>
+            <nav class="sidebar__nav" aria-label="Navegación de la empresa">
+                <ul>
+                    <li>
+                        <a th:href="@{/empresa/home}" class="sidebar__link" data-label="Inicio"
+                            th:classappend="${activeMenu == 'home'} ? 'sidebar__active'"
+                            th:attr="aria-current=${activeMenu == 'home'} ? 'page'">
+                            <span class="sidebar__icon"><i class="fa-solid fa-house"></i></span>
+                            <span class="sidebar__text">Inicio</span>
+                        </a>
+                    </li>
 
-                <li>
-                    <a th:href="@{/empresa/editar(empresaId=${empresa.id})}" title="Mi Perfil" aria-label="Mi Perfil"
-                        th:classappend="${activeMenu == 'perfil'} ? 'sidebar__active' : ''">
-                        <i class="fa-solid fa-user-gear"></i> <span class="sidebar__text">Mi Perfil</span>
-                    </a>
-                </li>
+                    <li><a th:href="@{/empresa/vacante}" class="sidebar__link" data-label="Vacantes" th:classappend="${activeMenu == 'vacantes'} ? 'sidebar__active'" th:attr="aria-current=${activeMenu == 'vacantes'} ? 'page'"><span class="sidebar__icon"><i class="fa-solid fa-briefcase"></i></span><span class="sidebar__text">Vacantes</span></a></li>
+                    <li>
+                        <a th:href="@{/empresa/postulaciones}" class="sidebar__link" data-label="Postulaciones"
+                            th:classappend="${activeMenu == 'postulaciones' or activeMenu == 'mis_postulaciones'} ? 'sidebar__active'"
+                            th:attr="aria-current=${activeMenu == 'postulaciones' or activeMenu == 'mis_postulaciones'} ? 'page'">
+                            <span class="sidebar__icon"><i class="fa-solid fa-clipboard-list"></i></span>
+                            <span class="sidebar__text">Postulaciones</span>
+                        </a>
+                    </li>
 
-                <li>
-                    <a th:href="@{/empresa/configuracion}" title="Configuración" aria-label="Configuración"
-                        th:classappend="${activeMenu == 'configuracion'} ? 'sidebar__active' : ''">
-                        <i class="fa-solid fa-gear"></i> <span class="sidebar__text">Configuración</span>
-                    </a>
-                </li>
+                    <li>
+                        <a th:href="@{/empresa/editar}" class="sidebar__link" data-label="Mi Perfil"
+                            th:classappend="${activeMenu == 'perfil'} ? 'sidebar__active'"
+                            th:attr="aria-current=${activeMenu == 'perfil'} ? 'page'">
+                            <span class="sidebar__icon"><i class="fa-solid fa-user-gear"></i></span>
+                            <span class="sidebar__text">Mi Perfil</span>
+                        </a>
+                    </li>
 
-                <li class="sidebar__theme-item">
-                    <button type="button" class="sidebar__theme" data-theme-toggle aria-label="Cambiar a modo oscuro">
-                        <i class="fa-solid fa-moon"></i><i class="fa-solid fa-sun"></i>
-                        <span class="sidebar__text theme-label--dark">Modo oscuro</span>
-                        <span class="sidebar__text theme-label--light">Modo claro</span>
-                    </button>
-                </li>
+                    <li>
+                        <a th:href="@{/empresa/configuracion}" class="sidebar__link" data-label="Configuración"
+                            th:classappend="${activeMenu == 'configuracion'} ? 'sidebar__active'"
+                            th:attr="aria-current=${activeMenu == 'configuracion'} ? 'page'">
+                            <span class="sidebar__icon"><i class="fa-solid fa-gear"></i></span>
+                            <span class="sidebar__text">Configuración</span>
+                        </a>
+                    </li>
 
-                <li>
-                    <a th:href="@{/logout}" class="sidebar__logout" title="Cerrar Sesión" aria-label="Cerrar Sesión">
-                        <i class="fa-solid fa-right-from-bracket"></i> <span class="sidebar__text">Cerrar Sesión</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    </aside>
+                    <li class="sidebar__bottom">
+                        <a th:href="@{/logout}" class="sidebar__link sidebar__logout" data-label="Cerrar Sesión">
+                            <span class="sidebar__icon"><i class="fa-solid fa-right-from-bracket"></i></span>
+                            <span class="sidebar__text">Cerrar Sesión</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <script th:src="@{/js/layout_postulante.js}" defer></script>
+    </th:block>
 
 </body>
 

@@ -15,10 +15,12 @@
 
     <title>Nueva Vacante - HireConnect</title>
     <link rel="stylesheet" th:href="@{/styles/brand.css}" />
+    <link rel="stylesheet" th:href="@{/styles/empresa/layout.css}" />
 </head>
 
 <body>
     <div th:replace="~{fragments/empresa/sidebar_empresa :: sidebar('vacantes')}"></div>
+    <div th:replace="~{fragments/empresa/header_empresa :: header}"></div>
 
     <main class="main">
         <div class="main__header">

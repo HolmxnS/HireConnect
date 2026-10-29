@@ -1,143 +1,73 @@
-<!DOCTYPE html>
+<!doctype html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" th:href="@{/styles/fragments/empresa/sidebar.css}">
-    <link rel="stylesheet" th:href="@{/styles/empresa/configuracion_empresa.css}">
-    <link rel="stylesheet" th:href="@{/styles/empresa/theme.css}">
-    <script th:src="@{/js/theme.js}"></script>
-    <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
-    <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
-    <link rel="icon" type="image/svg+xml" sizes="any" th:href="@{/source/img/favicon.svg}">
-    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
-
-    <title>Configuracion</title>
-    <link rel="stylesheet" th:href="@{/styles/brand.css}" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" th:href="@{/styles/fragments/empresa/sidebar.css}" />
+  <link rel="stylesheet" th:href="@{/styles/empresa/layout.css}" />
+  <link rel="stylesheet" th:href="@{/styles/empresa/theme.css}" />
+  <script th:src="@{/js/theme.js}"></script>
+  <link rel="stylesheet" th:href="@{/styles/satoshi.css}" />
+  <link rel="stylesheet" th:href="@{/styles/brand.css}" />
+  <link rel="stylesheet" th:href="@{/styles/postulante/configuracion_postulante.css}" />
+  <link rel="icon" type="image/svg+xml" th:href="@{/source/img/favicon.svg}" />
+  <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous" defer></script>
+  <title>Configuración | HireConnect</title>
 </head>
-
-<body>
-    <div id="sidebar-overlay" class="content-overlay hidden md:hidden" onclick="toggleSidebar()"></div>
-
-    <div th:replace="~{fragments/empresa/sidebar_empresa :: sidebar('configuracion')}"></div>
-
-    <main class="main">
-        <h2 class="main__title">
-            <i class="fa-solid fa-gear"></i>
-            <span>Configuración de Cuenta</span>
-        </h2>
-
-        <div class="settings">
-            <h5>
-                <i class="fa-solid fa-lock"></i>
-                <span>Cambiar Contraseña
-            </h5>
-
-            <p class="settings__description">Asegúrate de que tu nueva contraseña sea segura</p>
-
-            <form th:action="@{/empresa/cambiarPassword}" method="post">
-                <input type="hidden" name="id" th:value="${empresa.id}" />
-
-                <div class="form cols-1">
-                    <div class="form__field">
-                        <label for="passwordActual">Contraseña Actual</label>
-                        <input class="form__input" type="password" id="passwordActual" name="passwordActual"
-                            placeholder="Introduce tu contraseña actual" required />
-                    </div>
-
-                    <div class="form__field">
-                        <label for="nuevaPassword">Nueva Contraseña</label>
-                        <input class="form__input" type="password" id="nuevaPassword" name="nuevaPassword"
-                            placeholder="Introduce la nueva contraseña" required />
-                    </div>
-
-                    <div class="form__field">
-                        <label for="confirmarPassword">Confirmar Nueva Contraseña</label>
-                        <input class="form__input" type="password" id="confirmarPassword" name="confirmarPassword"
-                            placeholder="Confirma la nueva contraseña" required />
-                    </div>
-                </div>
-
-                <div class="form__actions">
-                    <button type="submit" class="btn-save">
-                        Actualizar Contraseña
-                    </button>
-                </div>
-            </form>
-
-            <div th:if="${error}" class="flash-alert error" role="alert">
-                <span class="block sm:inline" th:text="${error}">Error al actualizar la contraseña.</span>
-            </div>
-        </div>
-        <div class="settings settings--danger">
-            <h5>
-                <i class="fa-solid fa-trash-can"></i>
-                <span>Eliminar Cuenta de Empresa</span>
-            </h5>
-
-            <p class="settings__description">
-                Una vez que elimines tu cuenta de empresa, no hay vuelta atrás. Se eliminarán todas las vacantes,
-                postulaciones asociadas y datos de la empresa. Por favor, asegúrate de que realmente deseas hacer esto.
-            </p>
-
-            <div class="form__actions">
-                <button type="button" class="btn-delete" onclick="mostrarModalEliminar()">
-                    <i class="fa-solid fa-exclamation-triangle"></i>
-                    Eliminar cuenta de empresa
-                </button>
-            </div>
-        </div>
-
-    </main>
-
-    <div th:if="${exito}" class="modal" id="successModal">
-        <div class="modal__container">
-            <div class="modal__content">
-                <h3 class="modal__title">¡Listo <span th:text="${empresa.nombreLegal}">Empresa</span>!</h3>
-                <div class="modal__text">
-                    <i class="fa-solid fa-circle-check"></i>
-                    <p th:text="${exito}">Tu contraseña ha sido actualizada correctamente.</p>
-                </div>
-                <div class="modal__actions">
-                    <button type="button" class="modal__close-btn btn-base">Cerrar</button>
-                </div>
-            </div>
-        </div>
+<body class="settings-page">
+  <div th:replace="~{fragments/empresa/sidebar_empresa :: sidebar('configuracion')}"></div>
+  <div th:replace="~{fragments/empresa/header_empresa :: header}"></div>
+  <main class="content settings-layout">
+    <header class="settings-heading"><h1>Configuración</h1><p>Tu cuenta, a tu manera.</p></header>
+    <p th:if="${exito}" th:text="${exito}" class="settings-notice" role="status"></p>
+    <p th:if="${error}" th:text="${error}" class="settings-notice settings-notice--error" role="alert"></p>
+    <div class="settings-workspace">
+      <nav class="settings-nav" aria-label="Configuración">
+        <a href="#cuenta"><i class="fa-regular fa-user" aria-hidden="true"></i> Cuenta</a>
+        <a href="#apariencia"><i class="fa-solid fa-palette" aria-hidden="true"></i> Apariencia</a>
+        <a href="#seguridad"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Seguridad</a>
+      </nav>
+      <div class="settings-sections">
+        <section id="cuenta" class="settings-card">
+          <div class="settings-card-heading"><span class="settings-icon"><i class="fa-regular fa-user" aria-hidden="true"></i></span><div><h2>Cuenta</h2><p>Tu información y tus datos.</p></div></div>
+          <dl class="settings-account"><div><dt>Nombre</dt><dd th:text="${empresa.nombreLegal}"></dd></div><div><dt>Correo</dt><dd th:text="${empresa.email}"></dd></div></dl>
+          <div class="settings-row"><div><h3>Información personal</h3><p>Actualiza la información y la imagen de tu empresa.</p></div><a class="settings-button settings-button--secondary" th:href="@{/empresa/editar}">Editar perfil</a></div>
+          <div class="settings-row"><div><h3>Descargar mis datos</h3><p>Una copia de tu información de perfil en formato JSON.</p></div><a class="settings-button settings-button--secondary" th:href="@{/empresa/configuracion/datos}" download="hireconnect-empresa.json">Descargar datos</a></div>
+        </section>
+        <section id="apariencia" class="settings-card">
+          <div class="settings-card-heading"><span class="settings-icon"><i class="fa-solid fa-palette" aria-hidden="true"></i></span><div><h2>Apariencia</h2><p>Estas preferencias se guardan en este navegador.</p></div></div>
+          <fieldset class="settings-themes"><legend>Tema</legend>
+            <label><input type="radio" name="appearance" value="light" /><span class="settings-theme-preview settings-theme-preview--light" aria-hidden="true"><i></i><b></b></span><span>Claro</span></label>
+            <label><input type="radio" name="appearance" value="dark" /><span class="settings-theme-preview settings-theme-preview--dark" aria-hidden="true"><i></i><b></b></span><span>Oscuro</span></label>
+            <label><input type="radio" name="appearance" value="system" /><span class="settings-theme-preview settings-theme-preview--system" aria-hidden="true"><i></i><b></b></span><span>Del sistema</span></label>
+          </fieldset>
+          <div class="settings-row"><div><h3>Reducir animaciones</h3><p>Usa transiciones más discretas. También respetamos la preferencia de tu dispositivo.</p></div><label class="settings-switch"><input type="checkbox" id="reduceMotion" /><span aria-hidden="true"></span><span class="settings-sr-only">Reducir animaciones</span></label></div>
+          <p class="settings-preference-status" data-preference-status role="status" aria-live="polite"></p>
+        </section>
+        <section id="seguridad" class="settings-card">
+          <div class="settings-card-heading"><span class="settings-icon"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></span><div><h2>Seguridad</h2><p>Gestiona el acceso a tu cuenta.</p></div></div>
+          <form th:if="${empresa.authProvider == null or empresa.authProvider == 'LOCAL'}" th:action="@{/empresa/cambiarPassword}" method="post" data-password-form>
+            <input type="hidden" name="id" th:value="${empresa.id}" />
+            <h3>Cambiar contraseña</h3>
+            <div class="settings-password-field"><label for="passwordActual">Contraseña actual</label><div><input type="password" id="passwordActual" name="passwordActual" autocomplete="current-password" required maxlength="72" /><button type="button" data-show-password="passwordActual" aria-pressed="false">Mostrar</button></div></div>
+            <div class="settings-password-field"><label for="nuevaPassword">Nueva contraseña</label><div><input type="password" id="nuevaPassword" name="nuevaPassword" autocomplete="new-password" required minlength="8" maxlength="72" aria-describedby="password-hint" /><button type="button" data-show-password="nuevaPassword" aria-pressed="false">Mostrar</button></div><small id="password-hint">Al menos 8 caracteres. Usa una contraseña diferente a la actual.</small></div>
+            <div class="settings-password-field"><label for="confirmarPassword">Confirmar contraseña</label><div><input type="password" id="confirmarPassword" name="confirmarPassword" autocomplete="new-password" required minlength="8" maxlength="72" /><button type="button" data-show-password="confirmarPassword" aria-pressed="false">Mostrar</button></div></div>
+            <button type="submit" class="settings-button">Actualizar contraseña</button>
+          </form>
+          <p th:unless="${empresa.authProvider == null or empresa.authProvider == 'LOCAL'}">Tu acceso está vinculado a Google. Gestiona la contraseña desde tu cuenta de Google.</p>
+          <div class="settings-danger"><div><h3>Eliminar cuenta</h3><p>Esta acción es permanente. Perderás el acceso a tu perfil.</p></div><button type="button" class="settings-button settings-button--danger" data-delete-open>Eliminar mi cuenta</button></div>
+        </section>
+      </div>
     </div>
-
-    <div class="modal" id="deleteModal" style="display: none;">
-        <div class="modal__container">
-            <div class="modal__content">
-                <h3 class="modal__title modal__title--danger">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                    ¿Estás seguro?
-                </h3>
-                <div class="modal__text modal__text--danger">
-                    <p>Esta acción es <span>irreversible</span>. Se eliminarán:</p>
-                    <ul class="modal__list">
-                        <li>Los datos y perfil de tu empresa</li>
-                        <li>Todas las vacantes publicadas</li>
-                        <li>Todas las postulaciones recibidas</li>
-                        <li>Tu historial completo de actividad</li>
-                    </ul>
-                </div>
-                <form th:action="@{/empresa/eliminar-cuenta}" method="post">
-                    <input type="hidden" name="id" th:value="${empresa.id}" />
-                    <div class="modal__actions">
-                        <button type="button" class="modal__btn-cancel" onclick="cerrarModalEliminar()">
-                            Cancelar
-                        </button>
-                        <button type="submit" class="modal__btn-confirm-delete">
-                            Sí, eliminar cuenta de empresa
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <script th:src="@{/js/modal.js}"></script>
+  </main>
+  <dialog class="settings-delete-dialog" aria-labelledby="delete-title">
+    <h2 id="delete-title">¿Eliminar tu cuenta?</h2><p>Esta acción es permanente. Escribe ELIMINAR para confirmar.</p>
+    <form th:action="@{/empresa/eliminar-cuenta}" method="post">
+      <input type="hidden" name="id" th:value="${empresa.id}" />
+      <label for="delete-confirm">Confirmación</label><input id="delete-confirm" type="text" required pattern="ELIMINAR" autocomplete="off" />
+      <div><button type="button" class="settings-button settings-button--secondary" data-delete-cancel>Cancelar</button><button type="submit" class="settings-button settings-button--danger">Eliminar cuenta</button></div>
+    </form>
+  </dialog>
+  <script th:src="@{/js/configuracion_postulante.js}" defer></script>
 </body>
-
 </html>

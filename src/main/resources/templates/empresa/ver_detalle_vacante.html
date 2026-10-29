@@ -15,10 +15,12 @@
     <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
     <title th:text="${vacante.titulo} + ' | Detalle'"></title>
     <link rel="stylesheet" th:href="@{/styles/brand.css}" />
+    <link rel="stylesheet" th:href="@{/styles/empresa/layout.css}" />
 </head>
 
 <body>
     <div th:replace="~{fragments/empresa/sidebar_empresa :: sidebar ('vacantes')}"></div>
+    <div th:replace="~{fragments/empresa/header_empresa :: header}"></div>
 
     <div class="detalle">
 

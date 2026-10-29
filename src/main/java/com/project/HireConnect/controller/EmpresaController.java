@@ -11,6 +11,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+import org.springframework.http.HttpHeaders;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -266,67 +269,34 @@ public class EmpresaController {
         }
     }
 
+    @org.springframework.beans.factory.annotation.Autowired
+    private com.project.HireConnect.service.FotoEmpresaService fotoEmpresaService;
+
     @PostMapping("/subirFoto")
-    public String subirFotoEmpresa(@RequestParam("id") String id,
-            @RequestParam("file") MultipartFile file,
+    public String subirFoto(@RequestParam("id") String id,
+            @RequestParam("file") MultipartFile file, Authentication authentication,
             RedirectAttributes redirectAttributes) {
+        if (authentication == null) return "redirect:/login";
         try {
-            Empresa empresa = empresaService.obtenerPorId(id)
-                    .orElseThrow(() -> new RuntimeException("Empresa no encontrada."));
-            if (file.isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", "Por favor, selecciona un archivo.");
-                return "redirect:/empresa/editar";
-            }
-            String tipo = file.getContentType();
-            if (tipo == null || !(tipo.equals("image/jpeg") || tipo.equals("image/png"))) {
-                redirectAttributes.addFlashAttribute("error", "Solo se permiten imágenes JPG o PNG.");
-                return "redirect:/empresa/editar";
-            }
-            long maxSizeBytes = 2 * 1024 * 1024; // 2MB
-            if (file.getSize() > maxSizeBytes) {
-                redirectAttributes.addFlashAttribute("error", "El archivo excede el tamaño máximo permitido (2MB).");
-                return "redirect:/empresa/editar";
-            }
-            String uploadDir = "uploads/empresas/";
-            Path uploadPath = Paths.get(uploadDir);
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-            }
-            String extension = tipo.equals("image/png") ? ".png" : ".jpg";
-            String nombreArchivo = "empresa_" + id + "_" + System.currentTimeMillis() + extension;
-            Path archivoPath = uploadPath.resolve(nombreArchivo);
-            Files.copy(file.getInputStream(), archivoPath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-            empresa.setFoto("/" + uploadDir + nombreArchivo);
-            empresaService.guardar(empresa);
-            redirectAttributes.addFlashAttribute("success", "Foto subida correctamente.");
+            fotoEmpresaService.guardar(authentication.getName(), file);
+            redirectAttributes.addFlashAttribute("exito", "Foto actualizada.");
+        } catch (org.springframework.web.server.ResponseStatusException e) {
+            redirectAttributes.addFlashAttribute("error", e.getReason());
         } catch (Exception e) {
-            e.printStackTrace();
-            redirectAttributes.addFlashAttribute("error", "Error al subir la foto: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "No pudimos guardar la foto. Inténtalo de nuevo.");
         }
         return "redirect:/empresa/editar";
     }
 
     @GetMapping("/eliminarFoto")
-    public String eliminarFotoEmpresa(@RequestParam("id") String id,
+    public String eliminarFoto(@RequestParam("id") String id, Authentication authentication,
             RedirectAttributes redirectAttributes) {
+        if (authentication == null) return "redirect:/login";
         try {
-            Empresa empresa = empresaService.obtenerPorId(id)
-                    .orElseThrow(() -> new RuntimeException("Empresa no encontrada."));
-            if (empresa.getFoto() != null) {
-                String rutaFoto = empresa.getFoto().replaceFirst("/", "");
-                Path fotoPath = Paths.get(rutaFoto);
-                if (Files.exists(fotoPath)) {
-                    Files.delete(fotoPath);
-                }
-                empresa.setFoto(null);
-                empresaService.guardar(empresa);
-                redirectAttributes.addFlashAttribute("success", "Foto eliminada correctamente.");
-            } else {
-                redirectAttributes.addFlashAttribute("info", "No tienes una foto guardada.");
-            }
+            fotoEmpresaService.eliminar(authentication.getName());
+            redirectAttributes.addFlashAttribute("exito", "Foto eliminada.");
         } catch (Exception e) {
-            e.printStackTrace();
-            redirectAttributes.addFlashAttribute("error", "Error al eliminar la foto: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "No pudimos quitar la foto. Inténtalo de nuevo.");
         }
         return "redirect:/empresa/editar";
     }
@@ -347,6 +317,29 @@ public class EmpresaController {
             redirectAttributes.addFlashAttribute("error", "Sesión expirada o empresa no encontrada.");
             return "redirect:/login";
         }
+    }
+
+    @GetMapping("/configuracion/datos")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public ResponseEntity<?> descargarDatos(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) return ResponseEntity.status(401).build();
+        Optional<Empresa> actual = empresaService.buscarPorEmailEmpresa(authentication.getName());
+        if (actual.isEmpty()) return ResponseEntity.status(401).build();
+        Empresa p = actual.get();
+        // Exporta únicamente información de perfil, sin credenciales ni referencias internas.
+        java.util.Map<String, Object> datos = new java.util.LinkedHashMap<>();
+        datos.put("nombreLegal", p.getNombreLegal());
+        datos.put("email", p.getEmail());
+        datos.put("telefono", p.getTelefono());
+        datos.put("rut", p.getRut());
+        datos.put("sector", p.getSector());
+        datos.put("ubicacion", p.getUbicacion());
+        datos.put("website", p.getWebsite());
+        datos.put("descripcion", p.getDescripcion());
+        datos.put("fechaRegistro", p.getFechaRegistro());
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=hireconnect-empresa.json")
+                .header(HttpHeaders.CACHE_CONTROL, "no-store").body(datos);
     }
 
     @PostMapping("/cambiarPassword")
@@ -379,6 +372,10 @@ public class EmpresaController {
                 return "redirect:/empresa/configuracion";
             }
 
+            if (nuevaPassword.equals(passwordActual) || nuevaPassword.getBytes(java.nio.charset.StandardCharsets.UTF_8).length > 72) {
+                redirectAttributes.addFlashAttribute("error", "Usa una contraseña diferente a la actual y que no sea demasiado larga.");
+                return "redirect:/empresa/configuracion";
+            }
             boolean exito = empresaService.actualizarPassword(empresaId, passwordActual, nuevaPassword);
 
             if (exito) {
