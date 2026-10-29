@@ -656,3 +656,8 @@ body.vacancy-browser main.main.vacancy-page {
     width: 100%;
   }
 }
+
+.prediction-card[hidden],
+.badge[hidden] {
+  display: none;
+}
