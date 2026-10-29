@@ -84,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (noVacantesMessage) {
             noVacantesMessage.style.display = encontradas === 0 ? 'block' : 'none';
         }
+        document.dispatchEvent(new CustomEvent('vacantes:filtradas'));
     }
 
 

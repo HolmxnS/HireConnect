@@ -394,88 +394,34 @@ public class PostulanteController {
         }
     }
 
+    @org.springframework.beans.factory.annotation.Autowired
+    private com.project.HireConnect.service.FotoPostulanteService fotoPostulanteService;
+
     @PostMapping("/subirFoto")
     public String subirFoto(@RequestParam("id") String id,
-            @RequestParam("file") MultipartFile file,
+            @RequestParam("file") MultipartFile file, Authentication authentication,
             RedirectAttributes redirectAttributes) {
+        if (authentication == null) return "redirect:/login";
         try {
-            Optional<Postulante> opt = postulanteService.buscarPorId(id);
-            if (opt.isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", "No se encontró el postulante.");
-                return "redirect:/postulante/perfil";
-            }
-
-            Postulante postulante = opt.get();
-
-            if (file.isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", "Por favor, selecciona un archivo.");
-                return "redirect:/postulante/perfil";
-            }
-
-            String tipo = file.getContentType();
-            if (tipo == null || !(tipo.equals("image/jpeg") || tipo.equals("image/png") || tipo.equals("image/jpg"))) {
-                redirectAttributes.addFlashAttribute("error", "Solo se permiten imágenes JPG o PNG.");
-                return "redirect:/postulante/perfil";
-            }
-
-            long maxSizeBytes = 2 * 1024 * 1024; // 2MB
-            if (file.getSize() > maxSizeBytes) {
-                redirectAttributes.addFlashAttribute("error", "El archivo excede el tamaño máximo permitido (2MB).");
-                return "redirect:/postulante/perfil";
-            }
-
-            String uploadDir = "uploads/fotos/";
-            Path uploadPath = Paths.get(uploadDir);
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-            }
-
-            String extension = tipo.equals("image/png") ? ".png" : ".jpg";
-            String nombreArchivo = "postulante_" + id + "_" + System.currentTimeMillis() + extension;
-            Path archivoPath = uploadPath.resolve(nombreArchivo);
-            Files.copy(file.getInputStream(), archivoPath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-
-            postulante.setFoto("/" + uploadDir + nombreArchivo);
-            postulanteService.guardar(postulante);
-
-            redirectAttributes.addFlashAttribute("success", "Foto subida correctamente.");
+            fotoPostulanteService.guardar(authentication.getName(), file);
+            redirectAttributes.addFlashAttribute("exito", "Foto actualizada.");
+        } catch (org.springframework.web.server.ResponseStatusException e) {
+            redirectAttributes.addFlashAttribute("error", e.getReason());
         } catch (Exception e) {
-            e.printStackTrace();
-            redirectAttributes.addFlashAttribute("error", "Error al subir la foto: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "No pudimos guardar la foto. Inténtalo de nuevo.");
         }
-
         return "redirect:/postulante/perfil";
     }
 
     @GetMapping("/eliminarFoto")
-    public String eliminarFoto(@RequestParam("id") String id,
+    public String eliminarFoto(@RequestParam("id") String id, Authentication authentication,
             RedirectAttributes redirectAttributes) {
+        if (authentication == null) return "redirect:/login";
         try {
-            Optional<Postulante> opt = postulanteService.buscarPorId(id);
-            if (opt.isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", "No se encontró el postulante.");
-                return "redirect:/postulante/perfil";
-            }
-
-            Postulante postulante = opt.get();
-
-            if (postulante.getFoto() != null) {
-                String rutaFoto = postulante.getFoto().replaceFirst("/", "");
-                Path fotoPath = Paths.get(rutaFoto);
-                if (Files.exists(fotoPath)) {
-                    Files.delete(fotoPath);
-                }
-
-                postulante.setFoto(null);
-                postulanteService.guardar(postulante);
-
-                redirectAttributes.addFlashAttribute("success", "Foto eliminada correctamente.");
-            } else {
-                redirectAttributes.addFlashAttribute("info", "No tienes una foto guardada.");
-            }
+            fotoPostulanteService.eliminar(authentication.getName());
+            redirectAttributes.addFlashAttribute("exito", "Foto eliminada.");
         } catch (Exception e) {
-            e.printStackTrace();
-            redirectAttributes.addFlashAttribute("error", "Error al eliminar la foto: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "No pudimos quitar la foto. Inténtalo de nuevo.");
         }
         return "redirect:/postulante/perfil";
     }
@@ -762,6 +708,33 @@ public class PostulanteController {
         return "postulante/configuracion_postulante";
     }
 
+    @GetMapping("/configuracion/datos")
+    @ResponseBody
+    public ResponseEntity<?> descargarDatos(Authentication authentication) {
+        Optional<Postulante> actual = getAuthenticatedPostulante(authentication);
+        if (actual.isEmpty()) return ResponseEntity.status(401).build();
+        Postulante p = actual.get();
+        // Lista explícita para excluir credenciales y referencias internas de MongoDB.
+        java.util.Map<String, Object> datos = new java.util.LinkedHashMap<>();
+        datos.put("nombre", p.getNombre());
+        datos.put("apellido", p.getApellido());
+        datos.put("email", p.getEmail());
+        datos.put("telefono", p.getTelefono());
+        datos.put("tipoDocumento", p.getTipoDocumento());
+        datos.put("identificacion", p.getIdentificacion());
+        datos.put("fechaNacimiento", p.getFechaNacimiento());
+        datos.put("genero", p.getGenero());
+        datos.put("nacionalidad", p.getNacionalidad());
+        datos.put("titulacion", p.getTitulacion());
+        datos.put("fechaRegistro", p.getFechaRegistro());
+        datos.put("habilidades", p.getHabilidades());
+        datos.put("educacion", p.getEducacion());
+        datos.put("experiencia", p.getExperiencia());
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=hireconnect-perfil.json")
+                .header(HttpHeaders.CACHE_CONTROL, "no-store").body(datos);
+    }
+
     @PostMapping("/cambiarPassword")
     public String cambiarPassword(
             @RequestParam("id") String postulanteId,
@@ -784,6 +757,14 @@ public class PostulanteController {
             redirectAttributes.addFlashAttribute("error", "La nueva contraseña debe tener al menos 8 caracteres.");
             return "redirect:/postulante/configuracion";
         }
+        if (nuevaPassword.getBytes(java.nio.charset.StandardCharsets.UTF_8).length > 72) {
+            redirectAttributes.addFlashAttribute("error", "La nueva contraseña es demasiado larga. Usa una más corta.");
+            return "redirect:/postulante/configuracion";
+        }
+        if (nuevaPassword.equals(passwordActual)) {
+            redirectAttributes.addFlashAttribute("error", "Elige una contraseña diferente a la actual.");
+            return "redirect:/postulante/configuracion";
+        }
         boolean exito = postulanteService.actualizarPassword(postulanteId, passwordActual, nuevaPassword);
 
         if (exito) {
@@ -803,7 +784,7 @@ public class PostulanteController {
 
         try {
             Optional<Postulante> optPostulante = getAuthenticatedPostulante(auth);
-            if (!optPostulante.get().getId().equals(id)) {
+            if (optPostulante.isEmpty() || !optPostulante.get().getId().equals(id)) {
                 redirectAttributes.addFlashAttribute("error",
                         "No tienes permiso para eliminar esta cuenta.");
                 return "redirect:/postulante/configuracion";

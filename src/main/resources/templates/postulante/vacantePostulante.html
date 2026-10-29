@@ -1,131 +1,78 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="es">
-
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" th:href="@{/styles/fragments/postulante/header.css}">
-  <link rel="stylesheet" th:href="@{/styles/fragments/postulante/sidebar.css}">
-  <link rel="stylesheet" th:href="@{/styles/postulante/vacantePostulante.css}">
-  <link rel="stylesheet" th:href="@{/styles/postulante/theme.css}">
-  <script th:src="@{/js/theme.js}"></script>
-  <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
-  <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
-  <link rel="icon" type="image/svg+xml" sizes="any" th:href="@{/source/img/favicon.svg}">
-  <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous" defer></script>
-
-  <title>Vacantes Disponibles - HireConnect</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" th:href="@{/styles/fragments/postulante/sidebar.css}" />
+    <link rel="stylesheet" th:href="@{/styles/fragments/postulante/header.css}" />
+    <link rel="stylesheet" th:href="@{/styles/postulante/theme.css}" />
+    <link rel="stylesheet" th:href="@{/styles/postulante/vacantePostulante.css}" />
+    <script th:src="@{/js/theme.js}"></script>
+    <link rel="stylesheet" th:href="@{/styles/satoshi.css}" />
+    <link rel="stylesheet" th:href="@{/styles/clash-display.css}" />
     <link rel="stylesheet" th:href="@{/styles/brand.css}" />
+    <link rel="icon" type="image/svg+xml" sizes="any" th:href="@{/source/img/favicon.svg}" />
+    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous" defer></script>
+    <title>Vacantes | HireConnect</title>
 </head>
-
 <body class="vacancy-browser">
-  <div th:if="${error}" class="modal" id="errorModal">
-    <div class="modal__container">
-      <div class="modal__content">
-        <h3 class="modal__title">Ups...</h3>
-        <div class="modal__text">
-          <i class="fa-solid fa-circle-xmark"></i>
-          <p th:text="${error}">Ya estás postulado a esta vacante.</p>
+    <div th:replace="~{fragments/postulante/sidebar_postulante :: sidebar('vacantes')}"></div>
+    <div th:replace="~{fragments/postulante/header_postulante :: menu-fragment(true)}"></div>
+    <main class="main vacancy-page">
+        <div class="vacancy-page__heading"><div><h1>Encuentra tu próxima oportunidad</h1><p>Explora las vacantes y consulta sus detalles sin salir de la lista.</p></div><span class="vacancy-page__count" data-vacancy-count aria-live="polite" th:text="${#lists.size(vacantes) + ' vacantes'}"></span></div>
+        <p th:if="${exito}" class="vacancy-page__alert" role="status" th:text="${exito}"></p>
+        <p th:if="${error}" class="vacancy-page__alert vacancy-page__alert--error" role="alert" th:text="${error}"></p>
+        <div class="vacancy-workspace" data-vacancy-workspace>
+            <section class="vacancy-list" aria-label="Vacantes disponibles">
+                <div class="vacancy-list__heading"><h2>Vacantes disponibles</h2><span>Selecciona una oferta</span></div>
+                <div class="vacancies" id="vacantesContainer">
+                    <article th:each="vacante : ${vacantes}" class="vacancies__card" th:with="empresa=${vacante.empresa}"
+                        th:attr="data-titulo=${vacante.titulo},data-modalidad=${vacante.modalidad?.descripcion},data-experiencia=${vacante.experienciaRequerida?.descripcion},data-salario=${vacante.salario},data-empresa=${empresa?.nombre},data-fecha=${vacante.fechaPublicacion},data-tipo-contrato=${vacante.tipoContrato?.descripcion}">
+                        <a class="vacancy-item" data-vacancy-open th:href="@{/postulante/vacante/{id}(id=${vacante.id})}" th:attr="data-vacancy-id=${vacante.id}">
+                            <div class="vacancy-item__top"><span class="vacancy-company-logo" aria-hidden="true"><img th:if="${not #strings.isEmpty(empresa?.foto)}" th:src="${empresa.foto}" alt="" loading="lazy" /><i th:unless="${not #strings.isEmpty(empresa?.foto)}" class="fa-regular fa-building"></i></span><span class="vacancy-item__company" th:text="${empresa?.nombre ?: 'Empresa'}"></span><span class="vacancy-item__arrow" aria-hidden="true">↗</span></div>
+                            <h3 th:text="${vacante.titulo}"></h3>
+                            <div class="vacancy-item__tags"><span th:if="${vacante.modalidad != null}" th:text="${vacante.modalidad.descripcion}"></span><span th:if="${vacante.tipoContrato != null}" th:text="${vacante.tipoContrato.descripcion}"></span></div>
+                            <div class="vacancy-item__bottom"><strong th:text="${vacante.salario != null and vacante.salario > 0} ? ${'$' + #numbers.formatDecimal(vacante.salario, 0, 'POINT', 0, 'COMMA') + ' COP'} : 'Salario a convenir'"></strong><time class="vacancies__date" th:if="${vacante.fechaPublicacion != null}" th:attr="data-fecha=${vacante.fechaPublicacion}" th:datetime="${vacante.fechaPublicacion}" th:text="${#temporals.format(vacante.fechaPublicacion, 'dd/MM/yyyy')}"></time></div>
+                        </a>
+                        <!-- El detalle viaja con la lista y se clona al seleccionar, sin otra petición. -->
+                        <template data-vacancy-template>
+                            <article class="vacancy-detail" th:attr="aria-labelledby=${'vacancy-title-' + vacante.id}">
+                                <header class="vacancy-detail__hero">
+                                    <div class="vacancy-detail__company">
+                                        <span class="vacancy-company-logo" aria-hidden="true"><img th:if="${not #strings.isEmpty(empresa?.foto)}" th:src="${empresa.foto}" alt="" /><i th:unless="${not #strings.isEmpty(empresa?.foto)}" class="fa-regular fa-building"></i></span>
+                                        <div><p th:text="${empresa?.nombre ?: 'Empresa'}"></p><span th:if="${vacante.fechaPublicacion != null}" th:text="${'Publicada el ' + #temporals.format(vacante.fechaPublicacion, 'dd/MM/yyyy')}"></span></div>
+                                    </div>
+                                    <span class="vacancy-detail__availability" th:if="${vacante.estado != null and vacante.estado.name() == 'ACTIVA'}">Convocatoria abierta</span>
+                                    <h2 tabindex="-1" data-vacancy-title th:id="${'vacancy-title-' + vacante.id}" th:text="${vacante.titulo}"></h2>
+                                </header>
+                                <div class="vacancy-detail__intro">
+                                    <div class="vacancy-detail__pay"><span>Salario ofrecido</span><strong class="vacancy-detail__salary" th:text="${vacante.salario != null and vacante.salario > 0} ? ${'$' + #numbers.formatDecimal(vacante.salario, 0, 'POINT', 0, 'COMMA') + ' COP'} : 'A convenir'"></strong></div>
+                                    <a class="vacancy-detail__apply" th:if="${vacante.estado != null and vacante.estado.name() == 'ACTIVA'}" th:href="@{/postulante/postular(vacanteId=${vacante.id})}">Postularme <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                                    <span class="vacancy-detail__closed" th:unless="${vacante.estado != null and vacante.estado.name() == 'ACTIVA'}">Vacante no disponible</span>
+                                </div>
+                                <dl class="vacancy-detail__facts">
+                                    <div><dt><i class="fa-solid fa-laptop" aria-hidden="true"></i> Modalidad</dt><dd th:text="${vacante.modalidad?.descripcion ?: 'No especificada'}"></dd></div>
+                                    <div><dt><i class="fa-regular fa-file-lines" aria-hidden="true"></i> Contrato</dt><dd th:text="${vacante.tipoContrato?.descripcion ?: 'No especificado'}"></dd></div>
+                                    <div><dt><i class="fa-solid fa-briefcase" aria-hidden="true"></i> Experiencia</dt><dd th:text="${vacante.experienciaRequerida?.descripcion ?: 'No especificada'}"></dd></div>
+                                </dl>
+                                <section class="vacancy-detail__section"><h3>La oportunidad</h3><p class="vacancy-detail__description" th:text="${#strings.isEmpty(vacante.descripcion) ? 'La empresa no ha añadido una descripción.' : vacante.descripcion}"></p></section>
+                                <section class="vacancy-detail__section" th:if="${not #strings.isEmpty(vacante.habilidadesRequeridas)}"><h3>Lo que buscamos en ti</h3><ul class="vacancy-detail__skills"><li th:each="habilidad : ${#strings.arraySplit(vacante.habilidadesRequeridas, ',')}" th:text="${#strings.trim(habilidad)}"></li></ul></section>
+                                <div class="vacancy-detail__deadline" th:if="${vacante.fechaFin != null}"><span class="vacancy-detail__deadline-icon" aria-hidden="true"><i class="fa-regular fa-calendar"></i></span><div><strong>Cierre de la convocatoria</strong><p th:text="${#temporals.format(vacante.fechaFin, 'dd/MM/yyyy')}"></p></div></div>
+                            </article>
+                        </template>
+                    </article>
+                </div>
+                <div id="no-vacantes-message" class="vacancy-empty" th:style="${not #lists.isEmpty(vacantes)} ? 'display:none' : ''"><i class="fa-regular fa-folder-open" aria-hidden="true"></i><h3>No hay vacantes que coincidan</h3><p>Prueba con otro cargo o ajusta tus filtros.</p></div>
+            </section>
+            <section class="vacancy-reader" aria-label="Detalle de la vacante seleccionada" data-vacancy-reader hidden>
+                <div class="vacancy-reader__bar"><button type="button" data-vacancy-back class="vacancy-reader__back">← Volver a las vacantes</button><span>Detalle de la vacante</span></div>
+                <div class="vacancy-reader__content" data-vacancy-content><div class="vacancy-empty"><i class="fa-solid fa-arrow-pointer" aria-hidden="true"></i><h2>Encuentra una oportunidad para ti</h2><p>Selecciona una vacante para consultar sus requisitos.</p></div></div>
+            </section>
         </div>
-        <span class="modal__close-btn">Cerrar</span>
-      </div>
-    </div>
-  </div>
-
-  <div th:if="${exito}" class="modal" id="successModal">
-    <div class="modal__container">
-      <div class="modal__content">
-        <h3 class="modal__title">Hola <span th:text="${postulante.nombre}"></span></h3>
-        <div class="modal__text">
-          <i class="fa-solid fa-circle-check mr-3 text-xl"></i>
-          <p th:text="${exito}">Postulación exitosa! Ahora puedes ver el estado en 'Mis Postulaciones'.</p>
-        </div>
-        <span class="modal__close-btn">Cerrar</span>
-      </div>
-    </div>
-  </div>
-
-  <div th:replace="~{fragments/postulante/sidebar_postulante :: sidebar ('vacantes')}"></div>
-
-  <div th:replace="~{fragments/postulante/header_postulante :: menu-fragment(true)}"></div>
-
-  <main class="main">
-
-    <div class="vacancies" id="vacantesContainer">
-      <div th:each="vacante : ${vacantes}" class="vacancies__card" th:data-titulo="${vacante.titulo}"
-        th:data-modalidad="${vacante.modalidad}" th:data-experiencia="${vacante.experienciaRequerida}"
-        th:data-salario="${vacante.salario}" th:data-empresa="${vacante.empresa.nombre}"
-        th:data-fecha="${#temporals.format(vacante.fechaPublicacion, 'yyyy-MM-dd')}"
-        th:data-tipo-contrato="${vacante.tipoContrato.descripcion}">
-
-        <div class="vacancies__header">
-          <div class="vacancies__section">
-            <div class="vacancies__company-photo">
-              <img th:if="${vacante.empresa.foto != null}" th:src="@{${vacante.empresa.foto}}" alt="Logo Empresa">
-              <div th:if="${vacante.empresa.foto == null}" class="company-photo-placeholder">
-                <i class="fa-solid fa-building"></i>
-              </div>
-            </div>
-
-            <div class="sect_name">
-              <h3 th:text="${vacante.titulo}"></h3>
-              <p class="sect_name__company">
-                <i class="fa-solid fa-building"></i>
-                <span th:text="${vacante.empresa.nombre}"></span>
-              </p>
-            </div>
-          </div>
-
-          <span class="vacancies__date" th:data-fecha="${vacante.fechaPublicacion}">
-          </span>
-        </div>
-
-        <span class="modalidad-badge"
-          th:classappend="${vacante.modalidad.descripcion == 'Remoto'} ? 'modalidad-badge--remoto' : (${vacante.modalidad.descripcion == 'Híbrido' or vacante.modalidad.descripcion == 'Hibrido'} ? 'modalidad-badge--hibrido' : 'modalidad-badge--presencial')"
-          th:text="${vacante.modalidad.descripcion}">
-        </span>
-
-        <div class="vacancies__description">
-          <p th:text="${vacante.descripcion}"></p>
-        </div>
-
-        <div class="vacancies__info">
-          <p>
-            <i class="fa-solid fa-file-contract"></i>
-            <span th:text="${vacante.tipoContrato.descripcion}"></span>
-          </p>
-          <p class="special">
-            <i class="fa-solid fa-sack-dollar"></i>
-            $<span th:text="${#numbers.formatDecimal(vacante.salario, 0, 'COMMA', 0, 'POINT')}"></span>
-          </p>
-        </div>
-
-        <div class="vacancies__btns">
-          <a class="btn btn--postulate"
-            th:href="@{/postulante/postular(vacanteId=${vacante.id}, postulanteId=${postulante.id})}">
-            <i class="fa-solid fa-paper-plane"></i> Postularme
-          </a>
-          <a class="btn btn--view-more"
-            th:href="@{/postulante/vacante/{id}(id=${vacante.id}, postulanteId=${postulante.id})}">
-            <i class="fa-solid fa-eye"></i> Ver más
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <div th:if="${#lists.isEmpty(vacantes)}" id="no-vacantes-message" class="no__vacancies-message">
-      <i class="fa-solid fa-circle-info icon-no-vacancies"></i>
-      <p class="no__vacancies-title">No se encontraron vacantes disponibles.</p>
-      <p class="no-vacancies-text">Intenta ajustar tus criterios de búsqueda o vuelve más tarde.</p>
-    </div>
-
-
-  </main>
-
-  <script th:src="@{/js/filter.js}"></script>
-  <script th:src="@{/js/modal.js}"></script>
-  <script th:src="@{/js/vacante_postulante.js}"></script>
+    </main>
+    <script th:src="@{/js/vacantes_workspace.js}" defer></script>
+    <script th:src="@{/js/filter.js}" defer></script>
+    <script th:src="@{/js/vacante_postulante.js}" defer></script>
     <div th:replace="~{fragments/postulante/chatbot :: chatbot}"></div>
 </body>
-
 </html>

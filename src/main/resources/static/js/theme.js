@@ -1,42 +1,49 @@
 (function () {
-    var root = document.documentElement;
-    var KEY = 'hc-theme';
-
-    function saved() {
-        try { return localStorage.getItem(KEY); } catch (e) { return null; }
-    }
-
-    var theme = saved();
-    if (theme !== 'dark' && theme !== 'light') {
-        theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
-    }
-    root.setAttribute('data-theme', theme);
-
+    const root = document.documentElement;
+    const KEY = 'hc-theme';
+    const MOTION = 'hc-reduce-motion';
+    const system = window.matchMedia('(prefers-color-scheme: dark)');
+    let preference, reduceMotion;
+    try { preference = localStorage.getItem(KEY); reduceMotion = localStorage.getItem(MOTION) === 'true'; } catch (error) {}
+    if (!['dark', 'light', 'system'].includes(preference)) preference = 'system';
     function sync() {
-        var dark = root.getAttribute('data-theme') === 'dark';
-        var buttons = document.querySelectorAll('[data-theme-toggle]');
-        for (var i = 0; i < buttons.length; i++) {
-            buttons[i].setAttribute('aria-pressed', dark ? 'true' : 'false');
-            buttons[i].setAttribute('aria-label', dark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro');
-            buttons[i].setAttribute('title', dark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro');
-        }
+        const dark = root.getAttribute('data-theme') === 'dark';
+        document.querySelectorAll('[data-theme-toggle]').forEach(button => {
+            button.setAttribute('aria-pressed', String(dark));
+            button.setAttribute('aria-label', dark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro');
+            button.title = button.getAttribute('aria-label');
+        });
     }
-
-    document.addEventListener('click', function (e) {
-        var btn = e.target.closest ? e.target.closest('[data-theme-toggle]') : null;
-        if (!btn) return;
-        var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-        root.setAttribute('data-theme', next);
-        try { localStorage.setItem(KEY, next); } catch (err) { }
+    function apply() {
+        root.setAttribute('data-theme', preference === 'system' ? (system.matches ? 'dark' : 'light') : preference);
+        root.toggleAttribute('data-reduce-motion', Boolean(reduceMotion));
         sync();
+        document.dispatchEvent(new CustomEvent('hc:appearance', { detail: { theme: preference, reduceMotion } }));
+    }
+    function persist(key, value) {
+        try { localStorage.setItem(key, value); return true; } catch (error) { return false; }
+    }
+    window.HireConnectAppearance = {
+        get: () => ({ theme: preference, reduceMotion: Boolean(reduceMotion) }),
+        setTheme(value) {
+            if (!['dark', 'light', 'system'].includes(value)) return false;
+            preference = value; const saved = persist(KEY, value); apply(); return saved;
+        },
+        setReduceMotion(value) {
+            reduceMotion = Boolean(value); const saved = persist(MOTION, String(reduceMotion)); apply(); return saved;
+        }
+    };
+    apply();
+    system.addEventListener('change', () => { if (preference === 'system') apply(); });
+    document.addEventListener('click', event => {
+        if (event.target.closest?.('[data-theme-toggle]')) window.HireConnectAppearance.setTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
     });
-
-    window.addEventListener('storage', function (e) {
-        if (e.key === KEY && (e.newValue === 'dark' || e.newValue === 'light')) {
-            root.setAttribute('data-theme', e.newValue);
-            sync();
+    window.addEventListener('storage', event => {
+        if (event.key === KEY || event.key === MOTION || event.key === null) {
+            try { preference = localStorage.getItem(KEY); reduceMotion = localStorage.getItem(MOTION) === 'true'; } catch (error) {}
+            if (!['dark', 'light', 'system'].includes(preference)) preference = 'system';
+            apply();
         }
     });
-
     document.addEventListener('DOMContentLoaded', sync);
 })();

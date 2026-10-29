@@ -11,11 +11,7 @@
       rel="stylesheet"
       th:href="@{/styles/fragments/postulante/header.css}"
     />
-    <link
-      rel="stylesheet"
-      th:href="@{/styles/postulante/perfil_postulante.css}"
-    />
-    <link rel="stylesheet" th:href="@{/styles/postulante/theme.css}" />
+<link rel="stylesheet" th:href="@{/styles/postulante/theme.css}" />
     <script th:src="@{/js/theme.js}"></script>
     <link rel="stylesheet" th:href="@{/styles/satoshi.css}" />
     <link rel="stylesheet" th:href="@{/styles/clash-display.css}" />
@@ -27,96 +23,50 @@
     />
     <script
       src="https://kit.fontawesome.com/e71256cba2.js"
-      crossorigin="anonymous"
+      crossorigin="anonymous" defer
     ></script>
-    <title>Editar Perfil</title>
+    <title>Mi perfil | HireConnect</title>
       <link rel="stylesheet" th:href="@{/styles/brand.css}" />
+    <link rel="stylesheet" th:href="@{/styles/postulante/perfil_postulante.css}" />
 </head>
 
-  <body>
-    <div
-      id="sidebar-overlay"
-      class="content-overlay hidden md:hidden"
-      onclick="toggleSidebar()"
-    ></div>
-    <div
-      th:replace="~{fragments/postulante/sidebar_postulante :: sidebar ('perfil')}"
-      id="sidebar"
-    ></div>
-    <div
-      th:replace="~{fragments/postulante/header_postulante :: menu-fragment(false)}"
-    ></div>
-
-    <main class="content">
-      <h2 class="page-title">Perfil</h2>
-
-      <div th:if="${exito}" class="flash-alert success" role="alert">
-        <span class="block sm:inline" th:text="${exito}"
-          >Perfil actualizado correctamente.</span
-        >
-      </div>
-      <div th:if="${error}" class="flash-alert error" role="alert">
-        <span class="block sm:inline" th:text="${error}"
-          >Error al procesar la solicitud.</span
-        >
-      </div>
-
-      <div class="profile-banner">
-        <div class="profile-banner__background"></div>
-        <div class="profile-banner__content">
-          <div class="profile-avatar-large" id="profileAvatarClickArea">
-            <img
-              th:if="${postulante.foto != null}"
-              th:src="@{${postulante.foto}}"
-              alt="Foto de Perfil"
-              id="profileImage"
-            />
-            <div class="upload-overlay"><i class="fas fa-camera"></i></div>
-            <div th:if="${postulante.foto == null}" class="photo-placeholder">
-              <i class="fa-solid fa-user"></i>
-            </div>
-            <form
-              th:action="@{/postulante/subirFoto(id=${postulante.id})}"
-              method="post"
-              enctype="multipart/form-data"
-              id="fotoUploadForm"
-            >
-              <input type="file" name="file" accept="image/*" id="fileInput" />
-            </form>
-          </div>
-          <div class="profile-details">
-            <h2 th:text="${postulante.nombre}">Cuenta Postulante</h2>
-            <p th:text="${postulante.email}">Correo de postulante</p>
-          </div>
+  <body class="profile-page">
+    <div th:replace="~{fragments/postulante/sidebar_postulante :: sidebar('perfil')}"></div>
+    <div th:replace="~{fragments/postulante/header_postulante :: menu-fragment(false)}"></div>
+    <main class="content profile-layout">
+      <div th:if="${exito}" class="flash-alert success" role="status" th:text="${exito}"></div>
+      <div th:if="${error}" class="flash-alert error" role="alert" th:text="${error}"></div>
+      <section class="profile-hero" aria-label="Mi perfil">
+        <div class="profile-hero__cover" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="profile-hero__body">
+          <button type="button" class="profile-avatar-large" id="profileAvatarClickArea" aria-label="Cambiar foto de perfil">
+            <img th:if="${not #strings.isEmpty(postulante.foto)}" th:src="${postulante.foto}" alt="" id="profileImage" />
+            <span th:if="${#strings.isEmpty(postulante.foto)}" class="photo-placeholder"><i class="fa-solid fa-user" aria-hidden="true"></i></span>
+            <span class="upload-overlay" aria-hidden="true"><i class="fa-solid fa-camera"></i></span>
+          </button>
+          <form th:action="@{/postulante/subirFoto(id=${postulante.id})}" method="post" enctype="multipart/form-data" id="fotoUploadForm" th:data-photo-url="@{/postulante/foto}" hidden><input type="file" name="file" accept="image/jpeg,image/png" id="fileInput" aria-label="Foto de perfil" /></form>
+          <div class="profile-hero__identity"><h1 th:text="${postulante.nombre + ' ' + postulante.apellido}"></h1><p class="profile-hero__title" th:text="${#strings.isEmpty(postulante.titulacion) ? 'Postulante' : postulante.titulacion}"></p><p class="profile-hero__email" th:text="${postulante.email}"></p></div>
+          <div class="profile-hero__actions"><button type="button" class="profile-edit-button" data-profile-edit><i class="fa-solid fa-pen" aria-hidden="true"></i> Editar perfil</button><button type="button" class="profile-delete-photo" data-photo-remove th:hidden="${#strings.isEmpty(postulante.foto)}">Quitar foto</button></div>
         </div>
-        <div class="photo-actions">
-          <a
-            th:if="${postulante.foto != null and postulante.foto != ''}"
-            th:href="@{/postulante/eliminarFoto(id=${postulante.id})}"
-            class="delete"
-            >Eliminar Foto</a
-          >
-        </div>
-      </div>
-
-      <nav class="profile-tabs">
-        <button class="profile-tab" data-tab="basica">
-          <i class="fa-solid fa-user"></i> Información Básica
-        </button>
-        <button class="profile-tab" data-tab="habilidades">
-          <i class="fa-solid fa-brain"></i> Habilidades
-        </button>
-        <button class="profile-tab" data-tab="educacion">
-          <i class="fa-solid fa-graduation-cap"></i> Educación
-        </button>
-        <button class="profile-tab" data-tab="experiencia">
-          <i class="fa-solid fa-briefcase"></i> Experiencia
-        </button>
-      </nav>
-
+      </section>
+      <p class="profile-photo-feedback" data-photo-feedback role="status" aria-live="polite" hidden></p>
+      <div class="profile-columns">
+        <div class="profile-primary">
+          <nav class="profile-tabs" role="tablist" aria-label="Secciones del perfil">
+            <button type="button" class="profile-tab profile-tab--active" data-tab="resumen" role="tab" aria-selected="true">Resumen</button>
+            <button type="button" class="profile-tab" data-tab="basica" role="tab" aria-selected="false">Datos</button>
+            <button type="button" class="profile-tab" data-tab="habilidades" role="tab" aria-selected="false">Habilidades</button>
+            <button type="button" class="profile-tab" data-tab="educacion" role="tab" aria-selected="false">Educación</button>
+            <button type="button" class="profile-tab" data-tab="experiencia" role="tab" aria-selected="false">Experiencia</button>
+          </nav>
+          <div id="section-resumen" class="profile-section profile-section--visible">
+            <section class="profile-card"><h2>Habilidades</h2><div class="profile-skill-list" th:if="${not #lists.isEmpty(postulante.habilidades)}"><span th:each="habilidad : ${postulante.habilidades}" th:text="${habilidad}"></span></div><p class="profile-empty" th:if="${#lists.isEmpty(postulante.habilidades)}">Sin habilidades registradas.</p></section>
+            <section class="profile-card"><h2>Experiencia</h2><ul class="profile-timeline" th:if="${not #lists.isEmpty(postulante.experiencia)}"><li th:each="exp : ${postulante.experiencia}"><span class="profile-timeline__icon" aria-hidden="true"><i class="fa-solid fa-briefcase"></i></span><div><h3 th:text="${exp.cargo}"></h3><p th:text="${exp.empresa}"></p><p class="profile-timeline__date" th:if="${exp.fechaInicio != null}" th:text="${#temporals.format(exp.fechaInicio, 'MMM yyyy') + ' — ' + (exp.fechaFin != null ? #temporals.format(exp.fechaFin, 'MMM yyyy') : 'Actualidad')}"></p><p class="profile-timeline__description" th:if="${not #strings.isEmpty(exp.descripcion)}" th:text="${exp.descripcion}"></p></div></li></ul><p class="profile-empty" th:if="${#lists.isEmpty(postulante.experiencia)}">Sin experiencia registrada.</p></section>
+            <section class="profile-card"><h2>Educación</h2><ul class="profile-timeline" th:if="${not #lists.isEmpty(postulante.educacion)}"><li th:each="edu : ${postulante.educacion}"><span class="profile-timeline__icon" aria-hidden="true"><i class="fa-solid fa-graduation-cap"></i></span><div><h3 th:text="${edu.titulo}"></h3><p th:text="${edu.institucion}"></p><p class="profile-timeline__date" th:if="${edu.fechaInicio != null}" th:text="${#temporals.format(edu.fechaInicio, 'MMM yyyy') + ' — ' + (edu.fechaFin != null ? #temporals.format(edu.fechaFin, 'MMM yyyy') : 'Actualidad')}"></p></div></li></ul><p class="profile-empty" th:if="${#lists.isEmpty(postulante.educacion)}">Sin estudios registrados.</p></section>
+          </div>
       <div id="section-basica" class="profile-section profile-section--hidden">
         <div class="profile-card">
-          <h5><span>Información Básica</span></h5>
+          <h5><span>Datos personales</span></h5>
           <form th:action="@{/postulante/actualizar}" method="post">
             <input type="hidden" name="id" th:value="${postulante.id}" />
             <input type="hidden" name="foto" th:value="${postulante.foto}" />
@@ -159,7 +109,7 @@
 
             <div class="form-grid cols-3">
               <div class="form-field">
-                <label>Correo Electrónico</label>
+                <label>Correo</label>
                 <input
                   class="form-input readonly"
                   type="email"
@@ -167,7 +117,7 @@
                   th:value="${postulante.email}"
                   readonly
                 />
-                <p class="small-text">El correo no puede ser modificado.</p>
+
               </div>
               <div class="form-field">
                 <label>Teléfono</label>
@@ -193,7 +143,7 @@
 
             <div class="form-grid cols-3">
               <div class="form-field">
-                <label>Tipo de Documento</label>
+                <label>Documento</label>
                 <input
                   class="form-input readonly"
                   type="text"
@@ -212,7 +162,7 @@
                 />
               </div>
               <div class="form-field">
-                <label>Titulación Profesional</label>
+                <label>Titulación</label>
                 <input
                   class="form-input"
                   type="text"
@@ -225,46 +175,13 @@
 
             <div class="form-actions">
               <button type="submit" class="btn-submit-save">
-                Guardar Cambios
+                Guardar cambios
               </button>
             </div>
           </form>
         </div>
 
-        <div class="profile-card cv-section">
-          <h3><i class="fa-solid fa-file-lines"></i> Currículum Vitae</h3>
-          <form
-            th:action="@{/postulante/subirCV}"
-            method="post"
-            enctype="multipart/form-data"
-            class="cv-upload-form"
-          >
-            <input type="hidden" name="id" th:value="${postulante.id}" />
-            <input type="hidden" name="foto" th:value="${postulante.foto}" />
-            <div class="flex items-center gap-3">
-              <input
-                type="file"
-                name="file"
-                accept=".pdf,.doc,.docx"
-                class="cv-file-input"
-                required
-              />
-              <button type="submit" class="btn-upload-cv">
-                <i class="fa-solid fa-upload mr-2"></i> Subir CV
-              </button>
-            </div>
-          </form>
-          <div th:if="${postulante.cv}" class="cv-view-container">
-            <p>Ya tienes un CV cargado:</p>
-            <a
-              th:href="@{'/postulante/descargarCV/' + ${postulante.id}}"
-              target="_blank"
-              class="btn-view-cv"
-            >
-              <i class="fa-solid fa-file-pdf mr-2"></i>Descargar CV
-            </a>
-          </div>
-        </div>
+
       </div>
 
       <div
@@ -272,7 +189,7 @@
         class="profile-section profile-section--hidden"
       >
         <div class="profile-card">
-          <h5><span>🧠</span><span>Habilidades (Skills)</span></h5>
+          <h5><span>Habilidades</span></h5>
           <form
             th:action="@{/postulante/agregarHabilidad}"
             method="post"
@@ -283,12 +200,12 @@
               <input
                 class="form-input"
                 type="text"
-                name="habilidad"
-                placeholder="Ejemplo: Java, Trabajo en equipo, Marketing Digital..."
+                name="habilidad" aria-label="Nueva habilidad"
+                placeholder="Nueva habilidad"
                 required
               />
               <button type="submit" class="btn-add-item">
-                Agregar Habilidad
+                Agregar
               </button>
             </div>
           </form>
@@ -314,8 +231,7 @@
             th:if="${#lists.isEmpty(postulante.habilidades)}"
             class="empty-list-message"
           >
-            Añade tus principales habilidades para que las empresas te
-            encuentren.
+            Sin habilidades registradas.
           </div>
         </div>
       </div>
@@ -325,7 +241,7 @@
         class="profile-section profile-section--hidden"
       >
         <div class="profile-card">
-          <h5><span>🎓</span><span>Historial Académico</span></h5>
+          <h5><span>Educación</span></h5>
           <form
             th:action="@{/postulante/agregarEstudio}"
             method="post"
@@ -336,15 +252,15 @@
               <input
                 class="form-input"
                 type="text"
-                name="institucion"
-                placeholder="Institución (Ej: Universidad Nacional)"
+                name="institucion" aria-label="Institución"
+                placeholder="Institución"
                 required
               />
               <input
                 class="form-input"
                 type="text"
-                name="titulo"
-                placeholder="Título o carrera (Ej: Ingeniería de Software)"
+                name="titulo" aria-label="Título"
+                placeholder="Título"
                 required
               />
             </div>
@@ -360,7 +276,7 @@
             </div>
             <div class="flex justify-end">
               <button type="submit" class="btn-add-item">
-                Agregar Estudio
+                Agregar
               </button>
             </div>
           </form>
@@ -396,7 +312,7 @@
             th:if="${#lists.isEmpty(postulante.educacion)}"
             class="empty-list-message"
           >
-            Añade tu historial académico.
+            Sin estudios registrados.
           </div>
         </div>
       </div>
@@ -406,7 +322,7 @@
         class="profile-section profile-section--hidden"
       >
         <div class="profile-card">
-          <h5><span>💼</span><span>Experiencia Laboral</span></h5>
+          <h5><span>Experiencia</span></h5>
           <form
             th:action="@{/postulante/agregarExperiencia}"
             method="post"
@@ -417,15 +333,15 @@
               <input
                 class="form-input"
                 type="text"
-                name="empresa"
-                placeholder="Empresa (Ej: Tech Solutions Corp.)"
+                name="empresa" aria-label="Empresa"
+                placeholder="Empresa"
                 required
               />
               <input
                 class="form-input"
                 type="text"
-                name="cargo"
-                placeholder="Cargo (Ej: Desarrollador Senior)"
+                name="cargo" aria-label="Cargo"
+                placeholder="Cargo"
                 required
               />
             </div>
@@ -441,14 +357,14 @@
             </div>
             <textarea
               class="form-input resize-none min-h-[6rem]"
-              name="descripcion"
+              name="descripcion" aria-label="Responsabilidades y logros"
               rows="3"
-              placeholder="Descripción breve de tus responsabilidades y logros..."
+              placeholder="Responsabilidades y logros"
               required
             ></textarea>
             <div class="flex justify-end mt-4">
               <button type="submit" class="btn-add-item">
-                Agregar Experiencia
+                Agregar
               </button>
             </div>
           </form>
@@ -488,15 +404,62 @@
             th:if="${#lists.isEmpty(postulante.experiencia)}"
             class="empty-list-message"
           >
-            Añade tu historial laboral.
+            Sin experiencia registrada.
           </div>
         </div>
       </div>
+        </div>
+        <aside class="profile-aside" aria-label="Documentos y próximas funciones">
+        <div class="profile-card cv-section">
+          <h3>Hoja de vida</h3>
+          <form
+            th:action="@{/postulante/subirCV}"
+            method="post"
+            enctype="multipart/form-data"
+            class="cv-upload-form"
+          >
+            <input type="hidden" name="id" th:value="${postulante.id}" />
+            <input type="hidden" name="foto" th:value="${postulante.foto}" />
+            <div class="flex items-center gap-3">
+              <input
+                type="file"
+                name="file"
+                accept=".pdf,.doc,.docx"
+                class="cv-file-input" aria-label="Seleccionar hoja de vida"
+                required
+              />
+              <button type="submit" class="btn-upload-cv">
+                <i class="fa-solid fa-upload mr-2"></i> Subir archivo
+              </button>
+            </div>
+          </form>
+          <div th:if="${postulante.cv}" class="cv-view-container">
+            <p class="profile-cv-status">Documento disponible</p>
+            <a
+              th:href="@{'/postulante/descargarCV/' + ${postulante.id}}"
+              target="_blank"
+              class="btn-view-cv"
+            >
+              <i class="fa-solid fa-file-pdf mr-2"></i>Descargar
+            </a>
+          </div>
+        </div>
+          <section class="profile-features"><span class="profile-features__label">NEW FEATURES</span><div class="profile-features__circle" aria-hidden="true"><span>✦</span></div><h2>Tu perfil, con más posibilidades</h2><p>Próximamente</p></section>
+        </aside>
+      </div>
     </main>
-
-    <script th:src="@{/js/foto.js}"></script>
-    <script th:src="@{/js/modal_postulante.js}"></script>
-    <script th:src="@{/js/perfil_tabs.js}"></script>
+    <dialog class="profile-photo-dialog" aria-labelledby="photo-dialog-title">
+      <h2 id="photo-dialog-title">Ajusta tu foto</h2>
+      <p>Arrastra la imagen o usa las flechas para encuadrarla.</p>
+      <canvas width="512" height="512" data-photo-canvas aria-label="Vista previa de la foto"></canvas>
+      <label for="photoZoom">Zoom</label>
+      <input id="photoZoom" type="range" min="1" max="3" step="0.01" value="1" />
+      <p data-photo-editor-message role="status" aria-live="polite"></p>
+      <div class="profile-photo-dialog__actions"><button type="button" data-photo-cancel>Cancelar</button><button type="button" class="profile-edit-button" data-photo-save>Guardar foto</button></div>
+    </dialog>
+    <script th:src="@{/js/perfil_foto.js}" defer></script>
+    <script th:src="@{/js/modal_postulante.js}" defer></script>
+    <script th:src="@{/js/perfil_tabs.js}" defer></script>
     <div th:replace="~{fragments/postulante/chatbot :: chatbot}"></div>
   </body>
 </html>

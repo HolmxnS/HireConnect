@@ -408,40 +408,6 @@ select:focus {
     text-decoration: none;
 }
 
-.profile-tabs {
-    gap: .6rem;
-    padding: .6rem;
-    background: var(--pc-surface);
-    border: 1px solid var(--pc-line);
-    border-radius: 99rem;
-    width: fit-content;
-    max-width: 100%;
-    margin-bottom: 2.4rem;
-}
-
-.profile-tab {
-    padding: .9rem 2rem;
-    border: none;
-    border-radius: 99rem;
-    margin-bottom: 0;
-    color: var(--gris-o);
-}
-
-.profile-tab:hover {
-    background: var(--lila);
-    color: var(--morado-c);
-}
-
-.profile-tab--active {
-    background: var(--morado-c);
-    color: var(--blanco);
-}
-
-.profile-tab--active:hover {
-    background: var(--morado-h);
-    color: var(--blanco);
-}
-
 .profile-banner__background {
     background: linear-gradient(120deg, var(--morado-o) 0%, var(--morado-c) 100%);
     border-radius: var(--pc-radius);
@@ -582,7 +548,6 @@ body > .details {
 :root[data-theme="dark"] .modal__content,
 :root[data-theme="dark"] .modal-content,
 :root[data-theme="dark"] .filter-panel,
-:root[data-theme="dark"] .profile-tabs,
 :root[data-theme="dark"] .form-input,
 :root[data-theme="dark"] .form__input,
 :root[data-theme="dark"] textarea,
@@ -711,102 +676,18 @@ body > .details {
 
 @media (max-width: 700px) {
 
-    .sidebar {
-        top: auto;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        width: 100%;
-        height: 6.6rem;
-        flex-direction: row;
-        align-items: stretch;
-        padding: 0 .6rem env(safe-area-inset-bottom);
-        border-right: none;
-        border-top: 1px solid var(--pc-line);
-        background: var(--pc-header-bg);
-        -webkit-backdrop-filter: blur(1rem);
-        backdrop-filter: blur(1rem);
-        box-shadow: 0 -.4rem 2rem rgba(18, 11, 23, .06);
-        transform: none;
-        z-index: 50;
-    }
 
-    .sidebar__logo,
-    .sidebar__label {
-        display: none;
-    }
 
-    .sidebar__nav {
-        flex: 1;
-    }
 
-    .sidebar ul {
-        flex-direction: row;
-        align-items: stretch;
-        justify-content: space-around;
-        gap: 0;
-    }
 
-    .sidebar ul li {
-        flex: 1;
-        display: flex;
-        min-width: 0;
-    }
 
-    .sidebar ul li.sidebar__theme-item,
-    .sidebar ul li:last-child {
-        margin-top: 0;
-        padding-top: 0;
-        border-top: none;
-    }
 
-    .sidebar ul li a,
-    .sidebar ul li .sidebar__theme {
-        flex-direction: column;
-        justify-content: center;
-        gap: .2rem;
-        width: 100%;
-        height: 100%;
-        padding: 0 .2rem;
-        border-radius: 1.2rem;
-        font-size: 1rem;
-        line-height: 1.1;
-        text-align: center;
-    }
 
-    .sidebar__text {
-        display: block;
-        font-size: 1rem;
-    }
 
-    .sidebar .sidebar__theme .theme-label--light {
-        display: none;
-    }
 
-    :root[data-theme="dark"] .sidebar .sidebar__theme .theme-label--dark {
-        display: none;
-    }
 
-    :root[data-theme="dark"] .sidebar .sidebar__theme .theme-label--light {
-        display: block;
-    }
 
-    .sidebar ul li a i,
-    .sidebar ul li .sidebar__theme i {
-        width: 3rem;
-        height: 2.6rem;
-        font-size: 1.6rem;
-    }
 
-    .sidebar .sidebar__active::before {
-        left: 25%;
-        right: 25%;
-        top: 0;
-        bottom: auto;
-        width: auto;
-        height: .3rem;
-        border-radius: 0 0 .4rem .4rem;
-    }
 
     body main,
     body .main,
@@ -1019,18 +900,6 @@ body > .details {
         padding: 2.8rem 2rem;
     }
 
-    .profile-tabs {
-        width: 100%;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        border-radius: 1.6rem;
-    }
-
-    .profile-tab {
-        padding: .9rem 1.6rem;
-        flex-shrink: 0;
-    }
-
     .profile-card {
         padding: 1.8rem 1.6rem;
     }
@@ -1234,9 +1103,6 @@ body > .details {
         font-size: 3rem;
     }
 
-    .sidebar__text {
-        font-size: .9rem;
-    }
 
     .job-card__footer {
         flex-direction: column;
@@ -1246,5 +1112,20 @@ body > .details {
 
     .job-card__btn {
         justify-content: center;
+    }
+}
+
+html[data-reduce-motion] *, html[data-reduce-motion] *::before, html[data-reduce-motion] *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
     }
 }
