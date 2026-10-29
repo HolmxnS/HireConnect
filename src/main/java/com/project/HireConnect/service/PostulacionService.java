@@ -59,6 +59,10 @@ public class PostulacionService {
         return postulacionRepository.findByVacante(vacante);
     }
 
+    public List<Postulacion> buscarPorVacantes(List<Vacante> vacantes) {
+        return vacantes.isEmpty() ? List.of() : postulacionRepository.findByVacanteIn(vacantes);
+    }
+
     public List<Postulacion> buscarPorEmpresa(Empresa empresa) {
         return postulacionRepository.findByVacante_Empresa(empresa);
     }

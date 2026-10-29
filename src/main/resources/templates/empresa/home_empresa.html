@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/styles/fragments/empresa/sidebar.css}">
-    <link rel="stylesheet" th:href="@{/styles/empresa/home_empresa.css}">
     <link rel="stylesheet" th:href="@{/styles/empresa/theme.css}">
     <script th:src="@{/js/theme.js}"></script>
     <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
@@ -13,97 +12,51 @@
     <link rel="icon" type="image/svg+xml" sizes="any" th:href="@{/source/img/favicon.svg}">
     <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
 
-    <title>Home - Empresa</title>
+    <title>Inicio - HireConnect</title>
     <link rel="stylesheet" th:href="@{/styles/brand.css}" />
     <link rel="stylesheet" th:href="@{/styles/empresa/layout.css}" />
+    <link rel="stylesheet" th:href="@{/styles/empresa/home_empresa.css}">
 </head>
 
-<body>
-    <div th:replace="~{fragments/empresa/sidebar_empresa :: sidebar('home')}"></div>
-    <div th:replace="~{fragments/empresa/header_empresa :: header}"></div>
-
-    <main class="main home">
-
-        <section class="hero">
-            <div class="hero__text">
-                <span class="hero__eyebrow"><i class="fa-solid fa-wand-magic-sparkles"></i> Panel de empresa</span>
-                <h1 class="hero__title">Hola, <span class="hero__name" th:text="${empresa.nombreLegal}">Empresa</span></h1>
-                <p class="hero__subtitle">
-                    Publica vacantes, gestiona candidatos y encuentra el talento ideal más rápido.
-                </p>
-                <div class="hero__actions">
-                    <a th:href="@{/empresa/vacantes/nueva}" class="hero__btn hero__btn--solid">
-                        <i class="fa-solid fa-plus"></i> Publicar vacante
-                    </a>
-                    <a th:href="@{/empresa/postulaciones}" class="hero__btn hero__btn--ghost">
-                        Ver postulaciones
-                    </a>
-                </div>
-            </div>
-            <img class="hero__logo" th:src="@{/source/img/isotipo.png}" alt="" aria-hidden="true">
-        </section>
-
-        <section class="profile-card" th:if="${!faltantes.isEmpty()}">
-            <div class="profile-card__top">
-                <i class="fa-solid fa-circle-exclamation"></i>
-                <span>Perfil incompleto</span>
-            </div>
-
-            <div class="profile-card__body">
-                <div class="profile-card__content">
-                    <h2>Completa tu perfil empresarial</h2>
-                    <p>
-                        Tu empresa aún tiene información pendiente.
-                        Completa estos campos para mejorar la confianza de los postulantes.
-                    </p>
-
-                    <ul class="profile-card__list">
-                        <li th:each="item : ${faltantes}">
-                            <i class="fa-solid fa-check"></i>
-                            <span th:text="${item}"></span>
-                        </li>
-                    </ul>
-
-                    <a th:href="@{/empresa/editar}" class="profile-card__button">
-                        Completar perfil <i class="fa-solid fa-arrow-right"></i>
-                    </a>
-                </div>
-
-                <div class="profile-card__illustration">
-                    <i class="fa-regular fa-id-card"></i>
-                </div>
-            </div>
-        </section>
-
-        <section class="quick" aria-label="Accesos rápidos">
-            <a th:href="@{/empresa/vacantes/nueva}" class="quick__card">
-                <span class="quick__icon"><i class="fa-solid fa-plus-circle"></i></span>
-                <span class="quick__body">
-                    <strong>Crear vacante</strong>
-                    <small>Publica una oferta y busca nuevo talento</small>
-                </span>
-                <i class="fa-solid fa-arrow-right quick__arrow"></i>
-            </a>
-            <a th:href="@{/empresa/vacantes}" class="quick__card">
-                <span class="quick__icon"><i class="fa-solid fa-clipboard-list"></i></span>
-                <span class="quick__body">
-                    <strong>Gestionar vacantes</strong>
-                    <small>Edita, cierra o reactiva tus ofertas</small>
-                </span>
-                <i class="fa-solid fa-arrow-right quick__arrow"></i>
-            </a>
-            <a th:href="@{/empresa/postulaciones}" class="quick__card">
-                <span class="quick__icon"><i class="fa-solid fa-users"></i></span>
-                <span class="quick__body">
-                    <strong>Ver postulaciones</strong>
-                    <small>Revisa y responde a los candidatos</small>
-                </span>
-                <i class="fa-solid fa-arrow-right quick__arrow"></i>
-            </a>
-        </section>
-    </main>
-
-    <script th:src="@{/js/filter.js}"></script>
-</body>
-
-</html>
+<body class="company-overview">
+<div th:replace="~{fragments/empresa/sidebar_empresa :: sidebar('home')}"></div>
+<div th:replace="~{fragments/empresa/header_empresa :: header}"></div>
+<main class="main overview-page">
+  <header class="overview-heading"><div><span class="overview-eyebrow" th:text="${#temporals.format(hoy, 'EEEE, dd MMMM yyyy', new java.util.Locale('es', 'CO'))}"></span><h1>Tu equipo, en perspectiva.</h1><p th:text="${empresa.nombreLegal}"></p></div><a class="overview-primary" th:href="@{/empresa/vacantes/nueva}">+ Publicar vacante</a></header>
+  <section class="overview-metrics" aria-label="Estado de la contratación">
+    <a class="overview-metric" th:href="@{/empresa/vacantes}"><span>Vacantes activas</span><strong th:text="${inicio.activas}"></strong><small>Ver tus ofertas <span aria-hidden="true">↗</span></small></a>
+    <a class="overview-metric overview-metric--accent" th:href="@{/empresa/postulaciones}"><span>Por revisar</span><strong th:text="${inicio.pendientes}"></strong><small>Postulaciones pendientes <span aria-hidden="true">↗</span></small></a>
+    <a class="overview-metric" th:href="@{/empresa/postulaciones}"><span>Entrevistas pendientes</span><strong th:text="${inicio.entrevistas}"></strong><small>Postulaciones en esta etapa <span aria-hidden="true">↗</span></small></a>
+    <a class="overview-metric" th:href="@{/empresa/postulaciones}"><span>Postulaciones aceptadas</span><strong th:text="${inicio.aceptadas}"></strong><small>Resultados de tus procesos <span aria-hidden="true">↗</span></small></a>
+  </section>
+  <section th:if="${inicio.vacantes == 0}" class="overview-welcome"><span class="overview-eyebrow">TU PRIMER PASO</span><h2>Abre la puerta al talento.</h2><p>Publica tu primera vacante para empezar a recibir postulaciones y dar seguimiento a tus procesos desde aquí.</p><a class="overview-primary" th:href="@{/empresa/vacantes/nueva}">Crear mi primera vacante ↗</a></section>
+  <div class="overview-grid">
+    <section class="overview-panel overview-activity" aria-labelledby="activity-heading">
+      <div class="overview-panel__heading"><div><h2 id="activity-heading">Actividad de postulaciones</h2><p>Nuevas postulaciones recibidas cada día</p></div><div class="overview-chart-actions"><label for="activity-period" class="overview-sr-only">Período de actividad</label><select id="activity-period"><option value="7">Últimos 7 días</option><option value="14">Últimos 14 días</option><option value="30" selected>Últimos 30 días</option></select><button type="button" data-activity-export>↓ CSV</button></div></div>
+      <div class="overview-chart-summary"><strong data-activity-total></strong><span>en el período</span><p data-activity-detail aria-live="polite"></p></div>
+      <div class="overview-chart" data-activity-chart></div><p class="overview-chart-empty" data-activity-empty hidden>No se recibieron postulaciones en este período.</p>
+      <details class="overview-chart-table"><summary>Ver datos por día</summary><div><table><caption class="overview-sr-only">Postulaciones diarias</caption><thead><tr><th scope="col">Fecha</th><th scope="col">Postulaciones</th></tr></thead><tbody><tr th:each="dia : ${inicio.actividad}" data-activity-point th:data-date="${dia.fecha}" th:data-count="${dia.cantidad}"><td th:text="${#temporals.format(dia.fecha, 'dd MMM yyyy')}"></td><td th:text="${dia.cantidad}"></td></tr></tbody></table></div></details>
+      <noscript><p class="overview-quiet">Consulta la actividad en la tabla de datos por día.</p></noscript>
+    </section>
+    <section class="overview-panel overview-review"><div class="overview-panel__heading"><div><h2>Perfiles por revisar</h2><p>Primero, quienes llevan más tiempo esperando.</p></div><a th:href="@{/empresa/postulaciones}">Ver todas ↗</a></div>
+      <div class="overview-applications">
+        <a class="overview-person" th:each="p : ${inicio.porRevisar}" th:href="@{/empresa/postulaciones(vacante=${p.vacante.id},postulacion=${p.id})}">
+          <span class="overview-avatar"><img th:if="${not #strings.isEmpty(p.postulante.foto)}" th:src="${p.postulante.foto}" alt="" loading="lazy"/><span th:if="${#strings.isEmpty(p.postulante.foto)}" th:text="${#strings.isEmpty(p.postulante.nombre) ? '?' : #strings.substring(p.postulante.nombre,0,1)}"></span></span>
+          <span class="overview-person__identity"><strong th:text="${p.postulante.nombre + ' ' + p.postulante.apellido}"></strong><span th:text="${p.vacante.titulo}"></span></span><span class="overview-person__date" th:if="${p.fechaPostulacion != null}" th:text="${#temporals.format(p.fechaPostulacion, 'dd MMM')}"></span><span class="overview-link">Revisar ↗</span>
+        </a>
+        <div class="overview-empty" th:if="${#lists.isEmpty(inicio.porRevisar)}"><span aria-hidden="true">✓</span><h3 th:text="${inicio.total == 0 ? 'Todo listo para recibir talento' : 'No hay perfiles pendientes por revisar'}"></h3><p th:text="${inicio.total == 0 ? 'Las postulaciones a tus ofertas aparecerán aquí.' : 'Puedes seguir el avance de tus candidatos en Postulaciones.'}"></p></div>
+      </div>
+    </section>
+    <section class="overview-panel overview-process"><div class="overview-panel__heading"><div><h2>Tus procesos</h2><p><strong th:text="${inicio.total}"></strong> postulaciones en total</p></div></div>
+      <div class="overview-donut" data-process-ring aria-hidden="true"><div><strong th:text="${inicio.total}"></strong><span>postulaciones</span></div></div>
+      <div class="overview-states"><div class="overview-state" th:each="estado : ${inicio.estados}" th:attr="data-state=${estado.codigo},data-count=${estado.cantidad}"><div><span th:text="${estado.nombre}"></span><strong th:text="${estado.cantidad}"></strong></div><div class="overview-track" aria-hidden="true"><span th:style="${'width:' + estado.ancho + '%'}"></span></div></div></div>
+    </section>
+    <section class="overview-panel overview-closings"><div class="overview-panel__heading"><div><h2>Próximos cierres</h2><p>Convocatorias activas que terminan en los próximos 7 días.</p></div><span class="overview-counter" th:text="${#lists.size(inicio.proximosCierres)}"></span></div>
+      <a class="overview-closing" th:each="v : ${inicio.proximosCierres}" th:href="@{/empresa/vacantes(vacante=${v.id})}"><span><strong th:text="${v.titulo}"></strong><small th:text="${v.totalPostulaciones + ' postulaciones'}"></small></span><time th:text="${v.fechaFin == hoy ? 'Cierra hoy' : #temporals.format(v.fechaFin, 'dd MMM')}"></time><span aria-hidden="true">↗</span></a>
+      <p class="overview-quiet" th:if="${#lists.isEmpty(inicio.proximosCierres)}">No tienes vacantes próximas a cerrar esta semana.</p>
+    </section>
+    <section class="overview-panel overview-profile" th:if="${not #lists.isEmpty(faltantes)}"><div class="overview-panel__heading"><div><span class="overview-eyebrow">TU EMPRESA TAMBIÉN CUENTA</span><h2>Una buena primera impresión</h2></div></div><p>Completa estos detalles de tu perfil:</p><ul><li th:each="campo : ${faltantes}" th:text="${campo}"></li></ul><a th:href="@{/empresa/editar}">Completar perfil ↗</a></section>
+  </div>
+</main>
+<script th:src="@{/js/empresa_inicio.js}" defer></script>
+</body></html>

@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const save = dialog.querySelector('[data-cover-save]');
     const cancel = dialog.querySelector('[data-cover-cancel]');
     let image, url, busy = false;
-    function notify(text, error = false) { feedback.textContent = text; feedback.hidden = false; feedback.classList.toggle('is-error', error); }
+    function notify(text, error = false) { if (window.HireConnectToast) { window.HireConnectToast.show(text, error); return; } feedback.textContent = text; feedback.hidden = false; feedback.classList.toggle('is-error', error); }
     function draw() {
         const width = Math.min(image.width, image.height * 4) / Number(zoom.value);
         const height = width / 4;

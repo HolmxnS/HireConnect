@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/styles/fragments/admin/sidebar.css}">
-    <link rel="stylesheet" th:href="@{/styles/admin/ver_vacante.css}">
     <link rel="stylesheet" th:href="@{/styles/admin/theme.css}">
     <script th:src="@{/js/theme.js}"></script>
     <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
@@ -14,15 +13,21 @@
     <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
     <title th:text="'Detalle de Vacante - ' + ${vacante.titulo}"></title>
     <link rel="stylesheet" th:href="@{/styles/brand.css}" />
+    <link rel="stylesheet" th:href="@{/styles/admin/workspace.css}" />
+    <link rel="stylesheet" th:href="@{/styles/toasts.css}" />
+    <link rel="stylesheet" th:href="@{/styles/admin/content.css}" />
 </head>
 
-<body>
-    <div th:replace="~{fragments/admin/sidebar_admin :: sidebar('empresas')}"></div>
+<body class="admin-area admin-layout-page">
+    <div th:replace="~{fragments/admin/sidebar_admin :: sidebar('vacantes')}"></div>
 
+    <div th:replace="~{fragments/admin/header_admin :: topbar('Administración', '')}"></div>
     <main class="main">
+        <p th:if="${success}" th:text="${success}" data-toast-message hidden></p><p th:if="${error}" th:text="${error}" data-toast-message data-toast-error hidden></p>
+
 
         <div>
-            <a th:href="@{/admin/empresas/ver/{id}(id=${vacante.empresa.id})}" class="back-btn">
+            <a th:href="@{/admin/vacantes}" class="back-btn">
                 <i class="fa-solid fa-arrow-left"></i> Volver
             </a>
         </div>
@@ -31,15 +36,15 @@
             <div class="detail-top" style="margin-bottom: 0; padding-bottom: 0; border-bottom: none;">
                 <div class="detail-top__heading">
                     <h2 th:text="${vacante.titulo}">Título de la vacante</h2>
-                    <p>Publicada por: <strong th:text="${vacante.empresa.nombreLegal}">Empresa</strong></p>
+                    <p>Publicada por: <strong th:text="${vacante.empresa?.nombre ?: 'Sin empresa'}">Empresa</strong></p>
                 </div>
 
                 <div class="detail-top__actions">
                     <span class="badge"
-                        th:classappend="${vacante.estado.name() == 'ACTIVA'} ? 'badge--ok' : (${vacante.estado.name() == 'CERRADA'} ? 'badge--bad' : 'badge--warn')"
+                        th:classappend="${vacante.estado?.name() == 'ACTIVA'} ? 'badge--ok' : (${vacante.estado?.name() == 'CERRADA'} ? 'badge--bad' : 'badge--warn')"
                         th:text="${vacante.estado}">ACTIVA</span>
-                    <a th:href="@{/admin/vacantes/cerrar/{id}(id=${vacante.id})}"
-                        onclick="return confirm('¿Estás seguro de CERRAR esta vacante?')" class="btn btn--danger">
+                    <a th:if="${vacante.estado == null or vacante.estado.name() != 'CERRADA'}" th:href="@{/admin/vacantes/cerrar/{id}(id=${vacante.id})}"
+                        data-admin-confirm="¿Estás seguro de CERRAR esta vacante?" class="btn btn--danger">
                         <i class="fa-solid fa-circle-xmark"></i> Cerrar
                     </a>
                 </div>
@@ -53,9 +58,9 @@
                     <ul class="info-list">
                         <li><i class="fa-solid fa-money-bill"></i> Salario: $<span
                                 th:text="${#numbers.formatDecimal(vacante.salario, 0, 'COMMA', 0, 'POINT')}"></span></li>
-                        <li><i class="fa-solid fa-clock"></i> Tipo: <span th:text="${vacante.tipoContrato.descripcion}"></span></li>
-                        <li><i class="fa-solid fa-map-pin"></i> Modalidad: <span th:text="${vacante.modalidad.descripcion}"></span></li>
-                        <li><i class="fa-solid fa-graduation-cap"></i> Nivel: <span th:text="${vacante.experienciaRequerida.descripcion}"></span></li>
+                        <li><i class="fa-solid fa-clock"></i> Tipo: <span th:text="${vacante.tipoContrato?.descripcion ?: 'No especificado'}"></span></li>
+                        <li><i class="fa-solid fa-map-pin"></i> Modalidad: <span th:text="${vacante.modalidad?.descripcion ?: 'No especificada'}"></span></li>
+                        <li><i class="fa-solid fa-graduation-cap"></i> Nivel: <span th:text="${vacante.experienciaRequerida?.descripcion ?: 'No especificada'}"></span></li>
                         <li><i class="fa-solid fa-calendar-check"></i> Publicación:
                             <span th:text="${#temporals.format(vacante.fechaPublicacion, 'dd/MMM/yyyy')}"></span></li>
                         <li><i class="fa-solid fa-list-ol"></i> Total postulantes:
@@ -65,7 +70,7 @@
 
                 <div>
                     <h3>Descripción detallada</h3>
-                    <div class="text-box rich-text" th:utext="${vacante.descripcion}"></div>
+                    <div class="text-box rich-text" th:text="${vacante.descripcion}" style="white-space:pre-line"></div>
                 </div>
             </div>
         </section>

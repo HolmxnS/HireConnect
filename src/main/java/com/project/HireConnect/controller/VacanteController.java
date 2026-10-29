@@ -76,6 +76,7 @@ public class VacanteController {
 
         model.addAttribute("empresa", empresa);
         model.addAttribute("vacantes", vacantesFiltradas);
+        model.addAttribute("activeMenu", "vacantes");
 
         return "empresa/dashboard_vacantes";
     }
@@ -114,10 +115,15 @@ public class VacanteController {
         }
         Empresa empresaPublicadora = empresaOpt.get();
 
+        if (vacante.getFechaInicio() != null && vacante.getFechaFin() != null
+                && vacante.getFechaFin().isBefore(vacante.getFechaInicio())) {
+            result.rejectValue("fechaFin", "vacante.fechas", "El cierre debe ser igual o posterior a la apertura.");
+        }
+
         if (result.hasErrors()) {
             model.addAttribute("vacante", vacante);
             model.addAttribute("empresa", empresaPublicadora);
-            return "empresa/nueva_vacante";
+            return (vacante.getId() == null || vacante.getId().isBlank()) ? "empresa/nueva_vacante" : "empresa/editar_vacante";
         }
 
         try {

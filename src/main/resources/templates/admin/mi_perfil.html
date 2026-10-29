@@ -5,95 +5,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/styles/fragments/admin/sidebar.css}">
-    <link rel="stylesheet" th:href="@{/styles/admin/mi_perfil.css}">
     <link rel="stylesheet" th:href="@{/styles/admin/theme.css}">
     <script th:src="@{/js/theme.js}"></script>
     <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
     <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
-    <link rel="stylesheet" th:href="@{/styles/admin/mi_perfil.css}">
     <link rel="icon" type="image/svg+xml" sizes="any" th:href="@{/source/img/favicon.svg}">
     <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
     <title>HireConnect - Editar Perfil Admin</title>
     <link rel="stylesheet" th:href="@{/styles/brand.css}" />
+    <link rel="stylesheet" th:href="@{/styles/admin/workspace.css}" />
+    <link rel="stylesheet" th:href="@{/styles/toasts.css}" />
+    <link rel="stylesheet" th:href="@{/styles/admin/mi_perfil.css}">
 </head>
 
-<body>
-    <div th:replace="~{fragments/admin/sidebar_admin :: sidebar('perfil')}"></div>
-
-    <main class="main">
-
-        <header class="page-head">
-            <div>
-                <h1 class="page-head__title">Mi perfil</h1>
-                <p class="page-head__subtitle">Actualiza tu foto y tus datos de administrador.</p>
-            </div>
-        </header>
-
-        <section class="profile-banner">
-            <div class="profile-banner__bg"></div>
-
-            <div class="profile-banner__content">
-                <div class="profile-avatar" id="profileAvatarClickArea" title="Cambiar foto">
-                    <img th:if="${admin.foto != null and admin.foto != ''}" th:src="@{${admin.foto}}"
-                        alt="Foto de perfil" id="profileImage">
-                    <div th:if="${admin.foto == null or admin.foto == ''}" class="profile-avatar__placeholder">
-                        <i class="fa-solid fa-user"></i>
-                    </div>
-                    <div class="profile-avatar__overlay"><i class="fa-solid fa-camera"></i></div>
-                </div>
-
-                <form th:action="@{/admin/subirFoto(id=${admin.id})}" method="post" enctype="multipart/form-data"
-                    id="fotoUploadForm" class="visually-hidden">
-                    <input type="file" name="file" accept="image/*" id="fileInput">
-                </form>
-
-                <div class="profile-details">
-                    <h2 th:text="${admin.nombre + ' ' + admin.apellido}">Nombre</h2>
-                    <p th:text="${admin.email}">Correo del administrador</p>
-                </div>
-
-                <div class="profile-photo-actions">
-                    <a th:if="${admin.foto != null and admin.foto != ''}"
-                        th:href="@{/admin/eliminarFoto(id=${admin.id})}" class="btn btn--danger btn--sm">
-                        <i class="fa-solid fa-trash"></i> Eliminar foto
-                    </a>
-                </div>
-            </div>
-        </section>
-
-        <section class="panel profile-card">
-            <h3>Información básica y seguridad</h3>
-
-            <form th:action="@{/admin/guardar-perfil}" th:object="${admin}" method="post" id="adminForm" class="form">
-                <input type="hidden" th:field="*{id}" />
-                <input type="hidden" th:field="*{email}" />
-                <input type="hidden" th:field="*{password}" />
-
-                <div class="form__field">
-                    <label for="nombre">Nombre</label>
-                    <input type="text" th:field="*{nombre}" id="nombre" placeholder="Nombre" required>
-                </div>
-
-                <div class="form__field">
-                    <label for="apellido">Apellido</label>
-                    <input type="text" th:field="*{apellido}" id="apellido" placeholder="Apellido" required>
-                </div>
-
-                <div class="form__field form__field--full">
-                    <label for="emailView">Email</label>
-                    <input type="email" id="emailView" th:value="${admin.email}" disabled>
-                </div>
-
-                <div class="form__actions">
-                    <button type="submit" class="btn btn--primary">
-                        <i class="fa-solid fa-floppy-disk"></i> Guardar cambios
-                    </button>
-                </div>
-            </form>
-        </section>
-    </main>
-
-    <script th:src="@{/js/foto.js}"></script>
-</body>
-
-</html>
+<body class="admin-area admin-profile-page">
+<div th:replace="~{fragments/admin/sidebar_admin :: sidebar('perfil')}"></div>
+<div th:replace="~{fragments/admin/header_admin :: topbar('Mi perfil', '')}"></div>
+<main class="main admin-profile">
+  <p th:if="${success}" th:text="${success}" data-toast-message hidden></p><p th:if="${error}" th:text="${error}" data-toast-message data-toast-error hidden></p>
+  <div class="admin-profile__eyebrow"><span>PERFIL</span><span>HIRECONNECT</span></div>
+  <section class="admin-profile__hero">
+    <div><button type="button" class="admin-profile__photo" data-admin-photo-open aria-label="Cambiar foto de perfil"><img th:if="${not #strings.isEmpty(admin.foto)}" th:src="${admin.foto}" alt="Foto de perfil"/><span th:if="${#strings.isEmpty(admin.foto)}" th:text="${#strings.isEmpty(admin.nombre) ? 'A' : #strings.substring(admin.nombre,0,1)}"></span><small>Cambiar foto ↗</small></button><h1 th:text="${admin.nombre + ' ' + admin.apellido}"></h1><span class="admin-profile__role">ADMINISTRADOR</span></div>
+    <div class="admin-profile__session"><span class="admin-profile__symbol" aria-hidden="true">↗</span><p><i aria-hidden="true"></i> Sesión activa</p><a th:href="@{/admin/configuracion}">Administrar mi cuenta ↗</a><a th:if="${not #strings.isEmpty(admin.foto)}" th:href="@{/admin/eliminarFoto(id=${admin.id})}" data-admin-confirm="¿Quitar tu foto de perfil? Podrás subir una nueva cuando quieras.">Quitar foto</a></div>
+  </section>
+  <section class="admin-profile__section"><h2>ACERCA DE MÍ</h2><p class="admin-profile__about" th:text="${#strings.isEmpty(admin.about) ? 'Añade unas líneas sobre ti, tu experiencia y lo que aportas al equipo.' : admin.about}"></p></section>
+  <section class="admin-profile__section"><h2>CONTACTO</h2><a class="admin-profile__email" th:href="${'mailto:' + admin.email}" th:text="${admin.email}"></a></section>
+  <details class="admin-profile__editor"><summary>Editar perfil <span aria-hidden="true">↗</span></summary><form th:action="@{/admin/guardar-perfil}" method="post"><div><label for="admin-name">Nombre</label><input id="admin-name" name="nombre" th:value="${admin.nombre}" required maxlength="80" autocomplete="given-name"/></div><div><label for="admin-surname">Apellido</label><input id="admin-surname" name="apellido" th:value="${admin.apellido}" required maxlength="80" autocomplete="family-name"/></div><div class="admin-profile__full"><label for="admin-about">Acerca de mí</label><textarea id="admin-about" name="about" maxlength="500" rows="5" th:text="${admin.about}" placeholder="Cuéntanos sobre ti…"></textarea><small data-about-count>0 / 500</small></div><button type="submit">Guardar cambios</button></form></details>
+</main>
+<dialog class="admin-photo-dialog" data-admin-photo-dialog aria-labelledby="admin-photo-title"><h2 id="admin-photo-title">Tu foto de perfil</h2><p>JPG o PNG · Hasta 2 MB. Usaremos un recorte cuadrado centrado.</p><form th:action="@{/admin/subirFoto(id=${admin.id})}" method="post" enctype="multipart/form-data"><label for="admin-photo-file">Seleccionar imagen</label><input id="admin-photo-file" type="file" name="file" accept="image/jpeg,image/png" required/><img data-admin-photo-preview alt="Vista previa del recorte" hidden/><div><button type="button" data-admin-photo-cancel>Cancelar</button><button type="submit">Guardar foto</button></div></form></dialog>
+<script th:src="@{/js/admin_perfil.js}" defer></script>
+</body></html>

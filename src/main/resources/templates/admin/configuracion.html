@@ -1,0 +1,65 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" th:href="@{/styles/fragments/admin/sidebar.css}" />
+  <link rel="stylesheet" th:href="@{/styles/admin/theme.css}" />
+  <script th:src="@{/js/theme.js}"></script>
+  <link rel="stylesheet" th:href="@{/styles/satoshi.css}" />
+  <link rel="stylesheet" th:href="@{/styles/brand.css}" />
+  <link rel="stylesheet" th:href="@{/styles/postulante/configuracion_postulante.css}" />
+  <link rel="icon" type="image/svg+xml" th:href="@{/source/img/favicon.svg}" />
+  <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous" defer></script>
+  <title>Configuración | HireConnect</title>
+  <link rel="stylesheet" th:href="@{/styles/admin/workspace.css}" />
+  <link rel="stylesheet" th:href="@{/styles/toasts.css}" />
+</head>
+<body class="admin-area settings-page">
+  <div th:replace="~{fragments/admin/sidebar_admin :: sidebar('configuracion')}"></div>
+  <div th:replace="~{fragments/admin/header_admin :: topbar('Configuración', '')}"></div>
+  <main class="content settings-layout">
+    <header class="settings-heading"><h1>Configuración</h1><p>Tu cuenta, a tu manera.</p></header>
+    <p th:if="${success}" th:text="${success}" data-toast-message hidden></p>
+    <p th:if="${error}" th:text="${error}" data-toast-message data-toast-error hidden></p>
+    <div class="settings-workspace">
+      <nav class="settings-nav" aria-label="Configuración">
+        <a href="#cuenta"><i class="fa-regular fa-user" aria-hidden="true"></i> Cuenta</a>
+        <a href="#apariencia"><i class="fa-solid fa-palette" aria-hidden="true"></i> Apariencia</a>
+        <a href="#seguridad"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Seguridad</a>
+      </nav>
+      <div class="settings-sections">
+        <section id="cuenta" class="settings-card">
+          <div class="settings-card-heading"><span class="settings-icon"><i class="fa-regular fa-user" aria-hidden="true"></i></span><div><h2>Cuenta</h2><p>Tu información y tus datos.</p></div></div>
+          <dl class="settings-account"><div><dt>Nombre</dt><dd th:text="${admin.nombre + ' ' + admin.apellido}"></dd></div><div><dt>Correo</dt><dd th:text="${admin.email}"></dd></div></dl>
+          <div class="settings-row"><div><h3>Información del perfil</h3><p>Actualiza la información y la imagen de tu perfil.</p></div><a class="settings-button settings-button--secondary" th:href="@{/admin/editar}">Editar perfil</a></div>
+          <div class="settings-row"><div><h3>Descargar mis datos</h3><p>Una copia de tu información de perfil en formato JSON.</p></div><a class="settings-button settings-button--secondary" th:href="@{/admin/configuracion/datos}" download="hireconnect-admin.json">Descargar datos</a></div>
+        </section>
+        <section id="apariencia" class="settings-card">
+          <div class="settings-card-heading"><span class="settings-icon"><i class="fa-solid fa-palette" aria-hidden="true"></i></span><div><h2>Apariencia</h2><p>Estas preferencias se guardan en este navegador.</p></div></div>
+          <fieldset class="settings-themes"><legend>Tema</legend>
+            <label><input type="radio" name="appearance" value="light" /><span class="settings-theme-preview settings-theme-preview--light" aria-hidden="true"><i></i><b></b></span><span>Claro</span></label>
+            <label><input type="radio" name="appearance" value="dark" /><span class="settings-theme-preview settings-theme-preview--dark" aria-hidden="true"><i></i><b></b></span><span>Oscuro</span></label>
+            <label><input type="radio" name="appearance" value="system" /><span class="settings-theme-preview settings-theme-preview--system" aria-hidden="true"><i></i><b></b></span><span>Del sistema</span></label>
+          </fieldset>
+          <div class="settings-row"><div><h3>Reducir animaciones</h3><p>Usa transiciones más discretas. También respetamos la preferencia de tu dispositivo.</p></div><label class="settings-switch"><input type="checkbox" id="reduceMotion" /><span aria-hidden="true"></span><span class="settings-sr-only">Reducir animaciones</span></label></div>
+          <p class="settings-preference-status" data-preference-status role="status" aria-live="polite"></p>
+        </section>
+
+        <section id="seguridad" class="settings-card">
+          <div class="settings-card-heading"><span class="settings-icon"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i></span><div><h2>Seguridad</h2><p>Gestiona el acceso a tu cuenta.</p></div></div>
+          <form th:action="@{/admin/configuracion/password}" method="post" data-password-form>
+            <h3>Cambiar contraseña</h3>
+            <div class="settings-password-field"><label for="passwordActual">Contraseña actual</label><div><input type="password" id="passwordActual" name="passwordActual" autocomplete="current-password" required maxlength="72" /><button type="button" data-show-password="passwordActual" aria-pressed="false">Mostrar</button></div></div>
+            <div class="settings-password-field"><label for="nuevaPassword">Nueva contraseña</label><div><input type="password" id="nuevaPassword" name="nuevaPassword" autocomplete="new-password" required minlength="8" maxlength="72" aria-describedby="password-hint" /><button type="button" data-show-password="nuevaPassword" aria-pressed="false">Mostrar</button></div><small id="password-hint">Al menos 8 caracteres. Usa una contraseña diferente a la actual.</small></div>
+            <div class="settings-password-field"><label for="confirmarPassword">Confirmar contraseña</label><div><input type="password" id="confirmarPassword" name="confirmarPassword" autocomplete="new-password" required minlength="8" maxlength="72" /><button type="button" data-show-password="confirmarPassword" aria-pressed="false">Mostrar</button></div></div>
+            <button type="submit" class="settings-button">Actualizar contraseña</button>
+          </form>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script th:src="@{/js/configuracion_postulante.js}" defer></script>
+</body>
+</html>

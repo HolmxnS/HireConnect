@@ -6,7 +6,7 @@ import java.awt.Color;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.nio.file.*;
+import java.io.ByteArrayOutputStream;
 import java.util.UUID;
 import javax.imageio.ImageIO;
 import org.springframework.http.HttpStatus;
@@ -17,16 +17,11 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class FotoEmpresaService {
     private final EmpresaRepository repository;
-    private final Path directory;
+    private final ImagenesService imagenes;
 
-    @org.springframework.beans.factory.annotation.Autowired
-    public FotoEmpresaService(EmpresaRepository repository) {
-        this(repository, Paths.get("uploads/empresas"));
-    }
-
-    FotoEmpresaService(EmpresaRepository repository, Path directory) {
+    public FotoEmpresaService(EmpresaRepository repository, ImagenesService imagenes) {
         this.repository = repository;
-        this.directory = directory.toAbsolutePath().normalize();
+        this.imagenes = imagenes;
     }
 
     private Empresa actual(String email) {
@@ -79,17 +74,17 @@ public class FotoEmpresaService {
             int x = (image.getWidth() - cropWidth) / 2, y = (image.getHeight() - cropHeight) / 2;
             graphics.drawImage(image, 0, 0, width, height, x, y, x + cropWidth, y + cropHeight, null);
         } finally { graphics.dispose(); }
-        Files.createDirectories(directory);
         String filename = (portada ? "portada_empresa_" : "empresa_") + UUID.randomUUID() + ".jpg";
-        Path destination = directory.resolve(filename);
-        ImageIO.write(output, "jpg", destination.toFile());
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        ImageIO.write(output, "jpg", bytes);
         String previous = portada ? user.getPortada() : user.getFoto();
         String url = "/uploads/empresas/" + filename;
+        imagenes.guardar(url, bytes.toByteArray(), "image/jpeg");
         if (portada) user.setPortada(url); else user.setFoto(url);
         try { repository.save(user); }
         catch (RuntimeException e) {
             if (portada) user.setPortada(previous); else user.setFoto(previous);
-            Files.deleteIfExists(destination); throw e;
+            imagenes.eliminar(url); throw e;
         }
         borrarArchivoAnterior(previous);
         return url;
@@ -112,10 +107,8 @@ public class FotoEmpresaService {
 
     private void borrarArchivoAnterior(String url) {
         if (url == null || !(url.startsWith("/uploads/empresas/empresa_") || url.startsWith("/uploads/empresas/portada_empresa_"))) return;
-        Path file = directory.resolve(url.substring("/uploads/empresas/".length())).normalize();
-        if (!directory.equals(file.getParent())) return;
-        try { Files.deleteIfExists(file); }
-        catch (IOException e) {
+        try { imagenes.eliminar(url); }
+        catch (IOException | RuntimeException e) {
             org.slf4j.LoggerFactory.getLogger(getClass()).warn("No se pudo retirar la foto anterior del almacenamiento.");
         }
     }

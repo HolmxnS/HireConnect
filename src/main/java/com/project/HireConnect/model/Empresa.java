@@ -70,7 +70,6 @@ public class Empresa {
 
     private String foto;
     private String portada;
-    private List<String> publicacionesSociales = new ArrayList<>();
     private String threads;
     private String instagram;
     private String facebook;

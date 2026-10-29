@@ -37,6 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
         passwordForm.addEventListener('submit', event => { validate(); if (!passwordForm.reportValidity()) event.preventDefault(); });
     }
     const dialog = document.querySelector('.settings-delete-dialog');
-    document.querySelector('[data-delete-open]').addEventListener('click', () => { dialog.querySelector('form').reset(); dialog.showModal(); });
-    dialog.querySelector('[data-delete-cancel]').addEventListener('click', () => dialog.close());
+    document.querySelector('[data-delete-open]')?.addEventListener('click', () => { dialog.querySelector('form').reset(); dialog.showModal(); });
+    dialog?.querySelector('[data-delete-cancel]').addEventListener('click', () => dialog.close());
 });

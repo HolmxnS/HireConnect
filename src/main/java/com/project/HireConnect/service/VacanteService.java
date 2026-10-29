@@ -37,6 +37,27 @@ public class VacanteService {
         return vacanteRepository.findAll();
     }
 
+    public org.springframework.data.domain.Page<Vacante> paginaAdmin(String texto, String estado, String orden, int numero) {
+        String patron = java.util.regex.Pattern.quote(texto.trim());
+        List<Criteria> filtros = new ArrayList<>();
+        filtros.add(new Criteria().orOperator(Criteria.where("titulo").regex(patron, "i"),
+                Criteria.where("empresa.nombre").regex(patron, "i")));
+        if (List.of("ACTIVA", "PENDIENTE", "CERRADA").contains(estado))
+            filtros.add(Criteria.where("estado").is(VacanteEstado.valueOf(estado)));
+        Criteria criteria = new Criteria().andOperator(filtros.toArray(Criteria[]::new));
+        long total = mongoTemplate.count(Query.query(criteria), Vacante.class);
+        int paginas = (int) Math.max(1, (total + 19) / 20);
+        int actual = Math.max(0, Math.min(numero, paginas - 1));
+        var direccion = "oldest".equals(orden) ? org.springframework.data.domain.Sort.Direction.ASC
+                : org.springframework.data.domain.Sort.Direction.DESC;
+        var pageable = org.springframework.data.domain.PageRequest.of(actual, 20,
+                org.springframework.data.domain.Sort.by(direccion, "fechaPublicacion").and(org.springframework.data.domain.Sort.by(direccion, "id")));
+        Query query = Query.query(criteria).with(pageable);
+        query.fields().include("titulo", "empresa", "fechaPublicacion", "estado");
+        List<Vacante> vacantes = total == 0 ? List.of() : mongoTemplate.find(query, Vacante.class);
+        return new org.springframework.data.domain.PageImpl<>(vacantes, pageable, total);
+    }
+
     public Optional<Vacante> buscarPorId(String id) {
         return vacanteRepository.findById(id);
     }

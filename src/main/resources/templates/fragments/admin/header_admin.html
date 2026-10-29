@@ -8,7 +8,7 @@
 
 <body>
 
-    <header class="topbar" th:fragment="topbar (title, subtitle)">
+    <header class="topbar admin-header" th:fragment="topbar (title, subtitle)">
 
         <div class="topbar__text">
             <h1 class="topbar__title" th:text="${title}">Título</h1>
@@ -16,11 +16,12 @@
         </div>
 
         <div class="topbar__actions">
+            <button type="button" class="topbar__btn topbar__theme" data-theme-toggle aria-label="Cambiar tema"><span class="topbar__theme-icon topbar__theme-icon--moon"><i class="fa-solid fa-moon" aria-hidden="true"></i></span><span class="topbar__theme-icon topbar__theme-icon--sun"><i class="fa-solid fa-sun" aria-hidden="true"></i></span></button>
 
             <div class="notification">
-                <button type="button" class="notification__icon" id="notifToggle" aria-label="Notificaciones">
+                <button type="button" class="notification__icon" id="notifToggle" aria-label="Notificaciones" aria-expanded="false" aria-controls="notifPanel">
                     <i class="fa-solid fa-bell"></i>
-                    <span class="notification__badge" th:if="${notificacionesNuevas > 0}"
+                    <span class="notification__badge" th:if="${notificacionesNuevas != null and notificacionesNuevas > 0}"
                         th:text="${notificacionesNuevas}">0</span>
                 </button>
 
@@ -61,7 +62,7 @@
                             </div>
                         </div>
 
-                        <div class="notification__empty" th:if="${#lists.isEmpty(notificacion)}">
+                        <div class="notification__empty" th:hidden="${not #lists.isEmpty(notificacion)}">
                             <i class="fa-regular fa-bell-slash"></i>
                             <span>No tienes notificaciones.</span>
                         </div>
@@ -70,10 +71,11 @@
             </div>
 
             <a class="topbar__avatar" th:href="@{/admin/editar}" title="Mi perfil" aria-label="Mi perfil">
-                <img th:if="${admin.foto != null and admin.foto != ''}" th:src="@{${admin.foto}}" alt="Foto de perfil">
-                <span th:if="${admin.foto == null or admin.foto == ''}" class="topbar__avatar-placeholder">
+                <img th:if="${admin != null and not #strings.isEmpty(admin.foto)}" th:src="@{${admin.foto}}" alt="Foto de perfil">
+                <span th:if="${admin == null or #strings.isEmpty(admin.foto)}" class="topbar__avatar-placeholder">
                     <i class="fa-solid fa-user"></i>
                 </span>
+                <span class="admin-online" aria-hidden="true"></span>
             </a>
         </div>
     </header>

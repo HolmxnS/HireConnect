@@ -43,6 +43,18 @@ import com.project.HireConnect.service.AdminService;
 @RequestMapping("/admin")
 public class AdminController {
 
+    @org.springframework.beans.factory.annotation.Autowired
+    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+
+    @ModelAttribute
+    public void contextoAdmin(Model model, Authentication auth, jakarta.servlet.http.HttpServletRequest request) {
+        if (!"GET".equals(request.getMethod()) || "true".equals(request.getParameter("fragmento"))) return;
+        if (auth != null) model.addAttribute("admin", adminService.buscarPorEmail(auth.getName()).orElse(null));
+        List<Notificacion> avisos = notificacionService.obtenerTodasOrdenadas();
+        model.addAttribute("notificacion", avisos);
+        model.addAttribute("notificacionesNuevas", avisos.stream().filter(n -> !n.isLeida()).count());
+    }
+
     private final VacanteService vacanteService;
     private final EmpresaService empresaService;
     private final PostulanteService postulanteService;
@@ -78,33 +90,14 @@ public class AdminController {
             estados.put(estado.name(), vacantes.stream().filter(v -> v.getEstado() == estado).count());
         }
         model.addAttribute("estadosVacantes", estados);
+        model.addAttribute("vacantesTotal", vacantes.size());
         model.addAttribute("vacantesActivas", estados.get("ACTIVA"));
         model.addAttribute("vacantesPendientes", estados.get("PENDIENTE"));
         model.addAttribute("vacantesSinEstado", vacantes.stream().filter(v -> v.getEstado() == null).count());
-        model.addAttribute("proximasVacantes", vacantes.stream()
-                .filter(v -> v.getEstado() == VacanteEstado.PENDIENTE)
-                .sorted(java.util.Comparator.comparing(Vacante::getFechaInicio,
-                        java.util.Comparator.nullsLast(java.util.Comparator.naturalOrder())))
-                .limit(6).toList());
         java.time.LocalDate hoy = java.time.LocalDate.now(java.time.ZoneId.of("America/Bogota"));
         model.addAttribute("dashboardYear", hoy.getYear());
         model.addAttribute("dashboardMonth", hoy.getMonthValue());
         model.addAttribute("registrosPorMes", registroMensualService.registrosPorMes());
-
-        List<Notificacion> todas = notificacionService.obtenerTodasOrdenadas();
-
-        model.addAttribute("notificacion", todas);
-
-        Long nuevasNoLeidas = todas.stream().filter(n -> !n.isLeida()).count();
-        if (nuevasNoLeidas > 0) {
-            model.addAttribute("notificacionesNuevas", nuevasNoLeidas);
-        }
-
-        if (auth != null) {
-            Admin admin = adminService.buscarPorEmail(auth.getName())
-                    .orElse(null);
-            model.addAttribute("admin", admin);
-        }
 
         return "admin/admin_dashboard";
     }
@@ -140,10 +133,21 @@ public class AdminController {
     }
 
     @GetMapping("/empresas")
-    public String revisarEmpresas(Model model, Authentication auth) {
-
-        List<Empresa> listaEmpresas = empresaService.listarTodas();
-        model.addAttribute("empresas", listaEmpresas);
+    public String revisarEmpresas(Model model, Authentication auth,
+            @RequestParam(defaultValue = "") String q, @RequestParam(defaultValue = "") String estado,
+            @RequestParam(defaultValue = "most_recent") String orden, @RequestParam(defaultValue = "0") int pagina,
+            @RequestParam(defaultValue = "false") boolean fragmento) {
+        q = q.trim();
+        if (q.length() > 120) q = q.substring(0, 120);
+        estado = List.of("APROBADA", "SUSPENDIDA").contains(estado) ? estado : "";
+        orden = "oldest".equals(orden) ? "oldest" : "most_recent";
+        var resultado = empresaService.paginaAdmin(q, estado, orden, pagina);
+        model.addAttribute("empresas", resultado.getContent());
+        model.addAttribute("paginaEmpresas", resultado);
+        model.addAttribute("q", q);
+        model.addAttribute("estadoFiltro", estado);
+        model.addAttribute("ordenFiltro", orden);
+        if (fragmento) return "admin/gestion_empresas :: resultados";
 
         model.addAttribute("totalEmpresas", empresaService.contarEmpresas());
         model.addAttribute("empresasActivas", empresaService.contarEmpresasActivas());
@@ -151,21 +155,6 @@ public class AdminController {
         model.addAttribute("vacantes", vacanteService.contarVacantes());
 
         model.addAttribute("activeMenu", "empresas");
-
-        List<Notificacion> todas = notificacionService.obtenerTodasOrdenadas();
-
-        model.addAttribute("notificacion", todas);
-
-        Long nuevasNoLeidas = todas.stream().filter(n -> !n.isLeida()).count();
-        if (nuevasNoLeidas > 0) {
-            model.addAttribute("notificacionesNuevas", nuevasNoLeidas);
-        }
-
-        if (auth != null) {
-            Admin admin = adminService.buscarPorEmail(auth.getName())
-                    .orElse(null);
-            model.addAttribute("admin", admin);
-        }
 
         return "admin/gestion_empresas";
     }
@@ -194,24 +183,26 @@ public class AdminController {
     }
 
     @GetMapping("/empresas/aprobar/{id}")
-    public String aprobarEmpresa(@PathVariable String id) {
+    public String aprobarEmpresa(@PathVariable String id, RedirectAttributes redirect) {
         Empresa empresa = empresaService.obtenerPorId(id)
                 .orElseThrow(() -> new RuntimeException("Empresa no encontrada."));
         if (empresa != null) {
             empresa.setEstado(EmpresaEstado.APROBADA);
             empresaService.guardar(empresa);
         }
+        redirect.addFlashAttribute("success", "Empresa aprobada.");
         return "redirect:/admin/empresas";
     }
 
     @GetMapping("/empresas/suspender/{id}")
-    public String suspenderEmpresa(@PathVariable String id) {
+    public String suspenderEmpresa(@PathVariable String id, RedirectAttributes redirect) {
         Empresa empresa = empresaService.obtenerPorId(id)
                 .orElseThrow(() -> new RuntimeException("Empresa no encontrada."));
         if (empresa != null) {
             empresa.setEstado(EmpresaEstado.SUSPENDIDA);
             empresaService.guardar(empresa);
         }
+        redirect.addFlashAttribute("success", "Empresa suspendida.");
         return "redirect:/admin/empresas";
     }
 
@@ -228,17 +219,35 @@ public class AdminController {
         return "redirect:/admin/empresas";
     }
 
+    @GetMapping("/vacantes")
+    public String listarVacantesAdmin(Model model,
+            @RequestParam(defaultValue = "") String q, @RequestParam(defaultValue = "") String estado,
+            @RequestParam(defaultValue = "most_recent") String orden, @RequestParam(defaultValue = "0") int pagina,
+            @RequestParam(defaultValue = "false") boolean fragmento) {
+        q = q.trim(); if (q.length() > 120) q = q.substring(0, 120);
+        estado = List.of("ACTIVA", "PENDIENTE", "CERRADA").contains(estado) ? estado : "";
+        orden = "oldest".equals(orden) ? "oldest" : "most_recent";
+        var resultado = vacanteService.paginaAdmin(q, estado, orden, pagina);
+        model.addAttribute("vacantes", resultado.getContent());
+        model.addAttribute("paginaVacantes", resultado);
+        model.addAttribute("q", q); model.addAttribute("estadoFiltro", estado); model.addAttribute("ordenFiltro", orden);
+        if (fragmento) return "admin/gestion_vacantes :: resultados";
+        model.addAttribute("activeMenu", "vacantes");
+        return "admin/gestion_vacantes";
+    }
+
     @GetMapping("/vacantes/ver/{id}")
     public String verVacante(@PathVariable String id, Model model) {
         Optional<Vacante> vacanteOpt = vacanteService.buscarPorId(id);
 
         if (vacanteOpt.isEmpty()) {
-            return "redirect:/admin/vacantes?error=notfound";
+            return "redirect:/admin/empresas?error=notfound";
         }
 
         Vacante vacante = vacanteOpt.get();
         model.addAttribute("vacante", vacante);
-        List<Postulacion> postulantes = vacante.getPostulaciones();
+        List<Postulacion> postulantes = postulacionService.buscarPorVacante(vacante).stream()
+                .filter(p -> p != null && p.getPostulante() != null).toList();
         model.addAttribute("postulantes", postulantes != null ? postulantes : new ArrayList<>());
 
         model.addAttribute("activeMenu", "vacantes");
@@ -246,7 +255,7 @@ public class AdminController {
     }
 
     @GetMapping("/vacantes/cerrar/{id}")
-    public String cerrarVacante(@PathVariable String id) {
+    public String cerrarVacante(@PathVariable String id, RedirectAttributes redirect) {
         Optional<Vacante> vacanteOpt = vacanteService.buscarPorId(id);
 
         if (vacanteOpt.isPresent()) {
@@ -255,46 +264,38 @@ public class AdminController {
             vacanteService.guardar(vacante);
         }
 
-        return "redirect:/admin/vacantes";
+        redirect.addFlashAttribute("success", "Vacante cerrada.");
+        return "redirect:/admin/vacantes/ver/" + id;
     }
 
+    @org.springframework.beans.factory.annotation.Autowired
+    private com.project.HireConnect.service.AdminPostulantesService adminPostulantesService;
+
     @GetMapping("/postulantes")
-    public String revisarPostulantes(Model model, Authentication auth) {
+    public String revisarPostulantes(Model model, Authentication auth,
+            @RequestParam(defaultValue = "") String q, @RequestParam(defaultValue = "all") String estado,
+            @RequestParam(defaultValue = "all") String cv, @RequestParam(defaultValue = "most_recent") String orden,
+            @RequestParam(defaultValue = "0") int pagina, @RequestParam(defaultValue = "false") boolean fragmento) {
 
-        List<Postulante> postulantes = postulanteService.listarTodos();
-        model.addAttribute("postulantes", postulantes);
+        q = q.trim(); if (q.length() > 120) q = q.substring(0, 120);
+        estado = List.of("Pendiente", "En revision", "Entrevista pendiente", "Aceptada", "Rechazada", "Sin Postulaciones").contains(estado) ? estado : "all";
+        cv = List.of("complete", "incomplete").contains(cv) ? cv : "all";
+        orden = "oldest".equals(orden) ? "oldest" : "most_recent";
+        var resultado = adminPostulantesService.pagina(q, estado, cv, orden, pagina);
+        model.addAttribute("postulantes", resultado.pagina().getContent());
+        model.addAttribute("paginaPostulantes", resultado.pagina());
+        model.addAttribute("estados", resultado.estados());
+        model.addAttribute("q", q); model.addAttribute("estadoFiltro", estado);
+        model.addAttribute("cvFiltro", cv); model.addAttribute("ordenFiltro", orden);
+        if (fragmento) return "admin/gestion_postulantes :: resultados";
         model.addAttribute("activeMenu", "postulantes");
-
-        Map<String, String> estados = new HashMap<>();
-        for (Postulante p : postulantes) {
-            PostulacionEstado estado = postulacionService.ultimaPostulacion(p)
-                    .map(Postulacion::getEstado)
-                    .orElse(null);
-            String estadoStr = (estado != null) ? estado.getDescripcion() : "Sin Postulaciones";
-            estados.put(p.getId(), estadoStr);
-        }
-        model.addAttribute("estados", estados);
-
-        model.addAttribute("totalPostulantes", postulanteService.contarPostulantes());
-        model.addAttribute("postulantesCompletados", postulanteService.contarPostulantesConCV());
+        java.time.LocalDate fechaPanel = java.time.LocalDate.now(java.time.ZoneId.of("America/Bogota"));
+        model.addAttribute("postulantesYear", fechaPanel.getYear());
+        model.addAttribute("postulantesMonth", fechaPanel.getMonthValue());
+        model.addAttribute("resumenPostulantes", adminPostulantesService.resumen(fechaPanel));
         model.addAttribute("postulantesRevision", postulacionService.postulantesEnRevision());
         model.addAttribute("postulantesAceptados", postulacionService.postulantesAceptados());
         model.addAttribute("totalPostulaciones", postulacionService.contarPostulaciones());
-
-        List<Notificacion> todas = notificacionService.obtenerTodasOrdenadas();
-
-        model.addAttribute("notificacion", todas);
-
-        Long nuevasNoLeidas = todas.stream().filter(n -> !n.isLeida()).count();
-        if (nuevasNoLeidas > 0) {
-            model.addAttribute("notificacionesNuevas", nuevasNoLeidas);
-        }
-
-        if (auth != null) {
-            Admin admin = adminService.buscarPorEmail(auth.getName())
-                    .orElse(null);
-            model.addAttribute("admin", admin);
-        }
 
         return "admin/gestion_postulantes";
     }
@@ -330,12 +331,17 @@ public class AdminController {
             String email = auth.getName();
             Admin oldAdmin = adminService.buscarPorEmail(email)
                     .orElseThrow(() -> new RuntimeException("Admin no encontrado"));
-            adminForm.setId(oldAdmin.getId());
-            adminForm.setEmail(oldAdmin.getEmail());
-            adminForm.setRol(oldAdmin.getRol());
-            adminForm.setFoto(oldAdmin.getFoto());
-            adminForm.setPassword(oldAdmin.getPassword());
-            adminService.guardar(adminForm);
+            String nombre = adminForm.getNombre() == null ? "" : adminForm.getNombre().trim();
+            String apellido = adminForm.getApellido() == null ? "" : adminForm.getApellido().trim();
+            String about = adminForm.getAbout() == null ? "" : adminForm.getAbout().trim();
+            if (nombre.isEmpty() || apellido.isEmpty() || nombre.length() > 80 || apellido.length() > 80 || about.length() > 500) {
+                redirectAttributes.addFlashAttribute("error", "Completa nombre y apellido (máximo 80 caracteres) y una descripción de hasta 500 caracteres.");
+                return "redirect:/admin/editar";
+            }
+            oldAdmin.setNombre(nombre);
+            oldAdmin.setApellido(apellido);
+            oldAdmin.setAbout(about);
+            adminService.guardar(oldAdmin);
 
             redirectAttributes.addFlashAttribute("success", "Perfil actualizado correctamente.");
             return "redirect:/admin/editar";
@@ -346,12 +352,15 @@ public class AdminController {
         }
     }
 
+    @org.springframework.beans.factory.annotation.Autowired
+    private com.project.HireConnect.service.ImagenesService imagenesService;
+
     @PostMapping("/subirFoto")
     public String subirFotoAdmin(@RequestParam("id") String id,
             @RequestParam("file") MultipartFile file,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes, Authentication auth) {
         try {
-            Admin admin = adminService.buscarPorId(id)
+            Admin admin = adminService.buscarPorEmail(auth.getName())
                     .orElseThrow(() -> new RuntimeException("Administrador no encontrado."));
 
             if (file.isEmpty()) {
@@ -370,20 +379,31 @@ public class AdminController {
                 redirectAttributes.addFlashAttribute("error", "El archivo excede el tamaño máximo permitido (2MB).");
                 return "redirect:/admin/editar";
             }
-            String uploadDir = "uploads/admins/";
-            Path uploadPath = Paths.get(uploadDir);
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
+            java.awt.image.BufferedImage original = javax.imageio.ImageIO.read(file.getInputStream());
+            if (original == null || (long) original.getWidth() * original.getHeight() > 40_000_000) {
+                redirectAttributes.addFlashAttribute("error", "La imagen no es válida o tiene demasiada resolución.");
+                return "redirect:/admin/editar";
             }
-
-            String extension = tipo.equals("image/png") ? ".png" : ".jpg";
-            String nombreArchivo = "admin_" + id + "_" + System.currentTimeMillis() + extension;
-            Path archivoPath = uploadPath.resolve(nombreArchivo);
-
-            Files.copy(file.getInputStream(), archivoPath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-
-            admin.setFoto("/" + uploadDir + nombreArchivo);
-            adminService.guardar(admin);
+            int lado = Math.min(original.getWidth(), original.getHeight());
+            java.awt.image.BufferedImage normalizada = new java.awt.image.BufferedImage(512, 512, java.awt.image.BufferedImage.TYPE_INT_RGB);
+            java.awt.Graphics2D graphics = normalizada.createGraphics();
+            graphics.setColor(java.awt.Color.WHITE); graphics.fillRect(0, 0, 512, 512);
+            graphics.setRenderingHint(java.awt.RenderingHints.KEY_INTERPOLATION, java.awt.RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            graphics.drawImage(original, 0, 0, 512, 512, (original.getWidth() - lado) / 2, (original.getHeight() - lado) / 2,
+                    (original.getWidth() + lado) / 2, (original.getHeight() + lado) / 2, null);
+            graphics.dispose();
+            java.io.ByteArrayOutputStream bytes = new java.io.ByteArrayOutputStream();
+            javax.imageio.ImageIO.write(normalizada, "jpg", bytes);
+            String url = "/uploads/admins/admin_" + java.util.UUID.randomUUID() + ".jpg";
+            imagenesService.guardar(url, bytes.toByteArray(), "image/jpeg");
+            String anterior = admin.getFoto();
+            admin.setFoto(url);
+            try { adminService.guardar(admin); }
+            catch (RuntimeException error) { admin.setFoto(anterior); imagenesService.eliminar(url); throw error; }
+            if (anterior != null && anterior.startsWith("/uploads/admins/")) {
+                try { imagenesService.eliminar(anterior); }
+                catch (IOException | RuntimeException error) { org.slf4j.LoggerFactory.getLogger(getClass()).warn("No se pudo retirar la imagen anterior del administrador."); }
+            }
 
             redirectAttributes.addFlashAttribute("success", "Foto subida correctamente.");
         } catch (RuntimeException e) {
@@ -396,21 +416,17 @@ public class AdminController {
 
     @GetMapping("/eliminarFoto")
     public String eliminarFotoAdmin(@RequestParam("id") String id,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes, Authentication auth) {
         try {
-            Admin admin = adminService.buscarPorId(id)
+            Admin admin = adminService.buscarPorEmail(auth.getName())
                     .orElseThrow(() -> new RuntimeException("Administrador no encontrado."));
 
             if (admin.getFoto() != null && !admin.getFoto().isEmpty()) {
-                String rutaFoto = admin.getFoto().replaceFirst("/", "");
-                Path fotoPath = Paths.get(rutaFoto);
-
-                if (Files.exists(fotoPath)) {
-                    Files.delete(fotoPath);
-                }
-
+                String anterior = admin.getFoto();
                 admin.setFoto(null);
-                adminService.guardar(admin);
+                try { adminService.guardar(admin); }
+                catch (RuntimeException error) { admin.setFoto(anterior); throw error; }
+                imagenesService.eliminar(anterior);
                 redirectAttributes.addFlashAttribute("success", "Foto eliminada correctamente.");
             } else {
                 redirectAttributes.addFlashAttribute("info", "No tienes una foto guardada.");
@@ -421,6 +437,43 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("error", "Error al eliminar la foto: " + e.getMessage());
         }
         return "redirect:/admin/editar";
+    }
+
+    @GetMapping("/configuracion")
+    public String configuracion(Model model) {
+        model.addAttribute("activeMenu", "configuracion");
+        return "admin/configuracion";
+    }
+
+    @PostMapping("/configuracion/password")
+    public String cambiarPassword(Authentication auth, @RequestParam String passwordActual,
+            @RequestParam String nuevaPassword, @RequestParam String confirmarPassword, RedirectAttributes redirect) {
+        Admin admin = adminService.buscarPorEmail(auth.getName()).orElseThrow();
+        if (!passwordEncoder.matches(passwordActual, admin.getPassword())) {
+            redirect.addFlashAttribute("error", "La contraseña actual no es correcta.");
+        } else if (nuevaPassword.length() < 8 || nuevaPassword.getBytes(java.nio.charset.StandardCharsets.UTF_8).length > 72
+                || !nuevaPassword.equals(confirmarPassword) || passwordEncoder.matches(nuevaPassword, admin.getPassword())) {
+            redirect.addFlashAttribute("error", "Usa una contraseña diferente de al menos 8 caracteres, máximo 72 bytes, y confirma que coincidan.");
+        } else {
+            admin.setPassword(passwordEncoder.encode(nuevaPassword));
+            adminService.guardar(admin);
+            redirect.addFlashAttribute("success", "Contraseña actualizada.");
+        }
+        return "redirect:/admin/configuracion#seguridad";
+    }
+
+    @GetMapping("/configuracion/datos")
+    @ResponseBody
+    public org.springframework.http.ResponseEntity<Map<String, String>> datosAdmin(Authentication auth) {
+        Admin admin = adminService.buscarPorEmail(auth.getName()).orElseThrow();
+        Map<String, String> datos = new java.util.LinkedHashMap<>();
+        datos.put("nombre", java.util.Objects.toString(admin.getNombre(), ""));
+        datos.put("apellido", java.util.Objects.toString(admin.getApellido(), ""));
+        datos.put("email", java.util.Objects.toString(admin.getEmail(), ""));
+        datos.put("about", java.util.Objects.toString(admin.getAbout(), ""));
+        return org.springframework.http.ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=hireconnect-admin.json")
+                .header("Cache-Control", "no-store").body(datos);
     }
 
 }

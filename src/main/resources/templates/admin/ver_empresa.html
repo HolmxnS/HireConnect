@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/styles/fragments/admin/sidebar.css}">
-    <link rel="stylesheet" th:href="@{/styles/admin/ver_empresa.css}">
     <link rel="stylesheet" th:href="@{/styles/admin/theme.css}">
     <script th:src="@{/js/theme.js}"></script>
     <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
@@ -14,12 +13,18 @@
     <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
     <title th:text="'Detalle de Empresa - ' + ${empresa.nombreLegal}"></title>
     <link rel="stylesheet" th:href="@{/styles/brand.css}" />
+    <link rel="stylesheet" th:href="@{/styles/admin/workspace.css}" />
+    <link rel="stylesheet" th:href="@{/styles/toasts.css}" />
+    <link rel="stylesheet" th:href="@{/styles/admin/content.css}" />
 </head>
 
-<body>
+<body class="admin-area admin-layout-page">
     <div th:replace="~{fragments/admin/sidebar_admin :: sidebar('empresas')}"></div>
 
+    <div th:replace="~{fragments/admin/header_admin :: topbar('Administración', '')}"></div>
     <main class="main">
+        <p th:if="${success}" th:text="${success}" data-toast-message hidden></p><p th:if="${error}" th:text="${error}" data-toast-message data-toast-error hidden></p>
+
 
         <div>
             <a th:href="@{/admin/empresas}" class="back-btn">
@@ -36,7 +41,7 @@
 
                 <div class="detail-top__heading">
                     <h2 th:text="${empresa.nombreLegal}">Nombre de la empresa</h2>
-                    <span class="badge" th:classappend="${empresa.estado.name() == 'APROBADA'} ? 'badge--ok' : 'badge--bad'"
+                    <span class="badge" th:classappend="${empresa.estado?.name() == 'APROBADA'} ? 'badge--ok' : 'badge--bad'"
                         th:text="${empresa.estado}">APROBADA</span>
                 </div>
 
@@ -45,7 +50,7 @@
                         <i class="fa-solid fa-check"></i> Aprobar
                     </a>
                     <a th:href="@{/admin/empresas/suspender/{id}(id=${empresa.id})}"
-                        onclick="return confirm('¿Estás seguro de suspender esta empresa?')" class="btn btn--danger">
+                        data-admin-confirm="¿Estás seguro de suspender esta empresa?" class="btn btn--danger">
                         <i class="fa-solid fa-ban"></i> Suspender
                     </a>
                 </div>
@@ -96,7 +101,7 @@
                             <td class="table__strong" th:text="${vacante.titulo}">Vacante</td>
                             <td>
                                 <span class="badge"
-                                    th:classappend="${vacante.estado.name() == 'ACTIVA'} ? 'badge--ok' : (${vacante.estado.name() == 'CERRADA'} ? 'badge--bad' : 'badge--warn')"
+                                    th:classappend="${vacante.estado?.name() == 'ACTIVA'} ? 'badge--ok' : (${vacante.estado?.name() == 'CERRADA'} ? 'badge--bad' : 'badge--warn')"
                                     th:text="${vacante.estado}">ACTIVA</span>
                             </td>
                             <td class="table__muted" th:text="${#temporals.format(vacante.fechaPublicacion, 'dd/MMM/yyyy')}">01/01/2026</td>

@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/styles/fragments/admin/sidebar.css}">
-    <link rel="stylesheet" th:href="@{/styles/admin/gestion_postulantes.css}">
     <link rel="stylesheet" th:href="@{/styles/admin/theme.css}">
     <script th:src="@{/js/theme.js}"></script>
     <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
@@ -15,123 +14,60 @@
 
     <title>Revisar Postulantes</title>
     <link rel="stylesheet" th:href="@{/styles/brand.css}" />
+    <link rel="stylesheet" th:href="@{/styles/admin/workspace.css}" />
+    <link rel="stylesheet" th:href="@{/styles/toasts.css}" />
+    <link rel="stylesheet" th:href="@{/styles/admin/content.css}" />
+    <link rel="stylesheet" th:href="@{/styles/admin/postulantes_overview.css}" />
 </head>
 
-<body>
-    <div th:replace="~{fragments/admin/sidebar_admin :: sidebar('postulantes')}"></div>
-
-    <main class="main">
-
-        <div th:replace="~{fragments/admin/header_admin :: topbar('Candidatos registrados', 'Listado y gestión de perfiles de candidatos y sus habilidades.')}"></div>
-
-        <section class="kpis" aria-label="Resumen de postulantes">
-            <div class="kpi">
-                <span class="kpi__icon"><i class="fa-solid fa-users"></i></span>
-                <div class="kpi__body">
-                    <span class="kpi__number" th:text="${totalPostulantes}">0</span>
-                    <span class="kpi__label">Total postulantes</span>
-                </div>
-            </div>
-            <div class="kpi">
-                <span class="kpi__icon kpi__icon--info"><i class="fa-solid fa-hourglass-half"></i></span>
-                <div class="kpi__body">
-                    <span class="kpi__number" th:text="${postulantesRevision}">0</span>
-                    <span class="kpi__label">En revisión</span>
-                </div>
-            </div>
-            <div class="kpi">
-                <span class="kpi__icon kpi__icon--ok"><i class="fa-solid fa-circle-check"></i></span>
-                <div class="kpi__body">
-                    <span class="kpi__number" th:text="${postulantesAceptados}">0</span>
-                    <span class="kpi__label">Aceptados</span>
-                </div>
-            </div>
-            <div class="kpi">
-                <span class="kpi__icon"><i class="fa-solid fa-id-card"></i></span>
-                <div class="kpi__body">
-                    <span class="kpi__number" th:text="${postulantesCompletados}">0</span>
-                    <span class="kpi__label">Perfiles completos</span>
-                </div>
-            </div>
-            <div class="kpi">
-                <span class="kpi__icon kpi__icon--info"><i class="fa-solid fa-paper-plane"></i></span>
-                <div class="kpi__body">
-                    <span class="kpi__number" th:text="${totalPostulaciones}">0</span>
-                    <span class="kpi__label">Postulaciones</span>
-                </div>
-            </div>
-        </section>
-
-        <section class="toolbar">
+<body class="admin-area admin-layout-page admin-people-page">
+<div th:replace="~{fragments/admin/sidebar_admin :: sidebar('postulantes')}"></div>
+<div th:replace="~{fragments/admin/header_admin :: topbar('Administración', '')}"></div>
+<main class="main"><div class="people-heading"><h1>El talento de HireConnect.</h1><p>Una mirada a quienes forman parte de la plataforma.</p></div>
+<p th:if="${success}" th:text="${success}" data-toast-message hidden></p><p th:if="${error}" th:text="${error}" data-toast-message data-toast-error hidden></p>
+<div class="people-dashboard" th:data-year="${postulantesYear}" th:data-month="${postulantesMonth}"><div class="people-main">
+<section class="people-metrics" aria-label="Resumen de perfiles"><div class="people-metric"><strong data-people-total>0</strong><span>Postulantes registrados</span><small>Comunidad de HireConnect</small></div><div class="people-metric"><strong data-people-with-cv>0</strong><span>Con CV adjunto</span><small>Documento disponible</small></div><div class="people-metric"><strong data-people-without-cv>0</strong><span>Sin CV adjunto</span><small>Perfiles sin documento</small></div></section>
+<section class="people-registration" aria-labelledby="people-chart-title"><div class="people-section-heading"><div><h2 id="people-chart-title">Nuevos registros</h2><p>Postulantes por mes · <span data-people-year></span></p></div><label><span class="people-sr-only">Período del gráfico</span><select data-people-period aria-label="Período de registros"><option value="6">Últimos 6 meses</option><option value="12" selected>Año actual</option></select></label></div><div data-people-chart></div><p class="people-quiet" data-people-chart-empty hidden>No hay registros en este período.</p><details class="people-data"><summary>Ver datos por mes</summary><table><thead><tr><th>Mes</th><th>Registros</th></tr></thead><tbody data-people-chart-table></tbody></table></details></section>
+<section class="people-directory" id="people-directory"><div class="people-section-heading"><div><h2>Directorio de postulantes</h2><p>Busca perfiles y revisa sus documentos.</p></div><button type="button" class="people-clear" data-people-clear hidden>Limpiar filtros</button></div>
+        <form class="toolbar people-filters" id="peopleSearchForm" th:action="@{/admin/postulantes}" method="get" aria-label="Filtros del directorio">
             <div class="search">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="searchInputPostulantes" placeholder="Buscar por nombre o apellido..."
-                    onkeyup="filterPostulantes()">
+                <input type="search" id="searchInputPostulantes" name="q" maxlength="120" th:value="${q}" aria-label="Buscar postulante por nombre o apellido" placeholder="Buscar por nombre o apellido..."
+                    >
             </div>
 
-            <select id="statusFilter" class="select" onchange="filterPostulantes()">
+            <select id="statusFilter" name="estado" aria-label="Estado de la última postulación" class="select" >
                 <option value="all">Todos los estados</option>
-                <option value="En revision">En revisión</option>
-                <option value="Aceptada">Aceptada</option>
-                <option value="Rechazada">Rechazada</option>
+                <option value="Pendiente" th:selected="${estadoFiltro == 'Pendiente'}">Pendiente</option><option value="Entrevista pendiente" th:selected="${estadoFiltro == 'Entrevista pendiente'}">Entrevista pendiente</option><option value="Sin Postulaciones" th:selected="${estadoFiltro == 'Sin Postulaciones'}">Sin postulaciones</option><option value="En revision" th:selected="${estadoFiltro == 'En revision'}">En revisión</option>
+                <option value="Aceptada" th:selected="${estadoFiltro == 'Aceptada'}">Aceptada</option>
+                <option value="Rechazada" th:selected="${estadoFiltro == 'Rechazada'}">Rechazada</option>
             </select>
 
-            <select id="cvFilter" class="select" onchange="filterPostulantes()">
+            <select id="cvFilter" name="cv" aria-label="Disponibilidad del CV" class="select" >
                 <option value="all">Todos los CV</option>
-                <option value="complete">CV completo</option>
-                <option value="incomplete">Sin CV</option>
+                <option value="complete" th:selected="${cvFiltro == 'complete'}">CV completo</option>
+                <option value="incomplete" th:selected="${cvFiltro == 'incomplete'}">Sin CV</option>
             </select>
 
-            <select id="sortFilterPostulantes" class="select">
+            <select id="sortFilterPostulantes" name="orden" aria-label="Orden de registro" class="select">
                 <option value="most_recent">Más recientes</option>
-                <option value="oldest">Más antiguos</option>
+                <option value="oldest" th:selected="${ordenFiltro == 'oldest'}">Más antiguos</option>
             </select>
-        </section>
+            <button type="submit" class="people-search-submit">Buscar</button>
+        </form>
+<p class="people-request-status" data-people-request-status role="status" aria-live="polite"></p>
+<div th:fragment="resultados" data-people-results>
 
-        <section class="panel table-panel">
-            <div class="table-scroll">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">Apellido</th>
-                            <th scope="col">CV</th>
-                            <th scope="col">Estado</th>
-                            <th scope="col">Fecha de registro</th>
-                            <th scope="col">Acciones</th>
-                        </tr>
-                    </thead>
 
-                    <tbody id="postulantesList">
-                        <tr th:each="postulante : ${postulantes}" class="postulante-item"
-                            th:attr="data-date=${#temporals.format(postulante.fechaRegistro,'yyyy-MM-dd')}">
-                            <td class="nombre table__strong" th:text="${postulante.nombre}">Nombre</td>
-                            <td class="apellido table__strong" th:text="${postulante.apellido}">Apellido</td>
-                            <!-- Importante: el texto de estas celdas lo lee el filtro JS, no agregar espacios ni etiquetas dentro -->
-                            <td class="cv" th:classappend="${postulante.cv != null} ? 'cv--ok' : 'cv--no'"
-                                th:text="${postulante.cv != null ? 'Completo' : 'Incompleto'}">CV</td>
-                            <td class="postulacion-estado"
-                                th:classappend="${estados[postulante.id] == 'Aceptada'} ? 'estado--ok' : (${estados[postulante.id] == 'Rechazada'} ? 'estado--bad' : 'estado--warn')"
-                                th:text="${estados[postulante.id]}">Estado</td>
-                            <td class="table__muted" th:text="${#temporals.format(postulante.fechaRegistro,'dd/MM/yyyy')}">Fecha</td>
-                            <td>
-                                <a th:href="@{'/postulante/descargarCV/' + ${postulante.id}}" target="_blank"
-                                    class="btn btn--soft btn--sm">
-                                    <i class="fa-solid fa-file-lines"></i> Ver CV
-                                </a>
-                            </td>
-                        </tr>
-                        <tr th:if="${#lists.isEmpty(postulantes)}">
-                            <td colspan="6" class="table__empty">No hay postulantes registrados.</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-    </main>
 
-    <script th:src="@{/js/gestion_postulantes.js}"></script>
-    <script th:src="@{/js/admin_dashboard.js}"></script>
-</body>
-
-</html>
+<p class="admin-list-count" aria-live="polite" th:text="${paginaPostulantes.totalElements == 0 ? 'No se encontraron postulantes.' : 'Mostrando ' + (paginaPostulantes.number * paginaPostulantes.size + 1) + '–' + (paginaPostulantes.number * paginaPostulantes.size + paginaPostulantes.numberOfElements) + ' de ' + paginaPostulantes.totalElements + ' postulantes'}"></p><div class="table-scroll people-table-scroll" role="region" aria-label="Listado de postulantes" tabindex="0"><table class="table people-table"><thead><tr><th scope="col">Postulante</th><th scope="col">CV</th><th scope="col">Última postulación</th><th scope="col">Registro</th><th scope="col">Acciones</th></tr></thead><tbody id="postulantesList">
+<tr th:each="p : ${postulantes}" class="postulante-item" th:data-date="${p.fechaRegistro}" th:data-person-id="${p.id}"><td><div class="people-identity"><span class="people-avatar"><img th:if="${not #strings.isEmpty(p.foto)}" th:src="${p.foto}" alt="" loading="lazy"/><span th:if="${#strings.isEmpty(p.foto)}" th:text="${#strings.isEmpty(p.nombre) ? '?' : #strings.substring(p.nombre,0,1)}"></span></span><span><strong><span class="nombre" th:text="${p.nombre}"></span> <span class="apellido" th:text="${p.apellido}"></span></strong><small th:text="${p.email}"></small></span></div></td><td class="cv" th:classappend="${not #strings.isEmpty(p.cv)} ? 'cv--ok' : 'cv--no'" th:text="${not #strings.isEmpty(p.cv) ? 'Completo' : 'Incompleto'}"></td><td class="postulacion-estado" th:text="${estados[p.id] ?: 'Sin postulaciones'}"></td><td class="table__muted" th:text="${p.fechaRegistro != null ? #temporals.format(p.fechaRegistro,'dd MMM yyyy') : 'Sin fecha'}"></td><td><a th:if="${not #strings.isEmpty(p.cv)}" th:href="@{/postulante/descargarCV/{id}(id=${p.id})}" target="_blank" rel="noopener" class="people-document">Ver CV ↗</a><span th:if="${#strings.isEmpty(p.cv)}" class="people-quiet">Sin adjunto</span></td></tr>
+<tr th:if="${#lists.isEmpty(postulantes)}"><td colspan="5" class="table__empty">No hay postulantes que coincidan con los filtros.</td></tr>
+</tbody></table></div>
+<nav class="people-pagination" aria-label="Páginas de postulantes"><a th:if="${paginaPostulantes.hasPrevious()}" th:href="@{/admin/postulantes(q=${q},estado=${estadoFiltro},cv=${cvFiltro},orden=${ordenFiltro},pagina=${paginaPostulantes.number - 1})}" data-people-page>← Anterior</a><span th:unless="${paginaPostulantes.hasPrevious()}" aria-disabled="true">← Anterior</span><span th:text="${'Página ' + (paginaPostulantes.totalPages == 0 ? 1 : paginaPostulantes.number + 1) + ' de ' + (paginaPostulantes.totalPages == 0 ? 1 : paginaPostulantes.totalPages)}"></span><a th:if="${paginaPostulantes.hasNext()}" th:href="@{/admin/postulantes(q=${q},estado=${estadoFiltro},cv=${cvFiltro},orden=${ordenFiltro},pagina=${paginaPostulantes.number + 1})}" data-people-page>Siguiente →</a><span th:unless="${paginaPostulantes.hasNext()}" aria-disabled="true">Siguiente →</span></nav>
+</div></section></div>
+<aside class="people-aside"><section><div class="people-section-heading"><h2>Documentación</h2></div><div class="people-cv-ring" data-people-cv-ring aria-hidden="true"><div><strong data-people-cv-percent>0%</strong><span>con CV adjunto</span></div></div><p class="people-quiet" data-people-cv-summary></p></section>
+<section><div class="people-section-heading"><h2>Últimos registros</h2><span class="people-quiet">Hasta 5</span></div><div data-people-recent></div></section>
+<section><div class="people-section-heading"><h2>Postulaciones</h2></div><dl class="people-processes"><div><dt>En revisión</dt><dd th:text="${postulantesRevision}"></dd></div><div><dt>Aceptadas</dt><dd th:text="${postulantesAceptados}"></dd></div><div><dt>En total</dt><dd th:text="${totalPostulaciones}"></dd></div></dl></section></aside>
+</div></main><script th:inline="javascript">window.adminPeopleData = /*[[${resumenPostulantes}]]*/ {};</script><script th:src="@{/js/gestion_postulantes.js}" defer></script><script th:src="@{/js/admin_postulantes_overview.js}" defer></script>
+</body></html>

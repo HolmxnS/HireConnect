@@ -109,19 +109,3 @@
 .company-social__empty, .company-social__form-title p { color: var(--hc-muted); font-size: 1.3rem; line-height: 1.6; }
 .company-social__form-title { border-top: 1px solid var(--hc-line); margin-top: .8rem; padding-top: 2rem; }
 .company-social__form-title h3 { font-size: 1.6rem; color: var(--hc-text); margin-bottom: .6rem; }
-.company-posts { border-top: 1px solid var(--hc-line); padding-top: 2.8rem; min-width: 0; }
-.company-posts__heading { margin-bottom: 2rem; }
-.company-posts__heading p, .company-posts__empty, .company-posts__note { color: var(--hc-muted); font-size: 1.3rem; line-height: 1.6; }
-.company-posts__list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 2.8rem; align-items: start; }
-.company-post { min-width: 0; overflow: hidden; }
-.company-post__network { display: block; margin-bottom: 1rem; color: var(--hc-muted); font-size: 1.2rem; font-weight: 600; }
-.company-post > a { display: inline-block; color: var(--hc-accent-ink); font-size: 1.2rem; margin-top: 1.2rem; text-decoration: none; }
-.company-post > a:hover { text-decoration: underline; }
-.company-post [data-social-embed] { min-width: 0; overflow: hidden; }
-.company-post [data-social-embed] > iframe { border: 0; max-width: 100%; }
-.company-post [data-social-embed] blockquote { margin: 0; padding: 1.6rem 0; }
-.company-post [data-social-embed] blockquote a, .company-post [data-social-embed] p { color: var(--hc-muted); font-size: 1.3rem; }
-.company-post [data-social-embed] .instagram-media, .company-post [data-social-embed] .text-post-media { min-width: 0 !important; max-width: 100% !important; width: 100% !important; margin: 0 !important; }
-.company-posts__note { margin-top: 2rem; }
-@media(max-width:800px) { .company-posts__list { grid-template-columns: 1fr; max-width: 54rem; } }
-.company-posts__more { display: flex; justify-content: center; margin-top: 2.4rem; }

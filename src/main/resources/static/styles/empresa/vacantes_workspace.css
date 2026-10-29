@@ -1,0 +1,75 @@
+body.company-vacancy-browser main.main.vacancy-page { display: flex; flex-direction: column; height: calc(100vh - var(--header-h)); height: calc(100dvh - var(--header-h)); min-height: 0; padding: 3.2rem; overflow: hidden; }
+.company-vacancy-browser .vacancy-workspace { gap: 2.4rem; }
+.company-vacancy-browser .vacancy-workspace.is-enhanced { grid-template-columns: minmax(32rem,1.35fr) minmax(28rem,.85fr); }
+.company-vacancy-browser .vacancy-list { padding-right: .6rem; }
+.company-vacancy-toolbar { position: sticky; top: 0; z-index: 2; padding: .4rem 0 1.8rem; background: var(--pc-bg); }
+.company-vacancy-browser .vacancy-page__heading { gap: 1rem; margin-bottom: 2rem; }
+.company-vacancy-browser .vacancy-page__heading h1 { font-size: 2.2rem; }
+.company-vacancy-create { display: inline-flex; align-items: center; gap: .7rem; padding: 1rem 1.3rem; border-radius: 99rem; background: var(--hc-accent); color: var(--hc-on-accent); font-size: 1.2rem; font-weight: 600; text-decoration: none; flex-shrink: 0; }
+.company-vacancy-filters { display: flex; flex-wrap: wrap; gap: .8rem; }
+.company-vacancy-search { display: flex; align-items: center; gap: 1rem; flex: 1 1 100%; padding: 0 1.4rem; background: var(--hc-surface); border: 1px solid var(--hc-line); border-radius: 99rem; color: var(--hc-muted); font-size: 1.3rem; }
+.company-vacancy-browser .company-vacancy-search input { width: 100%; min-width: 0; border: 0; background: transparent; color: var(--hc-text); padding: 1.1rem 0; font: 1.3rem var(--font-satoshi); }
+.company-vacancy-search:focus-within { outline: 2px solid var(--hc-accent); }
+.company-vacancy-search input:focus { outline: none; }
+.company-vacancy-filters select { flex: 1; min-width: 0; border: 1px solid var(--hc-line); border-radius: 99rem; background: var(--hc-surface); color: var(--hc-text); padding: .8rem 1rem; font: 1.2rem var(--font-satoshi); }
+.company-vacancy-browser [hidden] { display: none !important; }
+.company-vacancy-browser .vacancies { gap: 1.2rem; }
+.company-vacancy-browser .vacancies__card { border-radius: 1.1rem; }
+.company-vacancy-browser .vacancy-item { display: grid; grid-template-columns: 4.4rem minmax(0,1fr) auto; align-items: start; gap: 1.2rem; padding: 1.8rem; }
+.company-card-logo { display: grid; place-items: center; width: 4.4rem; height: 4.4rem; border-radius: 1.2rem; background: var(--hc-soft); color: var(--hc-accent-ink); font-size: 1.8rem; overflow: hidden; }
+.company-card-logo img { width: 100%; height: 100%; object-fit: cover; }
+.company-card-info { min-width: 0; }
+.company-vacancy-browser .company-card-info h3 { margin: 0 0 .6rem; font-size: 1.5rem; line-height: 1.4; }
+.company-card-meta { display: flex; flex-wrap: wrap; gap: .4rem .8rem; color: var(--hc-muted); font-size: 1.1rem; margin-bottom: .6rem; }
+.company-vacancy-browser .vacancies__date { font-size: 1rem; }
+.company-card-side { display: grid; justify-items: end; gap: 1.2rem; }
+.company-card-side strong { color: var(--hc-muted); font-size: 1.1rem; font-weight: 500; }
+.company-vacancy-state { display: inline-block; padding: .4rem .8rem; border-radius: 99rem; background: var(--hc-soft); color: var(--hc-muted); font-size: 1rem; font-weight: 600; }
+.company-vacancy-state--activa { color: var(--hc-ok); }
+.company-vacancy-state--pendiente { color: var(--hc-warn); }
+.company-vacancy-browser .vacancy-reader { border-radius: 1.2rem; }
+.company-vacancy-browser .vacancy-reader__bar { padding: 1.2rem 2rem; font-size: 1.1rem; }
+.company-vacancy-browser .vacancy-reader__content { padding: 2.4rem; }
+.company-vacancy-browser .vacancy-detail__hero { display: flex; flex-direction: column; align-items: center; gap: 1.2rem; padding: 1rem 0 2.4rem; border: 0; border-bottom: 1px solid var(--hc-line); border-radius: 0; background: none; text-align: center; }
+.company-vacancy-browser .vacancy-detail__hero .vacancy-company-logo { width: 6.4rem; height: 6.4rem; border-radius: 1.6rem; margin-bottom: .4rem; }
+.company-vacancy-browser .vacancy-detail__hero h2 { font-size: clamp(1.8rem,1.7vw,2.2rem); line-height: 1.4; }
+.company-detail-name { font-size: 1.2rem; color: var(--hc-muted); }
+.company-vacancy-actions { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem 1.6rem; margin-top: .4rem; }
+.company-vacancy-actions a { color: var(--hc-accent-ink); font-size: 1.2rem; text-decoration: none; font-weight: 600; }
+.company-vacancy-actions a.company-vacancy-edit { display: inline-flex; align-items: center; gap: .7rem; background: var(--hc-accent); color: var(--hc-on-accent); border-radius: 99rem; padding: 1rem 2.4rem; }
+.company-vacancy-label { font-size: 1.1rem; color: var(--hc-muted); }
+.company-vacancy-browser .vacancy-detail__intro { margin: 2rem 0 1rem; padding-bottom: 1.6rem; }
+.company-vacancy-browser .vacancy-detail__salary { font-size: 2rem; }
+.company-vacancy-browser .vacancy-detail__facts { grid-template-columns: 1fr; gap: 0; margin-bottom: 2rem; }
+.company-vacancy-browser .vacancy-detail__facts > div { display: flex; justify-content: space-between; align-items: baseline; gap: 1.2rem; background: none; border: 0; border-bottom: 1px solid var(--hc-line); border-radius: 0; padding: 1.2rem 0; }
+.company-vacancy-browser .vacancy-detail__facts dt { margin: 0; font-size: 1.2rem; }
+.company-vacancy-browser .vacancy-detail__facts dd { text-align: right; font-size: 1.2rem; }
+.company-vacancy-browser .vacancy-detail__section { margin-top: 2.4rem; }
+.company-vacancy-browser .vacancy-detail__section h3 { font-size: 1.4rem; }
+.company-vacancy-browser .vacancy-detail__description { font-size: 1.3rem; line-height: 1.8; }
+.company-detail-about { border-top: 1px solid var(--hc-line); padding-top: 2.4rem; }
+.company-vacancy-reset { background: none; border: 0; color: var(--hc-accent-ink); font: 600 1.3rem var(--font-satoshi); padding: 1rem; cursor: pointer; }
+@media(max-width:900px) {
+ body.company-vacancy-browser main.main.vacancy-page { padding: 2rem 1.6rem; }
+ .company-vacancy-browser .vacancy-workspace.is-enhanced { grid-template-columns: 1fr; }
+ .company-vacancy-browser .vacancy-page__heading { flex-direction: row; align-items: center; }
+ .company-vacancy-browser .vacancy-reader__content { padding: 2rem; }
+ .company-vacancy-browser .vacancy-item { padding: 1.6rem; }
+}
+@media(max-width:480px) {
+ .company-vacancy-browser .vacancy-item { grid-template-columns: 3.8rem minmax(0,1fr); gap: 1rem; }
+ .company-card-logo { width: 3.8rem; height: 3.8rem; }
+ .company-card-side { grid-column: 2; display: flex; justify-content: space-between; align-items: center; }
+}
+
+.vacancy-confirm { position: fixed; inset: 0; margin: auto; width: min(46rem,calc(100vw - 3.2rem)); max-height: calc(100dvh - 3.2rem); padding: 3.2rem; border: 1px solid var(--hc-line); border-radius: 2rem; background: var(--hc-surface); color: var(--hc-text); box-shadow: 0 2rem 8rem #0004; }
+.vacancy-confirm::backdrop { background: #08051099; backdrop-filter: blur(4px); }
+.vacancy-confirm__close { position: absolute; top: 1.2rem; right: 1.2rem; display: grid; place-items: center; width: 3.2rem; height: 3.2rem; border: 0; border-radius: 50%; background: var(--hc-soft); color: var(--hc-muted); font-size: 2rem; cursor: pointer; }
+.vacancy-confirm__icon { display: grid; place-items: center; width: 5rem; height: 5rem; margin-bottom: 2rem; border-radius: 1.4rem; background: var(--hc-soft); color: var(--hc-accent-ink); font-size: 2.6rem; }
+.vacancy-confirm h2 { font-size: 2.2rem; line-height: 1.3; margin: 0 0 1rem; color: var(--hc-text); }
+.vacancy-confirm .vacancy-confirm__job { margin-bottom: 1.6rem; color: var(--hc-accent-ink); font-size: 1.4rem; font-weight: 600; overflow-wrap: anywhere; }
+.vacancy-confirm p { color: var(--hc-muted); font-size: 1.3rem; line-height: 1.8; }
+.vacancy-confirm__actions { display: flex; justify-content: flex-end; align-items: center; gap: 1rem; margin-top: 2.8rem; }
+.vacancy-confirm__actions button, .vacancy-confirm__actions a { display: inline-flex; justify-content: center; padding: 1.2rem 1.4rem; border: 1px solid var(--hc-line); border-radius: 1rem; background: var(--hc-soft); color: var(--hc-text); font: 600 1.2rem var(--font-satoshi); text-decoration: none; cursor: pointer; text-align: center; }
+.vacancy-confirm__actions a { border-color: var(--hc-accent); background: var(--hc-accent); color: var(--hc-on-accent); }
+@media(max-width:500px) { .vacancy-confirm { padding: 2.4rem; } .vacancy-confirm__actions { flex-direction: column-reverse; align-items: stretch; } }
