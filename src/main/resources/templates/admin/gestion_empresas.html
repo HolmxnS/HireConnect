@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/styles/fragments/admin/sidebar.css}">
-    <link rel="stylesheet" th:href="@{/styles/admin/gestion_empresas.css}">
     <link rel="stylesheet" th:href="@{/styles/admin/theme.css}">
     <script th:src="@{/js/theme.js}"></script>
     <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
@@ -15,14 +14,20 @@
 
     <title>Revisar Empresas</title>
     <link rel="stylesheet" th:href="@{/styles/brand.css}" />
+    <link rel="stylesheet" th:href="@{/styles/admin/workspace.css}" />
+    <link rel="stylesheet" th:href="@{/styles/toasts.css}" />
+    <link rel="stylesheet" th:href="@{/styles/admin/content.css}" />
 </head>
 
-<body>
+<body class="admin-area admin-layout-page">
     <div th:replace="~{fragments/admin/sidebar_admin :: sidebar('empresas')}"></div>
 
-    <main class="main">
+    <div th:replace="~{fragments/admin/header_admin :: topbar('Administración', '')}"></div>
+    <main class="main"><div class="company-management">
+        <div class="admin-page-heading"><h1>Empresas</h1><p>Gestiona las empresas registradas en HireConnect.</p></div>
+        <p th:if="${success}" th:text="${success}" data-toast-message hidden></p><p th:if="${error}" th:text="${error}" data-toast-message data-toast-error hidden></p>
 
-        <div th:replace="~{fragments/admin/header_admin :: topbar('Empresas en la plataforma', 'Listado y gestión de perfiles de empresas y sus vacantes.')}"></div>
+
 
         <section class="kpis" aria-label="Resumen de empresas">
             <div class="kpi">
@@ -43,7 +48,7 @@
                 <span class="kpi__icon kpi__icon--bad"><i class="fa-solid fa-ban"></i></span>
                 <div class="kpi__body">
                     <span class="kpi__number" th:text="${empresasDeshabilitadas}">0</span>
-                    <span class="kpi__label">Empresas deshabilitadas</span>
+                    <span class="kpi__label">Empresas suspendidas</span>
                 </div>
             </div>
             <div class="kpi">
@@ -55,20 +60,24 @@
             </div>
         </section>
 
-        <section class="toolbar">
+        <form class="toolbar company-search-form" id="companySearchForm" th:action="@{/admin/empresas}" method="get">
             <div class="search">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="searchInputEmpresas" onkeyup="filterEmpresas()"
-                    placeholder="Buscar por nombre de empresa...">
+                <input type="search" id="searchInputEmpresas" name="q" th:value="${q}" maxlength="120" aria-label="Buscar por empresa, correo o NIT"
+                    placeholder="Buscar empresa, correo o NIT…">
             </div>
-            <select id="sortFilterEmpresas" class="select">
+            <select id="companyStateFilter" name="estado" aria-label="Estado"><option value="">Todos los estados</option><option value="APROBADA" th:selected="${estadoFiltro == 'APROBADA'}">Aprobadas</option><option value="SUSPENDIDA" th:selected="${estadoFiltro == 'SUSPENDIDA'}">Suspendidas</option></select>
+            <select id="sortFilterEmpresas" class="select" name="orden" aria-label="Ordenar por fecha de registro">
                 <option value="most_recent">Más reciente</option>
-                <option value="oldest">Más antiguo</option>
+                <option value="oldest" th:selected="${ordenFiltro == 'oldest'}">Más antiguo</option>
             </select>
-        </section>
-
+            <button type="submit" class="company-search-submit">Buscar</button>
+        </form>
+        <p class="company-request-status" data-company-request-status role="status" aria-live="polite"></p>
+        <div th:fragment="resultados" data-company-results>
+        <p class="admin-list-count" aria-live="polite" th:text="${paginaEmpresas.totalElements == 0 ? 'No se encontraron empresas.' : 'Mostrando ' + (paginaEmpresas.number * paginaEmpresas.size + 1) + '–' + (paginaEmpresas.number * paginaEmpresas.size + paginaEmpresas.numberOfElements) + ' de ' + paginaEmpresas.totalElements + ' empresas'}"></p>
         <section class="panel table-panel">
-            <div class="table-scroll">
+            <div class="table-scroll company-table-scroll" tabindex="0" aria-label="Listado de empresas" role="region">
                 <table class="table">
                     <thead>
                         <tr>
@@ -76,24 +85,25 @@
                             <th scope="col">Fecha de registro</th>
                             <th scope="col">RUC / Identificación</th>
                             <th scope="col">Email de contacto</th>
-                            <th scope="col">Acciones</th>
+                            <th scope="col">Estado</th><th scope="col">Acciones</th>
                         </tr>
                     </thead>
 
                     <tbody id="empresasList">
                         <tr th:each="empresa : ${empresas}" class="empresa-item"
-                            th:attr="data-date=${#temporals.format(empresa.fechaRegistro, 'yyyy-MM-dd')}">
+                            th:attr="data-state=${empresa.estado?.name()},data-date=${empresa.fechaRegistro != null ? #temporals.format(empresa.fechaRegistro, 'yyyy-MM-dd') : ''}">
                             <td th:text="${empresa.nombreLegal}" class="table__strong empresa-nombre"></td>
                             <td th:text="${#temporals.format(empresa.fechaRegistro, 'dd MMM yyyy')}" class="table__muted"></td>
                             <td th:text="${empresa.rut}" class="table__muted"></td>
                             <td th:text="${empresa.email}" class="table__muted"></td>
+                            <td th:text="${empresa.estado?.name() ?: 'Sin estado'}"></td>
                             <td>
                                 <div class="table__actions">
                                     <a th:href="@{/admin/empresas/ver/{id}(id=${empresa.id})}" class="btn btn--soft btn--sm">
                                         <i class="fa-solid fa-eye"></i> Ver perfil
                                     </a>
                                     <a th:href="@{/admin/empresas/deshabilitar/{id}(id=${empresa.id})}"
-                                        onclick="return confirm('¿Quieres eliminar esta empresa? Esta accion no se puede deshacer. ')"
+                                        data-admin-confirm="¿Quieres eliminar esta empresa? Esta accion no se puede deshacer. "
                                         class="btn btn--danger btn--sm">
                                         <i class="fa-solid fa-trash"></i> Eliminar
                                     </a>
@@ -101,16 +111,20 @@
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(empresas)}">
-                            <td colspan="5" class="table__empty">No hay empresas registradas para revisión.</td>
+                            <td colspan="6" class="table__empty">No hay empresas que coincidan con la búsqueda.</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </section>
-    </main>
+        <nav class="company-pagination" aria-label="Páginas de empresas">
+          <a th:if="${paginaEmpresas.hasPrevious()}" th:href="@{/admin/empresas(q=${q},estado=${estadoFiltro},orden=${ordenFiltro},pagina=${paginaEmpresas.number - 1})}" data-company-page>← Anterior</a><span th:unless="${paginaEmpresas.hasPrevious()}" aria-disabled="true">← Anterior</span>
+          <span th:text="${'Página ' + (paginaEmpresas.totalPages == 0 ? 1 : paginaEmpresas.number + 1) + ' de ' + (paginaEmpresas.totalPages == 0 ? 1 : paginaEmpresas.totalPages)}"></span>
+          <a th:if="${paginaEmpresas.hasNext()}" th:href="@{/admin/empresas(q=${q},estado=${estadoFiltro},orden=${ordenFiltro},pagina=${paginaEmpresas.number + 1})}" data-company-page>Siguiente →</a><span th:unless="${paginaEmpresas.hasNext()}" aria-disabled="true">Siguiente →</span>
+        </nav></div>
+    </div></main>
 
     <script th:src="@{/js/gestion_empresas.js}" defer></script>
-    <script th:src="@{/js/admin_dashboard.js}"></script>
 </body>
 
 </html>

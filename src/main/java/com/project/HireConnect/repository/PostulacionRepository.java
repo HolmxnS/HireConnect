@@ -23,6 +23,8 @@ public interface PostulacionRepository extends MongoRepository<Postulacion, Stri
 
     List<Postulacion> findByVacante(Vacante vacante);
 
+    List<Postulacion> findByVacanteIn(List<Vacante> vacantes);
+
     List<Postulacion> findByPostulante(Postulante postulante);
 
     List<Postulacion> findByVacante_Empresa(Empresa empresa);

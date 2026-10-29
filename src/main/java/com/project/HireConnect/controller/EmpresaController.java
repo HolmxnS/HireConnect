@@ -26,10 +26,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.project.HireConnect.model.Empresa;
 import com.project.HireConnect.model.Postulacion;
+import com.project.HireConnect.enums.PostulacionEstado;
 import com.project.HireConnect.model.Vacante;
 import com.project.HireConnect.service.EmpresaService;
 import com.project.HireConnect.service.PostulacionService;
 import com.project.HireConnect.service.VacanteService;
+import com.project.HireConnect.service.InicioEmpresaService;
 
 @Controller
 @RequestMapping("/empresa")
@@ -38,13 +40,15 @@ public class EmpresaController {
     private final EmpresaService empresaService;
     private final PostulacionService postulacionService;
     private final VacanteService vacanteService;
+    private final InicioEmpresaService inicioEmpresaService;
 
     public EmpresaController(EmpresaService empresaService,
             PostulacionService postulacionService,
-            VacanteService vacanteService) {
+            VacanteService vacanteService, InicioEmpresaService inicioEmpresaService) {
         this.empresaService = empresaService;
         this.postulacionService = postulacionService;
         this.vacanteService = vacanteService;
+        this.inicioEmpresaService = inicioEmpresaService;
     }
 
     private Empresa obtenerEmpresaLogueada(Authentication authentication) {
@@ -63,12 +67,10 @@ public class EmpresaController {
         try {
             Empresa empresa = obtenerEmpresaLogueada(auth);
 
-            List<Vacante> vacantes = vacanteService.buscarPorEmpresa(empresa);
-
             model.addAttribute("activeMenu", "home");
             model.addAttribute("empresa", empresa);
-            model.addAttribute("vacantes", vacantes);
-
+            model.addAttribute("inicio", inicioEmpresaService.cargar(empresa, java.time.LocalDate.now()));
+            model.addAttribute("hoy", java.time.LocalDate.now());
             model.addAttribute("faltantes", empresa.obtenerCamposFaltantes());
 
             return "empresa/home_empresa";
@@ -80,34 +82,37 @@ public class EmpresaController {
     }
 
     @GetMapping("/vacante")
-    public String vacantes(Authentication auth, Model model, RedirectAttributes redirectAttributes) {
-        try {
-            Empresa empresa = obtenerEmpresaLogueada(auth);
-
-            List<Vacante> vacantes = vacanteService.buscarPorEmpresa(empresa);
-
-            model.addAttribute("activeMenu", "vacantes");
-            model.addAttribute("empresa", empresa);
-            model.addAttribute("vacantes", vacantes);
-
-            return "empresa/vacantes_empresa";
-        } catch (RuntimeException e) {
-            redirectAttributes.addFlashAttribute("error",
-                    "Sesión expirada o perfil no encontrado. Por favor, inicie sesión.");
-            return "redirect:/login";
-        }
+    public String vacantes() {
+        return "redirect:/empresa/vacantes";
     }
 
     @GetMapping("/postulaciones")
-    public String mostrarMenuPostulaciones(Model model, Authentication auth) {
+    public String mostrarMenuPostulaciones(Model model, Authentication auth,
+            @RequestParam(required = false) String vacante) {
         Empresa empresa = obtenerEmpresaLogueada(auth);
-        List<Vacante> vacantesActivas = vacanteService.buscarPorEmpresa(empresa);
-
-        vacantesActivas.forEach(v -> v.setTotalPostulaciones(postulacionService.contarPorVacante(v)));
-
+        List<Vacante> vacantes = vacanteService.buscarPorEmpresa(empresa).stream()
+                .filter(java.util.Objects::nonNull)
+                .sorted(java.util.Comparator.comparing(Vacante::getFechaPublicacion,
+                        java.util.Comparator.nullsLast(java.util.Comparator.reverseOrder())))
+                .toList();
+        vacantes.forEach(v -> v.setTotalPostulaciones(postulacionService.contarPorVacante(v)));
+        Vacante seleccionada = vacantes.stream().filter(v -> v.getId().equals(vacante)).findFirst()
+                .orElse(vacantes.isEmpty() ? null : vacantes.get(0));
         model.addAttribute("empresa", empresa);
-        model.addAttribute("vacantesActivas", vacantesActivas);
+        model.addAttribute("activeMenu", "postulaciones");
+        model.addAttribute("vacantesActivas", vacantes);
+        cargarCandidatos(model, seleccionada);
         return "empresa/listado_postulaciones";
+    }
+
+    private void cargarCandidatos(Model model, Vacante vacante) {
+        model.addAttribute("vacanteActual", vacante);
+        model.addAttribute("vacanteSeleccionadaId", vacante == null ? null : vacante.getId());
+        model.addAttribute("postulaciones", vacante == null ? List.of() : postulacionService.buscarPorVacante(vacante).stream()
+                .filter(p -> p != null && p.getPostulante() != null)
+                .sorted(java.util.Comparator.comparing(Postulacion::getFechaPostulacion,
+                        java.util.Comparator.nullsLast(java.util.Comparator.reverseOrder())))
+                .toList());
     }
 
     @GetMapping("/vacante/{id}")
@@ -142,30 +147,20 @@ public class EmpresaController {
 
     @GetMapping("/postulaciones/lista/{vacanteId}")
     public String listarPostulacionesPorVacante(@PathVariable String vacanteId, Model model,
-            Authentication auth) {
+            Authentication auth, @RequestParam(defaultValue = "false") boolean panel) {
         Empresa empresa = obtenerEmpresaLogueada(auth);
-        Vacante vacanteActual = vacanteService.buscarPorId(vacanteId)
-                .orElseThrow(() -> new RuntimeException("Vacante no encontrada"));
-
-        if (!vacanteActual.getEmpresa().getId().equals(empresa.getId())) {
-            return "redirect:/empresa/postulaciones?error=acceso_denegado";
-        }
-
-        List<Postulacion> postulaciones = postulacionService.buscarPorVacante(vacanteActual);
-        List<Vacante> vacantesActivas = vacanteService.buscarPorEmpresa(empresa);
-
-        model.addAttribute("empresa", empresa);
-        model.addAttribute("vacantesActivas", vacantesActivas);
-        model.addAttribute("vacanteActual", vacanteActual);
-        model.addAttribute("vacanteSeleccionadaId", vacanteId);
-        model.addAttribute("postulaciones", postulaciones);
-
-        return "empresa/listado_postulaciones";
+        Vacante vacante = vacanteService.buscarPorId(vacanteId)
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND));
+        if (vacante.getEmpresa() == null || !vacante.getEmpresa().getId().equals(empresa.getId()))
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN);
+        if (!panel) return "redirect:/empresa/postulaciones?vacante=" + vacanteId;
+        cargarCandidatos(model, vacante);
+        return "fragments/empresa/candidatos :: lista";
     }
 
     @GetMapping("/postulacion/{id}")
     public String verDetallePostulacion(@PathVariable("id") String idPostulacion,
-            Authentication auth,
+            @RequestParam(defaultValue = "false") boolean panel, Authentication auth,
             Model model,
             RedirectAttributes redirectAttributes) {
 
@@ -174,11 +169,14 @@ public class EmpresaController {
 
         Empresa empresaAuth = obtenerEmpresaLogueada(auth);
 
-        if (postulacion == null) {
+        if (postulacion == null || postulacion.getPostulante() == null) {
+            if (panel) throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND);
             redirectAttributes.addFlashAttribute("error", "Postulación no encontrada.");
             return "redirect:/empresa/home";
         }
-        if (!postulacion.getVacante().getEmpresa().getId().equals(empresaAuth.getId())) {
+        if (postulacion.getVacante() == null || postulacion.getVacante().getEmpresa() == null
+                || !postulacion.getVacante().getEmpresa().getId().equals(empresaAuth.getId())) {
+            if (panel) throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN);
             redirectAttributes.addFlashAttribute("error",
                     "Acceso denegado. Esta postulación no es para una vacante de tu empresa.");
             return "redirect:/empresa/home";
@@ -188,10 +186,34 @@ public class EmpresaController {
         model.addAttribute("postulante", postulacion.getPostulante());
         model.addAttribute("vacante", postulacion.getVacante());
         model.addAttribute("empresa", empresaAuth);
-        return "empresa/detalle_postulacion";
+        model.addAttribute("estadosPostulacion", PostulacionEstado.values());
+        return panel ? "fragments/empresa/candidatos :: detalle" : "empresa/detalle_postulacion";
     }
 
-    @PostMapping("/actualizar-postulacion")
+    private Postulacion postulacionPropia(String id, Authentication auth) {
+        Empresa empresa = obtenerEmpresaLogueada(auth);
+        Postulacion postulacion = postulacionService.buscarPorId(id)
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND));
+        if (postulacion.getVacante() == null || postulacion.getVacante().getEmpresa() == null
+                || !empresa.getId().equals(postulacion.getVacante().getEmpresa().getId()))
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.FORBIDDEN);
+        return postulacion;
+    }
+
+    @PostMapping(value = "/actualizar-postulacion", params = "panel=true")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public ResponseEntity<?> actualizarPostulacionPanel(@RequestParam String id, @RequestParam String estado,
+            Authentication auth) {
+        postulacionPropia(id, auth);
+        PostulacionEstado nuevo;
+        try { nuevo = PostulacionEstado.fromString(estado); }
+        catch (IllegalArgumentException error) { return ResponseEntity.badRequest().body(java.util.Map.of("mensaje", "El estado seleccionado no es válido.")); }
+        if (nuevo == null) return ResponseEntity.badRequest().body(java.util.Map.of("mensaje", "Selecciona un estado."));
+        postulacionService.actualizarEstado(id, nuevo.name());
+        return ResponseEntity.ok(java.util.Map.of("id", id, "estado", nuevo.name(), "descripcion", nuevo.getDescripcion(), "mensaje", "Estado actualizado."));
+    }
+
+    @PostMapping(value = "/actualizar-postulacion", params = "!panel")
     public String actualizarPostulacion(
             @RequestParam("id") String id,
             @RequestParam("estado") String estado,
@@ -199,7 +221,7 @@ public class EmpresaController {
             RedirectAttributes redirectAttributes) {
 
         try {
-            obtenerEmpresaLogueada(auth);
+            postulacionPropia(id, auth);
 
             postulacionService.actualizarEstado(id, estado);
 
@@ -226,7 +248,6 @@ public class EmpresaController {
 
             model.addAttribute("activeMenu", "perfil");
             model.addAttribute("empresa", empresa);
-            model.addAttribute("publicacionesEmpresa", com.project.HireConnect.service.PublicacionesSociales.mostrar(empresa.getPublicacionesSociales()));
             model.addAttribute("empleosEmpresa", vacanteService.buscarPorEmpresa(empresa).stream()
                     .sorted(java.util.Comparator.comparing(Vacante::getFechaPublicacion,
                             java.util.Comparator.nullsLast(java.util.Comparator.reverseOrder()))
@@ -271,6 +292,7 @@ public class EmpresaController {
             empresaForm.setEmail(oldEmpresa.getEmail());
             empresaForm.setRol(oldEmpresa.getRol());
             empresaForm.setPortada(oldEmpresa.getPortada());
+            empresaForm.setFoto(oldEmpresa.getFoto());
 
             if (empresaForm.getPassword() == null || empresaForm.getPassword().isEmpty()) {
                 empresaForm.setPassword(oldEmpresa.getPassword());
@@ -279,7 +301,6 @@ public class EmpresaController {
                 empresaForm.setPassword(oldEmpresa.getPassword());
             }
 
-            empresaForm.setPublicacionesSociales(com.project.HireConnect.service.PublicacionesSociales.normalizar(empresaForm.getPublicacionesSociales()));
             empresaForm.setThreads(validarRedSocial(empresaForm.getThreads(), "Threads", "threads.com", "threads.net"));
             empresaForm.setInstagram(validarRedSocial(empresaForm.getInstagram(), "Instagram", "instagram.com"));
             empresaForm.setFacebook(validarRedSocial(empresaForm.getFacebook(), "Facebook", "facebook.com"));
@@ -362,7 +383,6 @@ public class EmpresaController {
         datos.put("ubicacion", p.getUbicacion());
         datos.put("website", p.getWebsite());
         datos.put("threads", p.getThreads());
-        datos.put("publicacionesSociales", p.getPublicacionesSociales());
         datos.put("instagram", p.getInstagram());
         datos.put("facebook", p.getFacebook());
         datos.put("x", p.getX());

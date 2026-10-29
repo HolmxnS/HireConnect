@@ -6,7 +6,7 @@ import java.awt.Color;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.nio.file.*;
+import java.io.ByteArrayOutputStream;
 import java.util.UUID;
 import javax.imageio.ImageIO;
 import org.springframework.http.HttpStatus;
@@ -17,16 +17,11 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class FotoPostulanteService {
     private final PostulanteRepository repository;
-    private final Path directory;
+    private final ImagenesService imagenes;
 
-    @org.springframework.beans.factory.annotation.Autowired
-    public FotoPostulanteService(PostulanteRepository repository) {
-        this(repository, Paths.get("uploads/fotos"));
-    }
-
-    FotoPostulanteService(PostulanteRepository repository, Path directory) {
+    public FotoPostulanteService(PostulanteRepository repository, ImagenesService imagenes) {
         this.repository = repository;
-        this.directory = directory.toAbsolutePath().normalize();
+        this.imagenes = imagenes;
     }
 
     private Postulante actual(String email) {
@@ -67,14 +62,15 @@ public class FotoPostulanteService {
             int x = (image.getWidth() - side) / 2, y = (image.getHeight() - side) / 2;
             graphics.drawImage(image, 0, 0, 512, 512, x, y, x + side, y + side, null);
         } finally { graphics.dispose(); }
-        Files.createDirectories(directory);
         String filename = "postulante_" + UUID.randomUUID() + ".jpg";
-        Path destination = directory.resolve(filename);
-        ImageIO.write(output, "jpg", destination.toFile());
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        ImageIO.write(output, "jpg", bytes);
         String previous = user.getFoto();
-        user.setFoto("/uploads/fotos/" + filename);
+        String url = "/uploads/fotos/" + filename;
+        imagenes.guardar(url, bytes.toByteArray(), "image/jpeg");
+        user.setFoto(url);
         try { repository.save(user); }
-        catch (RuntimeException e) { user.setFoto(previous); Files.deleteIfExists(destination); throw e; }
+        catch (RuntimeException e) { user.setFoto(previous); imagenes.eliminar(url); throw e; }
         borrarArchivoAnterior(previous);
         return user.getFoto();
     }
@@ -83,16 +79,15 @@ public class FotoPostulanteService {
         Postulante user = actual(email);
         String previous = user.getFoto();
         user.setFoto(null);
-        repository.save(user);
+        try { repository.save(user); }
+        catch (RuntimeException error) { user.setFoto(previous); throw error; }
         borrarArchivoAnterior(previous);
     }
 
     private void borrarArchivoAnterior(String url) {
         if (url == null || !url.startsWith("/uploads/fotos/postulante_")) return;
-        Path file = directory.resolve(url.substring("/uploads/fotos/".length())).normalize();
-        if (!directory.equals(file.getParent())) return;
-        try { Files.deleteIfExists(file); }
-        catch (IOException e) {
+        try { imagenes.eliminar(url); }
+        catch (IOException | RuntimeException e) {
             org.slf4j.LoggerFactory.getLogger(getClass()).warn("No se pudo retirar la foto anterior del almacenamiento.");
         }
     }

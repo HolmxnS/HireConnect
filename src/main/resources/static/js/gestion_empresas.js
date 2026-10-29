@@ -1,39 +1,37 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const list = document.getElementById('empresasList'); 
-    const select = document.getElementById('sortFilterEmpresas');
-
-    if (!list || !select) return;
-
-    function sortEmpresas() {
-        const sortValue = select.value;
-        const items = Array.from(list.querySelectorAll('.empresa-item'));
-
-        items.sort((a, b) => {
-            const dateA = new Date(a.getAttribute('data-date'));
-            const dateB = new Date(b.getAttribute('data-date'));
-
-            return sortValue === 'most_recent' ? dateB - dateA : dateA - dateB;
-        });
-
-        list.innerHTML = '';
-        items.forEach(item => list.appendChild(item));
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('companySearchForm'); if (!form) return;
+    const search = document.getElementById('searchInputEmpresas');
+    const status = document.querySelector('[data-company-request-status]');
+    let request, timer;
+    function filterUrl() {
+        const url = new URL(form.action);
+        new FormData(form).forEach((value, name) => { if (value) url.searchParams.set(name, value); });
+        return url;
     }
-
-    select.addEventListener('change', sortEmpresas);
-
-    sortEmpresas();
-});
-
-
-function filterEmpresas() {
-    const input = document.getElementById('searchInputEmpresas');
-    const filterText = input.value.toUpperCase();
-    const list = document.getElementById('empresasList');
-    if (!list) return;
-    const items = list.querySelectorAll('.empresa-item');
-
-    items.forEach(item => {
-        const title = item.querySelector('.empresa-nombre').textContent.toUpperCase();
-        item.style.display = (title.indexOf(filterText) > -1) ? '' : 'none';
+    async function load(url) {
+        clearTimeout(timer); request?.abort(); request = new AbortController(); const current = request;
+        const results = document.querySelector('[data-company-results]');
+        results.setAttribute('aria-busy', 'true'); status.textContent = 'Cargando empresas…';
+        try {
+            const target = new URL(url); target.searchParams.set('fragmento', 'true');
+            const response = await fetch(target, { signal: current.signal, credentials: 'same-origin', headers: { Accept: 'text/html' } });
+            if (!response.ok || response.redirected) throw Error();
+            const template = document.createElement('template'); template.innerHTML = await response.text();
+            const replacement = template.content.querySelector('[data-company-results]');
+            if (!replacement) throw Error();
+            if (current !== request || current.signal.aborted) return;
+            results.replaceWith(replacement); status.textContent = '';
+            const clean = new URL(url); clean.searchParams.delete('fragmento'); window.history.replaceState(null, '', clean);
+        } catch (error) {
+            if (error.name !== 'AbortError' && current === request) status.textContent = 'No se pudo cargar la lista. Pulsa Buscar para intentarlo de nuevo.';
+        } finally { if (current === request) document.querySelector('[data-company-results]')?.removeAttribute('aria-busy'); }
+    }
+    form.addEventListener('submit', event => { event.preventDefault(); load(filterUrl()); });
+    search.addEventListener('input', () => { clearTimeout(timer); request?.abort(); timer = setTimeout(() => load(filterUrl()), 300); });
+    form.querySelectorAll('select').forEach(control => control.addEventListener('change', () => load(filterUrl())));
+    document.addEventListener('click', event => {
+        const link = event.target.closest('[data-company-page]');
+        if (!link || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+        event.preventDefault(); load(link.href);
     });
-}
+});

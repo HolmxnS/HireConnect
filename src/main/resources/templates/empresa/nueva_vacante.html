@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:fragment="editor(editando)" th:with="editando=${editando ?: false}">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/styles/fragments/empresa/sidebar.css}">
-    <link rel="stylesheet" th:href="@{/styles/empresa/nueva_vacante.css}">
     <link rel="stylesheet" th:href="@{/styles/empresa/theme.css}">
     <script th:src="@{/js/theme.js}"></script>
     <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
@@ -13,69 +12,54 @@
     <link rel="icon" type="image/svg+xml" sizes="any" th:href="@{/source/img/favicon.svg}">
     <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
 
-    <title>Nueva Vacante - HireConnect</title>
+    <title th:text="${editando ? 'Editar vacante - HireConnect' : 'Nueva vacante - HireConnect'}">Nueva vacante - HireConnect</title>
     <link rel="stylesheet" th:href="@{/styles/brand.css}" />
     <link rel="stylesheet" th:href="@{/styles/empresa/layout.css}" />
+    <link rel="stylesheet" th:href="@{/styles/empresa/nueva_vacante.css}">
 </head>
 
-<body>
-    <div th:replace="~{fragments/empresa/sidebar_empresa :: sidebar('vacantes')}"></div>
-    <div th:replace="~{fragments/empresa/header_empresa :: header}"></div>
-
-    <main class="main">
-        <div class="main__header">
-            <h1>Nueva Vacante</h1>
-            <a th:href="@{/empresa/vacante}">
-                <i class="fa-solid fa-arrow-left mr-2"></i> Volver
-            </a>
-        </div>
-
-        <form class="form" th:action="@{/empresa/vacantes/guardar}" th:object="${vacante}" method="post">
-            <input type="hidden" th:field="*{id}" />
-            <div class="form__group">
+<body class="vacancy-compose">
+<div th:replace="~{fragments/empresa/sidebar_empresa :: sidebar('vacantes')}"></div>
+<div th:replace="~{fragments/empresa/header_empresa :: header}"></div>
+<main class="main compose-page">
+  <a class="compose-back" th:href="${editando ? '/empresa/vacantes?vacante=' + vacante.id : '/empresa/vacantes'}">← Vacantes</a>
+  <header class="compose-heading"><div><span class="compose-eyebrow" th:text="${editando ? 'DALE FORMA A TU OPORTUNIDAD' : 'ENCUENTRA TU PRÓXIMO TALENTO'}"></span><h1 th:if="${not editando}">Una nueva oportunidad<br>empieza aquí.</h1><h1 th:if="${editando}">Una oportunidad que<br>evoluciona contigo.</h1><p th:text="${editando ? 'Actualiza los detalles y mantén tu oferta al día.' : 'Dale forma al puesto y conecta con las personas indicadas.'}"></p></div><span class="compose-label" th:text="${editando ? 'Editar vacante' : 'Nueva vacante'}"></span></header>
+  <div class="compose-layout">
+  <form id="vacancy-compose-form" class="compose-form" th:data-editing="${editando}" th:action="@{/empresa/vacantes/guardar}" th:object="${vacante}" method="post">
+    <input type="hidden" th:field="*{id}" />
+    <div class="compose-errors" role="alert" th:if="${#fields.hasAnyErrors() or error != null}"><strong>Revisa los datos de la vacante.</strong><p th:if="${error != null}" th:text="${error}"></p><ul th:if="${#fields.hasAnyErrors()}"><li th:each="err : ${#fields.allErrors()}" th:text="${err}"></li></ul></div>
+<section class="compose-section"><div class="compose-section__heading"><span>01</span><div><h2>El puesto</h2><p>Un título preciso y una descripción que vaya al punto.</p></div></div><div class="compose-fields"><div class="form__group compose-wide">
                 <label for="titulo">Título de la vacante</label>
-                <input type="text" th:field="*{titulo}" id="titulo" required>
+                <input type="text" th:field="*{titulo}" id="titulo" maxlength="100" placeholder="Ej. Desarrollador Java" required>
                 <p class="error" th:if="${#fields.hasErrors('titulo')}" th:errors="*{titulo}"></p>
-            </div>
-
-            <div class="form__group">
+            </div><div class="form__group compose-wide">
                 <label for="descripcion">Descripción</label>
-                <textarea class="form__textarea" th:field="*{descripcion}" id="descripcion" rows="4" required
-                    placeholder="Describe las responsabilidades, la cultura y lo que hace este puesto especial."></textarea>
+                <textarea class="form__textarea" th:field="*{descripcion}" id="descripcion" rows="8" maxlength="1000" aria-describedby="description-count" required
+                    placeholder="Describe las responsabilidades, la cultura y lo que hace este puesto especial."></textarea><small id="description-count" data-description-count>0 / 1000</small>
                 <p class="error" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></p>
-            </div>
-
-            <div class="form__row">
-                <div class="form__group">
-                    <label for="salario">Salario</label>
-                    <input type="number" th:field="*{salario}" id="salario" step="1000" min="0"
-                        placeholder="Ej: 4.500.000" required>
+            </div></div></section><section class="compose-section"><div class="compose-section__heading"><span>02</span><div><h2>Lo que ofreces</h2><p>Las condiciones y habilidades que definen esta oportunidad.</p></div></div><div class="compose-fields"><div class="form__group">
+                    <label for="salario">Salario mensual · COP</label>
+                    <input type="number" th:field="*{salario}" id="salario" step="any" min="0"
+                        placeholder="4500000" required>
                     <p class="error" th:if="${#fields.hasErrors('salario')}" th:errors="*{salario}"></p>
-                </div>
-
-                <div class="form__group">
-                    <label for="modalidad">Modalidad de Trabajo</label>
+                </div><div class="form__group">
+                    <label for="modalidad">Modalidad</label>
                     <select th:field="*{modalidad}" id="modalidad" required>
                         <option value="">Selecciona una opción</option>
                         <option th:each="m : ${modalidades}" th:value="${m.name()}" th:text="${m.descripcion}">
                         </option>
                     </select>
                     <p class="error" th:if="${#fields.hasErrors('modalidad')}" th:errors="*{modalidad}"></p>
-                </div>
-            </div>
-
-            <div class="form__row">
-                <div class="form__group">
-                    <label for="tipoContrato">Tipo de Contrato</label> <select th:field="*{tipoContrato}"
+                </div><div class="form__group">
+                    <label for="tipoContrato">Contrato</label> <select th:field="*{tipoContrato}"
                         id="tipoContrato" required>
                         <option value="">Selecciona una opción</option>
                         <option th:each="t : ${tiposContrato}" th:value="${t.name()}" th:text="${t.descripcion}">
                         </option>
                     </select>
                     <p class="error" th:if="${#fields.hasErrors('tipoContrato')}" th:errors="*{tipoContrato}"></p>
-                </div>
-                <div class="form__group">
-                    <label for="experienciaRequerida">Nivel de Experiencia</label>
+                </div><div class="form__group">
+                    <label for="experienciaRequerida">Experiencia</label>
                     <select th:field="*{experienciaRequerida}" id="experienciaRequerida" required>
                         <option value="">Selecciona un nivel</option>
                         <option th:each="e : ${nivelesExperiencia}" th:value="${e.name()}"
@@ -83,32 +67,32 @@
                     </select>
                     <p class="error" th:if="${#fields.hasErrors('experienciaRequerida')}"
                         th:errors="*{experienciaRequerida}"></p>
-                </div>
-            </div>
-            <div class="form__group">
-                <label for="habilidadesRequeridas">Habilidades
-                    Requeridas (Separadas por coma)</label>
+                </div><div class="form__group compose-wide">
+                <label for="habilidadesRequeridas">Habilidades</label><small>Separa cada habilidad con una coma.</small>
                 <input type="text" th:field="*{habilidadesRequeridas}" id="habilidadesRequeridas" required
                     placeholder="Ej: Java, Spring Boot, AWS, Scrum">
                 <p class="error" th:if="${#fields.hasErrors('habilidadesRequeridas')}"
                     th:errors="*{habilidadesRequeridas}"></p>
-            </div>
-            <div class="form__row">
-                <div class="form__group">
-                    <label for="fechaInicio">Fecha de Inicio</label>
+            </div></div></section><section class="compose-section"><div class="compose-section__heading"><span>03</span><div><h2>Las fechas</h2><p>Define cuándo empieza y termina la convocatoria.</p></div></div><div class="compose-fields"><div class="form__group">
+                    <label for="fechaInicio">Apertura</label>
                     <input type="date" th:field="*{fechaInicio}" id="fechaInicio"
                         placeholder="dd/mm/aaaa" required />
-                </div>
-                <div class="form__group">
-                    <label for="fechaFin">Fecha de Cierre</label>
+                <p class="error" th:if="${#fields.hasErrors('fechaInicio')}" th:errors="*{fechaInicio}"></p></div><div class="form__group">
+                    <label for="fechaFin">Cierre</label>
                     <input type="date" th:field="*{fechaFin}" id="fechaFin" placeholder="dd/mm/aaaa"
                         required />
-                </div>
-            </div>
-
-            <button type="submit" class="form__btn">Publicar Vacante</button>
-        </form>
-    </main>
-</body>
-
-</html>
+                <p class="error" th:if="${#fields.hasErrors('fechaFin')}" th:errors="*{fechaFin}"></p></div></div></section><div class="compose-actions"><a th:href="${editando ? '/empresa/vacantes?vacante=' + vacante.id : '/empresa/vacantes'}">Cancelar</a><button type="submit"><span th:text="${editando ? 'Guardar cambios' : 'Publicar vacante'}"></span><span aria-hidden="true">↗</span></button></div>
+  </form>
+  <aside class="compose-aside" aria-label="Vista previa de la vacante">
+    <div class="compose-preview"><div class="compose-preview__bar"><span>VISTA PREVIA</span><span class="compose-live"><span aria-hidden="true">●</span> En vivo</span></div>
+      <div class="compose-company"><span class="compose-company__logo"><img th:if="${not #strings.isEmpty(empresa.foto)}" th:src="${empresa.foto}" alt=""/><span th:if="${#strings.isEmpty(empresa.foto)}" aria-hidden="true">↗</span></span><span th:text="${empresa.nombreLegal}"></span></div>
+      <h2 data-preview-title>El próximo gran puesto</h2><div class="compose-preview__tags"><span data-preview-modalidad>Modalidad</span><span data-preview-tipoContrato>Contrato</span></div>
+      <p class="compose-preview__salary" data-preview-salary>Salario por definir</p><span class="compose-salary-caption">Mensual · pesos colombianos</span>
+      <div class="compose-preview__description"><h3>El reto</h3><p data-preview-description>La descripción de tu vacante aparecerá aquí.</p></div>
+      <div class="compose-preview__facts"><div><span>Experiencia</span><strong data-preview-experienciaRequerida>Por definir</strong></div><div><span>Convocatoria</span><strong data-preview-dates>Fechas por definir</strong></div></div>
+      <div class="compose-preview__skills" data-preview-skills></div>
+    </div>
+    <div class="compose-readiness"><div><strong>Tu vacante, lista para conectar</strong><span data-progress-label>0 de 9 campos</span></div><progress max="9" value="0" data-compose-progress aria-label="Campos completados"></progress><p data-publish-note>Completa los datos para preparar la publicación.</p></div>
+  </aside></div>
+</main><script th:src="@{/js/nueva_vacante.js}" defer></script>
+</body></html>

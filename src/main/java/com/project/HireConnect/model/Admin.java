@@ -21,6 +21,7 @@ public class Admin {
     private String nombre;
     private String apellido;
     private String foto;
+    private String about;
 
     @Indexed(unique = true) 
     private String email;

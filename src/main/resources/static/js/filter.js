@@ -1,284 +1,132 @@
 document.addEventListener('DOMContentLoaded', () => {
-
-    const buscador = document.getElementById("buscador");
-    const historialDiv = document.getElementById("historial");
-    const form = document.getElementById("filtroForm");
-
-    const filtroTipoContrato = document.getElementById("filtroTipoContrato");
-    const filtroFecha = document.getElementById("filtroFecha");
-    const salarioMin = document.getElementById("salarioMin");
-    const salarioMax = document.getElementById("salarioMax");
-    const minDisplay = document.getElementById('salarioMinDisplay');
-    const maxDisplay = document.getElementById('salarioMaxDisplay');
-
-
-    if (form) {
-        form.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const texto = buscador?.value.trim();
-            if (texto) {
-                await fetch("/postulante/historial/guardar", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    body: `texto=${encodeURIComponent(texto)}`
-                });
-            }
-            form.submit();
-        });
+    const filters = document.querySelector('.applicant-quick-filters');
+    if (!filters) return;
+    const search = document.getElementById('buscador');
+    const publication = document.getElementById('quickPublicationFilter');
+    const sector = document.getElementById('quickSectorFilter');
+    const modality = document.getElementById('quickModalityFilter');
+    const contract = document.getElementById('quickContractFilter');
+    const minimum = document.getElementById('quickSalaryMin');
+    const maximum = document.getElementById('quickSalaryMax');
+    const salary = filters.querySelector('details:not(.applicant-sector-filter)');
+    const sectorMenu = filters.querySelector('.applicant-sector-filter');
+    const sectorSearch = document.getElementById('quickSectorSearch');
+    const sectorOptions = document.getElementById('quickSectorOptions');
+    const candidates = document.getElementById('quickCandidatesFilter');
+    const clear = document.getElementById('quickClearFilters');
+    const cards = Array.from(document.querySelectorAll('.vacancies__card'));
+    const normalize = text => (text || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
+    const sectors = new Map();
+    cards.forEach(card => { if (card.dataset.sector) sectors.set(normalize(card.dataset.sector), card.dataset.sector); });
+    const sectorList = Array.from(sectors).sort((a, b) => a[1].localeCompare(b[1], 'es'));
+    function chooseSector(value) {
+        sector.value = value; sectorMenu.open = false; filter(); sectorMenu.querySelector('summary').focus();
     }
-
-
-    // Combina los filtros sobre las tarjetas cargadas, sin consultar de nuevo al servidor.
-    function filtrarVacantes() {
-        const texto = buscador?.value.toLowerCase().trim() || "";
-        const modalidad = document.querySelector('.filter-card input[type="radio"]:checked')?.value.toLowerCase() || "";
-        const tipoContrato = filtroTipoContrato?.value.toLowerCase() || "";
-        const fechaFiltro = filtroFecha?.value || "";
-        const salarioMinVal = salarioMin?.value ? parseFloat(salarioMin.value) : null;
-        const salarioMaxVal = salarioMax?.value ? parseFloat(salarioMax.value) : null;
-
-        const vacantes = document.querySelectorAll(".vacancies__card");
-        const noVacantesMessage = document.getElementById("no-vacantes-message");
-        const ahora = new Date();
-        let encontradas = 0;
-
-        vacantes.forEach(card => {
-            const titulo = (card.dataset.titulo || '').toLowerCase();
-            const mod = (card.dataset.modalidad || '').toLowerCase();
-            const empresa = (card.dataset.empresa || '').toLowerCase();
-            const contrato = (card.dataset.tipoContrato || '').toLowerCase();
-            const salario = parseFloat(card.dataset.salario || '0');
-            const fechaPublicacion = card.dataset.fecha ? new Date(card.dataset.fecha) : null;
-
-            const coincideTexto =
-                !texto ||
-                titulo.includes(texto) ||
-                empresa.includes(texto);
-
-            const coincideModalidad = modalidad === "" || mod === modalidad;
-
-            const coincideContrato = tipoContrato === "" || contrato === tipoContrato;
-
-            let coincideSalario = true;
-            if (salarioMinVal !== null && !isNaN(salario)) {
-                coincideSalario = salario >= salarioMinVal;
-            }
-            if (salarioMaxVal !== null && !isNaN(salario)) {
-                coincideSalario = coincideSalario && salario <= salarioMaxVal;
-            }
-
-            let coincideFecha = true;
-            if (fechaFiltro && fechaPublicacion) {
-                const diffDias = (ahora - fechaPublicacion) / (1000 * 60 * 60 * 24);
-                if (fechaFiltro === "hoy") coincideFecha = diffDias < 1;
-                else if (fechaFiltro === "3dias") coincideFecha = diffDias <= 3;
-                else if (fechaFiltro === "semana") coincideFecha = diffDias <= 7;
-                else if (fechaFiltro === "mes") coincideFecha = diffDias <= 30;
-            }
-
-            const visible = coincideTexto && coincideModalidad && coincideContrato && coincideSalario && coincideFecha;
-            card.style.display = visible ? "block" : "none";
-            if (visible) encontradas++;
+    function renderSectors() {
+        const matches = sectorList.filter(([id]) => id.includes(normalize(sectorSearch.value)));
+        sectorOptions.replaceChildren();
+        matches.slice(0, 5).forEach(([id, name]) => {
+            const item = document.createElement('li'); const button = document.createElement('button');
+            button.type = 'button'; button.textContent = name; button.setAttribute('aria-pressed', String(sector.value === id));
+            button.addEventListener('click', () => chooseSector(id)); item.append(button); sectorOptions.append(item);
         });
-
-        if (noVacantesMessage) {
-            noVacantesMessage.style.display = encontradas === 0 ? 'block' : 'none';
-        }
+        filters.querySelector('[data-sector-empty]').hidden = matches.length !== 0;
+        filters.querySelector('[data-sector-count]').textContent = matches.length > 5 ? 'Mostrando 5 de ' + matches.length + '. Escribe para buscar otro.' : '';
+    }
+    sectorSearch.addEventListener('input', renderSectors);
+    sectorMenu.addEventListener('toggle', () => {
+        if (sectorMenu.open) { salary.open = false; sectorSearch.value = ''; renderSectors(); sectorSearch.focus(); }
+    });
+    filters.querySelector('[data-sector-all]').addEventListener('click', () => chooseSector(''));
+    sectorMenu.addEventListener('keydown', event => { if (event.key === 'Escape') { sectorMenu.open = false; sectorMenu.querySelector('summary').focus(); } });
+    document.addEventListener('click', event => { if (!sectorMenu.contains(event.target)) sectorMenu.open = false; });
+    renderSectors();
+    const params = new URL(window.location.href).searchParams;
+    publication.value = params.get('fechaFiltro') || '';
+    modality.value = params.get('modalidad') || '';
+    contract.value = params.get('tipoContrato') || '';
+    minimum.value = params.get('salarioMin') || ''; maximum.value = params.get('salarioMax') || '';
+    let fewer = false;
+    function filter() {
+        const today = new Date(); today.setHours(0, 0, 0, 0);
+        const cutoff = new Date(today);
+        const days = { hoy: 1, '3dias': 3, semana: 7, mes: 30 }[publication.value];
+        if (days) cutoff.setDate(cutoff.getDate() - days + 1);
+        const min = minimum.value === '' ? null : minimum.valueAsNumber;
+        const max = maximum.value === '' ? null : maximum.valueAsNumber;
+        const invalidSalary = !minimum.validity.valid || !maximum.validity.valid || (min !== null && max !== null && min > max);
+        document.getElementById('quickSalaryError').textContent = invalidSalary ? 'Revisa el rango: el máximo debe ser igual o mayor al mínimo.' : '';
+        let count = 0;
+        cards.forEach(card => {
+            const data = card.dataset;
+            const date = data.fecha ? new Date(data.fecha + 'T00:00:00') : null;
+            const salaryValue = Number(data.salario);
+            const visible = (!search?.value.trim() || normalize(data.titulo + ' ' + data.empresa).includes(normalize(search.value)))
+                && (!sector.value || normalize(data.sector) === sector.value)
+                && (!modality.value || normalize(data.modalidad) === normalize(modality.value))
+                && (!contract.value || normalize(data.tipoContrato) === normalize(contract.value))
+                && (!days || (date && date >= cutoff && date <= today))
+                && (!fewer || Number(data.candidatos) < 10)
+                && !invalidSalary
+                && (min === null || (data.salario && salaryValue >= min))
+                && (max === null || (data.salario && salaryValue <= max));
+            card.style.display = visible ? 'block' : 'none';
+            if (visible) count++;
+        });
+        [publication, sector, modality, contract].forEach(control => control.classList.toggle('is-active', Boolean(control.value)));
+        sectorMenu.classList.toggle('is-active', Boolean(sector.value));
+        document.getElementById('quickSectorSummary').textContent = sectors.get(sector.value) || 'Sector';
+        candidates.setAttribute('aria-pressed', String(fewer));
+        salary.classList.toggle('is-active', min !== null || max !== null);
+        document.getElementById('quickSalarySummary').textContent = min !== null || max !== null ? 'Salario · filtrado' : 'Salario';
+        clear.hidden = !publication.value && !sector.value && !modality.value && !contract.value && min === null && max === null && !fewer;
+        document.getElementById('no-vacantes-message').style.display = count ? 'none' : 'block';
         document.dispatchEvent(new CustomEvent('vacantes:filtradas'));
     }
-
-
-    document.querySelectorAll(".filter-chip").forEach(chip => {
-        chip.addEventListener("click", () => {
-            const field = chip.dataset.field;
-            document.querySelectorAll(`.filter-chip[data-field="${field}"]`).forEach(c => {
-                c.classList.remove("filter-chip--active");
-            });
-            chip.classList.add("filter-chip--active");
-
-            const fieldMap = {
-                tipoContrato: filtroTipoContrato,
-                fechaFiltro: filtroFecha
-            };
-
-            if (fieldMap[field]) fieldMap[field].value = chip.dataset.value;
-            filtrarVacantes();
+    [publication, sector, modality, contract].forEach(control => control.addEventListener('change', filter));
+    [minimum, maximum].forEach(control => control.addEventListener('input', filter));
+    candidates.addEventListener('click', () => { fewer = !fewer; filter(); });
+    clear.addEventListener('click', () => {
+        [publication, sector, modality, contract, minimum, maximum].forEach(control => { control.value = ''; });
+        fewer = false; salary.open = false; sectorMenu.open = false; sectorSearch.value = ''; renderSectors(); filter(); publication.focus();
+    });
+    filters.querySelector('[data-salary-done]').addEventListener('click', () => { salary.open = false; salary.querySelector('summary').focus(); });
+    document.addEventListener('click', event => { if (!salary.contains(event.target)) salary.open = false; });
+    salary.addEventListener('toggle', () => { if (salary.open) sectorMenu.open = false; });
+    salary.addEventListener('keydown', event => { if (event.key === 'Escape') { salary.open = false; salary.querySelector('summary').focus(); } });
+    const history = document.getElementById('historial');
+    const historyList = document.getElementById('lista-historial');
+    let request, debounce;
+    function suggestions(items) {
+        if (!history || !historyList) return;
+        historyList.replaceChildren();
+        (Array.isArray(items) ? items : []).slice(0, 8).forEach(item => {
+            const li = document.createElement('li'); const button = document.createElement('button');
+            button.type = 'button'; button.textContent = item;
+            button.addEventListener('click', () => { search.value = item; history.style.display = 'none'; filter(); });
+            li.append(button); historyList.append(li);
         });
-    });
-
-
-    document.querySelectorAll('.filter-card input[type="radio"]').forEach(radio => {
-        radio.addEventListener("change", () => {
-            document.querySelectorAll(".filter-card").forEach(c => c.classList.remove("filter-card--active"));
-            radio.closest(".filter-card").classList.add("filter-card--active");
-            filtrarVacantes();
-        });
-    });
-
-
-    function formatCOP(val) {
-        return '$' + parseInt(val).toLocaleString('es-CO');
+        history.style.display = historyList.children.length ? 'block' : 'none';
     }
-
-    function syncSliders() {
-        if (!salarioMin || !salarioMax) return;
-        const gap = 500000;
-        if (parseInt(salarioMin.value) >= parseInt(salarioMax.value) - gap) {
-            salarioMin.value = parseInt(salarioMax.value) - gap;
-        }
-        if (minDisplay) minDisplay.textContent = formatCOP(salarioMin.value);
-        if (maxDisplay) maxDisplay.textContent = formatCOP(salarioMax.value);
-    }
-
-    salarioMin?.addEventListener('input', () => { syncSliders(); filtrarVacantes(); });
-    salarioMax?.addEventListener('input', () => { syncSliders(); filtrarVacantes(); });
-
-
-    const canvas = document.getElementById('histogramCanvas');
-    if (canvas) {
-        const ctx = canvas.getContext('2d');
-        const bars = [2, 4, 7, 12, 18, 24, 30, 28, 22, 16, 11, 8, 6, 4, 3, 2, 2, 1, 1, 1];
-        const maxBar = Math.max(...bars);
-
-        function drawHistogram() {
-            const W = canvas.width;
-            const H = canvas.height;
-            const barW = W / bars.length;
-            const minVal = parseInt(salarioMin?.value || 0);
-            const maxVal = parseInt(salarioMax?.value || 20000000);
-            const range = 20000000;
-            ctx.clearRect(0, 0, W, H);
-            bars.forEach((val, i) => {
-                const barStart = (i / bars.length) * range;
-                const barEnd = ((i + 1) / bars.length) * range;
-                ctx.fillStyle = (barEnd > minVal && barStart < maxVal) ? '#9400D3' : '#ddd';
-                const bh = (val / maxBar) * H;
-                ctx.beginPath();
-                ctx.roundRect(i * barW + 1, H - bh, barW - 2, bh, 2);
-                ctx.fill();
-            });
-        }
-
-        drawHistogram();
-        salarioMin?.addEventListener('input', drawHistogram);
-        salarioMax?.addEventListener('input', drawHistogram);
-    }
-
-
-    document.getElementById('btnLimpiarFiltros')?.addEventListener('click', () => {
-        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('filter-chip--active'));
-        document.querySelectorAll('.filter-chip[data-value=""]').forEach(c => c.classList.add('filter-chip--active'));
-
-        document.querySelectorAll('.filter-card').forEach(c => c.classList.remove('filter-card--active'));
-        const primeraCard = document.querySelector('.filter-card input[value=""]');
-        if (primeraCard) {
-            primeraCard.checked = true;
-            primeraCard.closest('.filter-card').classList.add('filter-card--active');
-        }
-
-        if (filtroTipoContrato) filtroTipoContrato.value = '';
-        if (filtroFecha) filtroFecha.value = '';
-        if (salarioMin) salarioMin.value = 0;
-        if (salarioMax) salarioMax.value = 20000000;
-
-        syncSliders();
-        salarioMin?.dispatchEvent(new Event('input'));
-        filtrarVacantes();
-    });
-
-
-    const panel = document.getElementById('filterPanel');
-    const overlay = document.getElementById('filterOverlay');
-    const openBtn = document.getElementById('openFilterPanel');
-    const closeBtn = document.getElementById('closeFilterPanel');
-
-    const closePanel = () => {
-        panel?.classList.remove('filter-panel--open');
-        overlay?.classList.remove('filter-overlay--visible');
-        document.body.style.overflow = '';
-    };
-
-    openBtn?.addEventListener('click', () => {
-        panel?.classList.add('filter-panel--open');
-        overlay?.classList.add('filter-overlay--visible');
-        document.body.style.overflow = 'hidden';
-    });
-
-    closeBtn?.addEventListener('click', closePanel);
-    overlay?.addEventListener('click', closePanel);
-
-
-    buscador?.addEventListener("input", async () => {
-        const texto = buscador.value.trim();
-        filtrarVacantes();
-
-        if (texto.length < 2) {
-            mostrarHistorial();
-            return;
-        }
-
+    async function loadSuggestions() {
+        request?.abort(); request = new AbortController(); const signal = request.signal;
         try {
-            const [sugerenciasRes, historialRes] = await Promise.all([
-                fetch(`/postulante/vacantes/sugerencias?texto=${texto}`),
-                fetch(`/postulante/historial`)
-            ]);
-            const sugerencias = await sugerenciasRes.json();
-            const historial = await historialRes.json();
-            const historialFiltrado = historial.filter(h => h.toLowerCase().includes(texto.toLowerCase()));
-            const combinado = [...new Set([...historialFiltrado, ...sugerencias])];
-            mostrarSugerencias(combinado);
-        } catch (error) {
-            console.error(error);
-        }
-    });
-
-    function mostrarSugerencias(lista) {
-        const listaEl = document.getElementById("lista-historial");
-        const dropdown = document.getElementById("historial");
-        listaEl.innerHTML = "";
-
-        if (!lista || lista.length === 0) {
-            dropdown.style.display = "none";
-            return;
-        }
-
-        dropdown.style.display = "block";
-        lista.forEach(item => {
-            const li = document.createElement("li");
-            li.textContent = item;
-            li.addEventListener("click", () => {
-                buscador.value = item;
-                dropdown.style.display = "none";
-                filtrarVacantes();
-            });
-            listaEl.appendChild(li);
-        });
+            const text = search.value.trim();
+            const response = await fetch(text.length >= 2 ? '/postulante/vacantes/sugerencias?texto=' + encodeURIComponent(text) : '/postulante/historial', { signal });
+            if (response.ok) suggestions(await response.json());
+        } catch (error) { if (error.name !== 'AbortError') suggestions([]); }
     }
-
-    async function mostrarHistorial() {
-        try {
-            const res = await fetch(`/postulante/historial`);
-            const data = await res.json();
-            mostrarSugerencias(data);
-        } catch (error) {
-            console.error("Error historial:", error);
-        }
-    }
-
-    buscador?.addEventListener("focus", () => mostrarHistorial());
-
-    document.getElementById("limpiar-historial")?.addEventListener("click", async () => {
-        await fetch("/postulante/historial/limpiar", { method: "POST" });
-        document.getElementById("lista-historial").innerHTML = "";
-        document.getElementById("historial").style.display = "none";
+    search?.addEventListener('input', () => { filter(); clearTimeout(debounce); debounce = setTimeout(loadSuggestions, 200); });
+    search?.addEventListener('focus', loadSuggestions);
+    document.getElementById('searchForm')?.addEventListener('submit', event => {
+        event.preventDefault(); filter(); if (history) history.style.display = 'none';
+        const text = search?.value.trim();
+        if (text) fetch('/postulante/historial/guardar', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ texto: text }) }).catch(() => {});
     });
-
-    document.addEventListener("click", (e) => {
-        if (!e.target.closest(".search-main")) {
-            if (historialDiv) historialDiv.style.display = "none";
-        }
+    document.getElementById('limpiar-historial')?.addEventListener('click', async () => {
+        const response = await fetch('/postulante/historial/limpiar', { method: 'POST' }).catch(() => null);
+        if (response?.ok) suggestions([]);
     });
-
-    syncSliders();
-    filtrarVacantes();
+    document.addEventListener('click', event => { if (!event.target.closest('.search-main') && history) { history.style.display = 'none'; request?.abort(); } });
+    filter();
 });

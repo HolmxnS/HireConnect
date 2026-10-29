@@ -17,6 +17,7 @@
     <link rel="stylesheet" th:href="@{/styles/empresa/layout.css}" />
     <link rel="stylesheet" th:href="@{/styles/postulante/perfil_postulante.css}" />
     <link rel="stylesheet" th:href="@{/styles/empresa/perfil.css}" />
+    <link rel="stylesheet" th:href="@{/styles/toasts.css}" />
 </head>
 
 <body class="profile-page company-profile">
@@ -24,8 +25,8 @@
     <div th:replace="~{fragments/empresa/header_empresa :: header}"></div>
 
     <main class="content">
-        <p th:if="${success}" th:text="${success}" class="settings-notice" role="status"></p>
-        <p th:if="${error}" th:text="${error}" class="settings-notice settings-notice--error" role="alert"></p>
+        <p th:if="${success}" th:text="${success}" class="settings-notice" data-toast-message hidden role="status"></p>
+        <p th:if="${error}" th:text="${error}" class="settings-notice settings-notice--error" data-toast-message hidden role="alert"></p>
       <section class="profile-hero" aria-label="Mi perfil">
         <div class="profile-hero__cover" data-company-cover th:data-cover-url="@{/empresa/portada}">
           <img th:if="${not #strings.isEmpty(empresa.portada)}" th:src="${empresa.portada}" alt="Portada de la empresa" data-cover-image />
@@ -70,18 +71,7 @@
                   <div><dt>Teléfono</dt><dd th:text="${#strings.isEmpty(empresa.telefono) ? 'Sin especificar' : empresa.telefono}"></dd></div>
                   <div><dt>RUT / NIT</dt><dd th:text="${empresa.rut}"></dd></div>
                 </dl>
-                <section class="company-posts" aria-labelledby="company-posts-title" th:if="${(not #strings.isEmpty(empresa.threads) or not #strings.isEmpty(empresa.instagram) or not #strings.isEmpty(empresa.facebook) or not #strings.isEmpty(empresa.x)) and not #lists.isEmpty(publicacionesEmpresa)}">
-                  <div class="company-posts__heading"><h2 id="company-posts-title">Publicaciones</h2><p>Una mirada a lo que compartimos.</p></div>
-                  <div class="company-posts__list" th:if="${not #lists.isEmpty(publicacionesEmpresa)}">
-                    <article class="company-post" th:each="publicacion : ${publicacionesEmpresa}" th:data-social-network="${publicacion.red}" th:data-social-url="${publicacion.url}">
-                      <span class="company-post__network" th:text="${publicacion.red}"></span>
-                      <div data-social-embed></div>
-                      <a th:href="${publicacion.url}" target="_blank" rel="noopener noreferrer" th:text="${'Ver publicación en ' + publicacion.red}"></a>
-                    </article>
-                  </div>
-                  <div class="company-posts__more" th:if="${#lists.size(publicacionesEmpresa) > 5}"><button type="button" class="profile-edit-button" data-social-more hidden>Ver más publicaciones</button></div>
-                  <p class="company-posts__note" th:unless="${#lists.isEmpty(publicacionesEmpresa)}">Si una publicación no se muestra aquí, puedes abrirla en su red social.</p>
-                </section>
+
               </div>
                 <div class="profile__field" id="company-edit-form" hidden>
                     <div class="company-edit-heading"><h2>Editar información</h2><button type="button" data-company-edit-cancel>Cancelar</button></div>
@@ -140,8 +130,6 @@
                             <div class="form__field"><label for="instagram">Instagram</label><input type="url" th:field="*{instagram}" id="instagram" maxlength="2048" placeholder="https://www.instagram.com/tuempresa" /></div>
                             <div class="form__field"><label for="facebook">Facebook</label><input type="url" th:field="*{facebook}" id="facebook" maxlength="2048" placeholder="https://www.facebook.com/tuempresa" /></div>
                             <div class="form__field"><label for="x">X (Twitter)</label><input type="url" th:field="*{x}" id="x" maxlength="2048" placeholder="https://x.com/tuempresa" /></div>
-                            <div class="form__field full-width company-social__form-title"><h3>Publicaciones destacadas</h3><p>Añade hasta 6 enlaces de publicaciones públicas de Instagram, Threads, Facebook o X. Deja el campo vacío para quitar una publicación.</p></div>
-                            <div class="form__field" th:each="indice : ${#numbers.sequence(0, 5)}"><label th:for="${'social-post-' + indice}" th:text="${'Publicación ' + (indice + 1)}"></label><input type="url" name="publicacionesSociales" th:id="${'social-post-' + indice}" th:value="${empresa.publicacionesSociales != null and #lists.size(empresa.publicacionesSociales) > indice ? empresa.publicacionesSociales[indice] : ''}" maxlength="2048" placeholder="https://…" /></div>
                             <div class="form__actions">
                                 <button type="submit" form="empresaForm" class="save">Guardar Cambios</button>
                             </div>
@@ -178,10 +166,10 @@
       <div class="profile-photo-dialog__actions"><button type="button" data-photo-cancel>Cancelar</button><button type="button" class="profile-edit-button" data-photo-save>Guardar foto</button></div>
     </dialog>
     <dialog class="company-cover-dialog" aria-labelledby="cover-dialog-title"><h2 id="cover-dialog-title">Ajusta tu portada</h2><p>JPG o PNG de hasta 5 MB. Recomendado: 1600 × 400 px.</p><canvas width="1600" height="400" data-cover-preview aria-label="Vista previa de la portada"></canvas><label for="coverZoom">Zoom</label><input id="coverZoom" type="range" min="1" max="3" step="0.01" value="1" /><label for="coverPosition">Posición vertical</label><input id="coverPosition" type="range" min="0" max="1" step="0.01" value="0.5" /><p data-cover-message role="status" aria-live="polite"></p><div class="company-cover-dialog__actions"><button type="button" data-cover-cancel>Cancelar</button><button type="button" class="profile-edit-button" data-cover-save>Guardar portada</button></div></dialog>
+    <script th:src="@{/js/toasts.js}" defer></script>
     <script th:src="@{/js/empresa_portada.js}" defer></script>
     <script th:src="@{/js/perfil_foto.js}" defer></script>
     <script th:src="@{/js/empresa_perfil.js}" defer></script>
-    <script th:src="@{/js/empresa_publicaciones.js}" defer></script>
 
 
 </body>

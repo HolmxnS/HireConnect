@@ -43,7 +43,8 @@ public class SecurityConfig {
                                                                 "/register/verificar-codigo",
                                                                 "/register/empresa",
                                                                 "/forgot-password", "/reset-password",
-                                                                "/js/**", "/images/**", "/webjars/**")
+                                                                "/js/**", "/images/**", "/webjars/**",
+                                                                "/uploads/empresas/**", "/uploads/fotos/**", "/uploads/admins/**")
                                                 .permitAll()
                                                 .requestMatchers("/images/lightning.png").permitAll()
 

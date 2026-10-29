@@ -28,14 +28,15 @@
     <title>Mi perfil | HireConnect</title>
       <link rel="stylesheet" th:href="@{/styles/brand.css}" />
     <link rel="stylesheet" th:href="@{/styles/postulante/perfil_postulante.css}" />
+    <link rel="stylesheet" th:href="@{/styles/toasts.css}" />
 </head>
 
   <body class="profile-page">
     <div th:replace="~{fragments/postulante/sidebar_postulante :: sidebar('perfil')}"></div>
     <div th:replace="~{fragments/postulante/header_postulante :: menu-fragment(false)}"></div>
     <main class="content profile-layout">
-      <div th:if="${exito}" class="flash-alert success" role="status" th:text="${exito}"></div>
-      <div th:if="${error}" class="flash-alert error" role="alert" th:text="${error}"></div>
+      <div th:if="${exito}" class="flash-alert success" data-toast-message hidden role="status" th:text="${exito}"></div>
+      <div th:if="${error}" class="flash-alert error" data-toast-message hidden role="alert" th:text="${error}"></div>
       <section class="profile-hero" aria-label="Mi perfil">
         <div class="profile-hero__cover" aria-hidden="true"><span></span><span></span><span></span></div>
         <div class="profile-hero__body">
@@ -457,6 +458,7 @@
       <p data-photo-editor-message role="status" aria-live="polite"></p>
       <div class="profile-photo-dialog__actions"><button type="button" data-photo-cancel>Cancelar</button><button type="button" class="profile-edit-button" data-photo-save>Guardar foto</button></div>
     </dialog>
+    <script th:src="@{/js/toasts.js}" defer></script>
     <script th:src="@{/js/perfil_foto.js}" defer></script>
     <script th:src="@{/js/modal_postulante.js}" defer></script>
     <script th:src="@{/js/perfil_tabs.js}" defer></script>

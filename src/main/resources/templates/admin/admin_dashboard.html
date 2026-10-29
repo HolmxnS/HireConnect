@@ -5,64 +5,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/styles/fragments/admin/sidebar.css}">
-    <link rel="stylesheet" th:href="@{/styles/admin/admin_dashboard.css}">
     <link rel="stylesheet" th:href="@{/styles/admin/theme.css}">
     <script th:src="@{/js/theme.js}"></script>
     <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
     <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
     <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
     <link rel="icon" type="image/svg+xml" sizes="any" th:href="@{/source/img/favicon.svg}">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <title>Admin - Inicio</title>
     <link rel="stylesheet" th:href="@{/styles/brand.css}" />
     <link rel="stylesheet" th:href="@{/styles/admin/overview.css}" />
+    <link rel="stylesheet" th:href="@{/styles/admin/workspace.css}" />
+    <link rel="stylesheet" th:href="@{/styles/toasts.css}" />
+    <link rel="stylesheet" th:href="@{/styles/admin/content.css}" />
 </head>
 
-<body>
-    <div th:replace="~{fragments/admin/sidebar_admin :: sidebar('home')}"></div>
-
-    <main class="main">
-
-        <div th:replace="~{fragments/admin/header_admin :: topbar('Panel de administración', 'Actividad reciente de HireConnect')}"></div>
-
-        <div class="admin-overview">
-          <div class="overview-heading"><div><span class="overview-eyebrow">ACTIVIDAD DE LA PLATAFORMA</span><h2>Todo bajo control</h2><p>Usuarios, publicaciones y próximos movimientos.</p></div><a th:href="@{/admin/empresas}" class="overview-button">Gestionar empresas <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></div>
-          <section class="overview-metrics" aria-label="Indicadores generales">
-            <a th:href="@{/admin/empresas}" class="overview-metric"><span>Empresas</span><strong th:text="${empresas}">0</strong><small>Total registrado</small><i class="fa-solid fa-building" aria-hidden="true"></i></a>
-            <a th:href="@{/admin/postulantes}" class="overview-metric overview-metric--blue"><span>Postulantes</span><strong th:text="${postulantes}">0</strong><small>Total registrado</small><i class="fa-solid fa-users" aria-hidden="true"></i></a>
-            <div class="overview-metric overview-metric--green"><span>Vacantes activas</span><strong th:text="${vacantesActivas}">0</strong><small>Estado actual</small><i class="fa-solid fa-briefcase" aria-hidden="true"></i></div>
-            <a href="#pending-vacancies" class="overview-metric overview-metric--amber"><span>Vacantes pendientes</span><strong th:text="${vacantesPendientes}">0</strong><small>Aún no están activas</small><i class="fa-regular fa-clock" aria-hidden="true"></i></a>
-          </section>
-          <section class="overview-charts">
-            <article class="overview-panel">
-              <div class="overview-panel__head"><div><h2>Nuevos registros</h2><p th:text="${'Por mes · ' + dashboardYear}"></p></div><label class="overview-period">Periodo<select id="chartPeriod"><option value="3">Últimos 3 meses</option><option value="6">Últimos 6 meses</option><option value="12" selected>Año actual</option></select></label></div>
-              <div class="overview-chart" data-registration-chart><canvas id="lineChart" role="img" aria-label="Nuevos registros mensuales de empresas y postulantes. Datos disponibles en la tabla."></canvas></div>
-              <p class="overview-empty" id="registrationEmpty" hidden>Sin registros en este periodo.</p>
-              <div class="overview-chart-footer"><span class="overview-legend"><i></i> Empresas <i></i> Postulantes</span><button type="button" id="downloadChart" class="overview-text-button">Descargar CSV</button></div>
-              <details class="overview-data"><summary>Ver datos de la gráfica</summary><div class="overview-table-scroll"><table><caption class="overview-sr-only">Registros mensuales</caption><thead><tr><th scope="col">Mes</th><th scope="col">Empresas</th><th scope="col">Postulantes</th></tr></thead><tbody id="registrationsData"></tbody></table></div></details>
-            </article>
-            <article class="overview-panel">
-              <div class="overview-panel__head"><div><h2>Estado de las vacantes</h2><p>Distribución actual de publicaciones</p></div></div>
-              <div class="overview-chart overview-chart--donut"><canvas id="vacancyChart" role="img" aria-label="Distribución de vacantes. Cantidades y porcentajes en la leyenda inferior."></canvas></div>
-              <p class="overview-empty" id="vacancyEmpty" hidden>Todavía no hay vacantes registradas.</p>
-              <ul class="overview-state-list" id="vacancyLegend"></ul>
-              <p class="overview-note" th:if="${vacantesSinEstado > 0}" th:text="${vacantesSinEstado + ' vacantes sin estado no se incluyen en esta gráfica.'}"></p>
-            </article>
-          </section>
-          <section class="overview-panel" id="pending-vacancies">
-            <div class="overview-panel__head"><div><h2>Vacantes pendientes</h2><p>Próximas fechas de inicio. Se muestran hasta 6 publicaciones.</p></div><span class="overview-count" th:text="${vacantesPendientes}"></span></div>
-            <div class="overview-empty" th:if="${#lists.isEmpty(proximasVacantes)}"><i class="fa-regular fa-circle-check" aria-hidden="true"></i><h3>No hay vacantes pendientes</h3><p>Las publicaciones pendientes aparecerán aquí.</p></div>
-            <div class="overview-table-scroll" th:unless="${#lists.isEmpty(proximasVacantes)}"><table class="overview-vacancies"><thead><tr><th scope="col">Vacante</th><th scope="col">Empresa</th><th scope="col">Inicio</th><th scope="col"><span class="overview-sr-only">Acción</span></th></tr></thead><tbody><tr th:each="vacante : ${proximasVacantes}"><td th:text="${vacante.titulo}"></td><td th:text="${vacante.empresa != null ? vacante.empresa.nombre : 'Sin empresa'}"></td><td th:text="${vacante.fechaInicio != null ? #temporals.format(vacante.fechaInicio, 'dd MMM yyyy') : 'Sin fecha'}"></td><td><a class="overview-text-button" th:href="@{/admin/vacantes/ver/{id}(id=${vacante.id})}" th:attr="aria-label=${'Ver vacante ' + vacante.titulo}">Ver detalle <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a></td></tr></tbody></table></div>
-          </section>
-        </div>
-    </main>
-
-    <script th:inline="javascript">
-        /*<![CDATA[*/
-        window.adminDashboardData = { registros: /*[[${registrosPorMes}]]*/ {}, estados: /*[[${estadosVacantes}]]*/ {}, year: /*[[${dashboardYear}]]*/ 2026, month: /*[[${dashboardMonth}]]*/ 1 };
-        /*]]>*/
-    </script>
-    <script th:src="@{/js/admin_dashboard.js}"></script>
-</body>
-
-</html>
+<body class="admin-area admin-layout-page admin-home-page">
+<div th:replace="~{fragments/admin/sidebar_admin :: sidebar('home')}"></div>
+<div th:replace="~{fragments/admin/header_admin :: topbar('Administración', '')}"></div>
+<main class="main"><div class="admin-overview">
+  <div class="overview-heading"><div><span class="overview-eyebrow">HIRECONNECT</span><h1>La plataforma, de un vistazo.</h1></div><span class="overview-year" th:text="${dashboardYear}"></span></div>
+  <div class="overview-dashboard">
+    <section class="overview-metrics" aria-label="Indicadores de la plataforma">
+<a class="overview-metric" th:href="@{/admin/empresas}"><span class="overview-metric__top"><i class="fa-solid fa-building" aria-hidden="true"></i><span aria-hidden="true">↗</span></span><span class="overview-metric__body"><span><strong>Empresas</strong><small>Perfiles registrados</small></span><b th:text="${empresas}"></b></span></a><a class="overview-metric" th:href="@{/admin/postulantes}"><span class="overview-metric__top"><i class="fa-solid fa-users" aria-hidden="true"></i><span aria-hidden="true">↗</span></span><span class="overview-metric__body"><span><strong>Postulantes</strong><small>Talento en la plataforma</small></span><b th:text="${postulantes}"></b></span></a><a class="overview-metric" th:href="@{/admin/vacantes}"><span class="overview-metric__top"><i class="fa-solid fa-briefcase" aria-hidden="true"></i><span aria-hidden="true">↗</span></span><span class="overview-metric__body"><span><strong>Vacantes</strong><small>Publicaciones en total</small></span><b th:text="${vacantesTotal}"></b></span></a></section>
+    <section class="overview-panel overview-registration" aria-labelledby="registration-heading"><div class="overview-panel__head"><div><h2 id="registration-heading">Nuevos registros</h2><p th:text="${'Actividad mensual · ' + dashboardYear}"></p></div><select id="chartPeriod" aria-label="Período de registros"><option value="3">Últimos 3 meses</option><option value="6">Últimos 6 meses</option><option value="12" selected>Año actual</option></select></div><div class="overview-chart" data-registration-chart></div><p class="overview-empty" id="registrationEmpty" hidden>No hay registros en este período.</p><div class="overview-chart-footer"><span class="overview-legend"><i></i> Empresas <i></i> Postulantes</span><button type="button" id="downloadChart" class="overview-text-button">↓ Descargar CSV</button></div><details class="overview-data"><summary>Ver datos por mes</summary><div class="overview-table-scroll"><table><caption class="overview-sr-only">Registros mensuales</caption><thead><tr><th scope="col">Mes</th><th scope="col">Empresas</th><th scope="col">Postulantes</th></tr></thead><tbody id="registrationsData"></tbody></table></div></details></section>
+    <aside class="overview-panel overview-status" aria-labelledby="vacancy-status-heading"><div class="overview-panel__head"><div><h2 id="vacancy-status-heading">Estado de las vacantes</h2><p>El movimiento de tus publicaciones.</p></div><span class="overview-status__icon" aria-hidden="true">↗</span></div><div class="overview-gauge" data-vacancy-ring aria-hidden="true"><div><small>ACTIVAS</small><strong data-active-percentage>0%</strong><span>de las vacantes con estado</span></div></div><p class="overview-empty" id="vacancyEmpty" hidden>Todavía no hay vacantes con estado.</p><ul class="overview-state-list" id="vacancyLegend"></ul><p class="overview-note" th:if="${vacantesSinEstado > 0}" th:text="${vacantesSinEstado + ' vacantes sin estado no se incluyen en el gráfico.'}"></p><a class="overview-manage" th:href="@{/admin/vacantes}">Gestionar vacantes <span aria-hidden="true">↗</span></a></aside>
+  </div>
+</div></main>
+<script th:inline="javascript">
+window.adminDashboardData = { registros: /*[[${registrosPorMes}]]*/ {}, estados: /*[[${estadosVacantes}]]*/ {}, year: /*[[${dashboardYear}]]*/ 2026, month: /*[[${dashboardMonth}]]*/ 1 };
+</script><script th:src="@{/js/admin_dashboard.js}" defer></script>
+</body></html>

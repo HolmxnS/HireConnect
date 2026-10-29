@@ -1,72 +1,90 @@
-<!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<!doctype html><html lang="es" xmlns:th="http://www.thymeleaf.org"><body>
+    <th:block th:fragment="sidebar (activeMenu)">
 
-<head>
-    <meta charset="UTF-8">
-    <title>Sidebar Administrador</title>
-</head>
+        <!--Aplica el estado plegado antes de pintar para que no haya parpadeo (solo en escritorio)-->
+        <script>
+            (function () {
+                try {
+                    if (window.matchMedia('(min-width: 901px)').matches && localStorage.getItem('hc-sidebar') === 'collapsed') {
+                        document.documentElement.classList.add('is-sidebar-collapsed');
+                    }
+                } catch (e) { }
+            })();
+        </script>
 
-<body>
+        <button type="button" class="sidebar-opener" id="sidebarOpener" aria-label="Abrir menú" aria-controls="sidebar"
+            aria-expanded="false">
+            <span class="sidebar-opener__icon"><i class="fa-solid fa-bars"></i></span>
+        </button>
 
-    <aside th:fragment="sidebar (activeMenu)" class="sidebar">
+        <aside class="sidebar" id="sidebar" aria-label="Menú principal">
 
-        <div class="sidebar__logo">
-            <h1 class="hc-logo-wordmark"><span class="hc-logo-mark" aria-hidden="true"><img th:src="@{/source/img/isotipo.png}" alt="" /></span><span>Hire<span class="sidebar__highlight">Connect</span></span></h1>
-        </div>
+            <div class="sidebar__logo">
+                <button type="button" class="sidebar__toggle" id="sidebarToggle" aria-label="Ocultar menú"
+                    aria-controls="sidebar" aria-expanded="true">
+                    <span class="sidebar__toggle-icon"><i class="fa-solid fa-bars"></i></span>
+                </button>
+                <a class="sidebar__brand" th:href="@{/admin/dashboard}" aria-label="HireConnect, ir al inicio">
+                    <span class="hc-logo-mark" aria-hidden="true"><img th:src="@{/source/img/isotipo.png}" alt="" /></span>
+                    <span class="sidebar__brand-name">Hire<span class="sidebar__highlight">Connect</span></span>
+                </a>
+            </div>
 
-        <nav class="sidebar__nav" aria-label="Navegación del administrador">
-            <ul>
-                <li class="sidebar__label">Gestión</li>
+            <nav class="sidebar__nav" aria-label="Navegación de administración">
+                <ul>
+                    <li>
+                        <a th:href="@{/admin/dashboard}" class="sidebar__link" data-label="Inicio"
+                            th:classappend="${activeMenu == 'home'} ? 'sidebar__active'"
+                            th:attr="aria-current=${activeMenu == 'home'} ? 'page'">
+                            <span class="sidebar__icon"><i class="fa-solid fa-house"></i></span>
+                            <span class="sidebar__text">Inicio</span>
+                        </a>
+                    </li>
 
-                <li>
-                    <a th:href="@{/admin/dashboard}" class="sidebar__link" title="Inicio" aria-label="Inicio"
-                        th:classappend="${activeMenu == 'home'} ? 'sidebar__active' : ''">
-                        <i class="fa-solid fa-house"></i> <span class="sidebar__text">Inicio</span>
-                    </a>
-                </li>
+                    <li><a th:href="@{/admin/empresas}" class="sidebar__link" data-label="Empresas" th:classappend="${activeMenu == 'empresas'} ? 'sidebar__active'" th:attr="aria-current=${activeMenu == 'empresas'} ? 'page'"><span class="sidebar__icon"><i class="fa-solid fa-briefcase"></i></span><span class="sidebar__text">Empresas</span></a></li>
+                    <li>
+                        <a th:href="@{/admin/postulantes}" class="sidebar__link" data-label="Postulantes"
+                            th:classappend="${activeMenu == 'postulantes'} ? 'sidebar__active'"
+                            th:attr="aria-current=${activeMenu == 'postulantes'} ? 'page'">
+                            <span class="sidebar__icon"><i class="fa-solid fa-clipboard-list"></i></span>
+                            <span class="sidebar__text">Postulantes</span>
+                        </a>
+                    </li>
 
-                <li>
-                    <a th:href="@{/admin/empresas}" title="Empresas" aria-label="Empresas"
-                        th:classappend="${activeMenu == 'empresas'} ? 'sidebar__active' : ''">
-                        <i class="fa-solid fa-building"></i> <span class="sidebar__text">Empresas</span>
-                    </a>
-                </li>
+                    <li><a th:href="@{/admin/vacantes}" class="sidebar__link" data-label="Vacantes" th:classappend="${activeMenu == 'vacantes'} ? 'sidebar__active'" th:attr="aria-current=${activeMenu == 'vacantes'} ? 'page'"><span class="sidebar__icon"><i class="fa-solid fa-briefcase"></i></span><span class="sidebar__text">Vacantes</span></a></li>
+                    <li>
+                        <a th:href="@{/admin/editar}" class="sidebar__link" data-label="Mi Perfil"
+                            th:classappend="${activeMenu == 'perfil'} ? 'sidebar__active'"
+                            th:attr="aria-current=${activeMenu == 'perfil'} ? 'page'">
+                            <span class="sidebar__icon"><i class="fa-solid fa-user-gear"></i></span>
+                            <span class="sidebar__text">Mi Perfil</span>
+                        </a>
+                    </li>
 
-                <li>
-                    <a th:href="@{/admin/postulantes}" title="Postulantes" aria-label="Postulantes"
-                        th:classappend="${activeMenu == 'postulantes'} ? 'sidebar__active' : ''">
-                        <i class="fa-solid fa-users"></i> <span class="sidebar__text">Postulantes</span>
-                    </a>
-                </li>
+                    <li>
+                        <a th:href="@{/admin/configuracion}" class="sidebar__link" data-label="Configuración"
+                            th:classappend="${activeMenu == 'configuracion'} ? 'sidebar__active'"
+                            th:attr="aria-current=${activeMenu == 'configuracion'} ? 'page'">
+                            <span class="sidebar__icon"><i class="fa-solid fa-gear"></i></span>
+                            <span class="sidebar__text">Configuración</span>
+                        </a>
+                    </li>
 
+                    <li class="sidebar__bottom">
+                        <a th:href="@{/logout}" class="sidebar__link sidebar__logout" data-label="Cerrar Sesión">
+                            <span class="sidebar__icon"><i class="fa-solid fa-right-from-bracket"></i></span>
+                            <span class="sidebar__text">Cerrar Sesión</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
 
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-                <li class="sidebar__label">Mi cuenta</li>
-
-                <li>
-                    <a th:href="@{/admin/editar}" title="Mi Perfil" aria-label="Mi Perfil"
-                        th:classappend="${activeMenu == 'perfil'} ? 'sidebar__active' : ''">
-                        <i class="fa-solid fa-user-gear"></i> <span class="sidebar__text">Mi Perfil</span>
-                    </a>
-                </li>
-
-                <li class="sidebar__theme-item">
-                    <button type="button" class="sidebar__theme" data-theme-toggle aria-label="Cambiar a modo oscuro">
-                        <i class="fa-solid fa-moon"></i><i class="fa-solid fa-sun"></i>
-                        <span class="sidebar__text theme-label--dark">Modo oscuro</span>
-                        <span class="sidebar__text theme-label--light">Modo claro</span>
-                    </button>
-                </li>
-
-                <li>
-                    <a th:href="@{/logout}" class="sidebar__logout" title="Cerrar Sesión" aria-label="Cerrar Sesión">
-                        <i class="fa-solid fa-right-from-bracket"></i> <span class="sidebar__text">Cerrar Sesión</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    </aside>
-
-</body>
-
-</html>
+        <dialog class="admin-confirm" data-admin-dialog aria-labelledby="admin-confirm-title"><h2 id="admin-confirm-title">Confirmar acción</h2><p data-admin-confirm-message></p><div><button type="button" data-admin-cancel>Cancelar</button><a data-admin-proceed>Confirmar</a></div></dialog>
+        <script th:src="@{/js/layout_postulante.js}" defer></script>
+        <script th:src="@{/js/toasts.js}" defer></script>
+        <script th:src="@{/js/admin_workspace.js}" defer></script>
+    </th:block>
+</body></html>

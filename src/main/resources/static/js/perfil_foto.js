@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const message = dialog.querySelector('[data-photo-editor-message]');
   let image, objectUrl, x = .5, y = .5, busy = false, drag;
   function notify(text, error = false) {
+    if (window.HireConnectToast) { window.HireConnectToast.show(text, error); return; }
     feedback.textContent = text; feedback.hidden = false;
     feedback.classList.toggle('is-error', error);
   }

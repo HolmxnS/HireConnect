@@ -44,48 +44,42 @@
                 <p class="type__subtitle">Elige una cuenta para buscar empleo o gestionar las vacantes de tu empresa.</p>
             </div>
 
-            <fieldset class="roles">
-                <legend class="roles__legend">Tipo de cuenta</legend>
-
-                <label class="roles__option">
-                    <input class="roles__input" type="radio" name="rol" value="postulante" checked
-                        th:attr="data-href=@{/register/postulante},data-oauth-href=@{/register/oauth/postulante}">
-                    <span class="roles__card">
-                        <span class="roles__icon" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
-                        <span class="roles__name">Postulante</span>
-                        <span class="roles__desc">Explora vacantes y postúlate con tu perfil.</span>
-                    </span>
-                </label>
-
-                <label class="roles__option">
-                    <input class="roles__input" type="radio" name="rol" value="empresa"
-                        th:attr="data-href=@{/register/empresa},data-oauth-href=@{/register/oauth/empresa}">
-                    <span class="roles__card">
-                        <span class="roles__icon" aria-hidden="true"><i class="fa-solid fa-building"></i></span>
-                        <span class="roles__name">Empresa</span>
-                        <span class="roles__desc">Publica vacantes y gestiona tus candidatos.</span>
-                    </span>
-                </label>
-            </fieldset>
-
-            <div class="type__actions">
-                <a class="type__back" th:href="@{/}">Volver al inicio</a>
-
-                <!--Si viene de Google: formulario POST (el destino lo ajusta register.js según la opción elegida)-->
-                <form class="type__next-form" th:if="${oauthPending}" th:action="@{/register/oauth/postulante}"
-                    method="post" data-next-form>
-                    <button class="type__next" type="submit" aria-label="Continuar con el tipo de cuenta elegido"
-                        title="Continuar">
-                        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+            <div class="roles" role="group" aria-label="Tipo de cuenta">
+                <a class="roles__option" th:unless="${oauthPending}" th:href="@{/register/postulante}" aria-label="Crear cuenta de postulante">
+                        <span class="roles__card">
+                            <span class="roles__icon" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
+                            <span class="roles__name">Postulante</span>
+                            <span class="roles__desc">Explora vacantes y postúlate con tu perfil.</span>
+                        </span>
+                </a>
+                <form class="roles__form" th:if="${oauthPending}" th:action="@{/register/oauth/postulante}" method="post">
+                    <button class="roles__option" type="submit" aria-label="Crear cuenta de postulante con Google">
+                        <span class="roles__card">
+                            <span class="roles__icon" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
+                            <span class="roles__name">Postulante</span>
+                            <span class="roles__desc">Explora vacantes y postúlate con tu perfil.</span>
+                        </span>
                     </button>
                 </form>
-
-                <!--Flujo normal: enlace GET (el destino lo ajusta register.js según la opción elegida)-->
-                <a class="type__next" th:unless="${oauthPending}" th:href="@{/register/postulante}" data-next-link
-                    aria-label="Continuar con el tipo de cuenta elegido" title="Continuar">
-                    <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                <a class="roles__option" th:unless="${oauthPending}" th:href="@{/register/empresa}" aria-label="Crear cuenta de empresa">
+                        <span class="roles__card">
+                            <span class="roles__icon" aria-hidden="true"><i class="fa-solid fa-building"></i></span>
+                            <span class="roles__name">Empresa</span>
+                            <span class="roles__desc">Publica vacantes y gestiona tus candidatos.</span>
+                        </span>
                 </a>
+                <form class="roles__form" th:if="${oauthPending}" th:action="@{/register/oauth/empresa}" method="post">
+                    <button class="roles__option" type="submit" aria-label="Crear cuenta de empresa con Google">
+                        <span class="roles__card">
+                            <span class="roles__icon" aria-hidden="true"><i class="fa-solid fa-building"></i></span>
+                            <span class="roles__name">Empresa</span>
+                            <span class="roles__desc">Publica vacantes y gestiona tus candidatos.</span>
+                        </span>
+                    </button>
+                </form>
             </div>
+
+            <div class="type__actions"><a class="type__back" th:href="@{/}">Volver al inicio</a></div>
 
             <ul class="trust">
                 <li class="trust__item">
@@ -113,7 +107,6 @@
         </section>
     </main>
 
-    <script th:src="@{/js/register.js}"></script>
 </body>
 
 </html>

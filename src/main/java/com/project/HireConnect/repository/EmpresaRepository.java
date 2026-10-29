@@ -19,6 +19,14 @@ public interface EmpresaRepository extends MongoRepository<Empresa, String> {
 
     int countByEstado(EmpresaEstado estado);
 
+    @Query(value = "{ '$or': [ { 'nombreLegal': { '$regex': ?0, '$options': 'i' } }, { 'email': { '$regex': ?0, '$options': 'i' } }, { 'rut': { '$regex': ?0, '$options': 'i' } } ] }",
+            fields = "{ 'nombreLegal': 1, 'email': 1, 'rut': 1, 'estado': 1, 'fechaRegistro': 1 }")
+    org.springframework.data.domain.Page<Empresa> buscarPaginaAdmin(String texto, org.springframework.data.domain.Pageable pagina);
+
+    @Query(value = "{ 'estado': ?1, '$or': [ { 'nombreLegal': { '$regex': ?0, '$options': 'i' } }, { 'email': { '$regex': ?0, '$options': 'i' } }, { 'rut': { '$regex': ?0, '$options': 'i' } } ] }",
+            fields = "{ 'nombreLegal': 1, 'email': 1, 'rut': 1, 'estado': 1, 'fechaRegistro': 1 }")
+    org.springframework.data.domain.Page<Empresa> buscarPaginaAdminPorEstado(String texto, EmpresaEstado estado, org.springframework.data.domain.Pageable pagina);
+
     @Query("{ $expr: { $and: [ " +
            "{ $eq: [{ $month: '$fecha_registro' }, { $month: new Date() }] }, " +
            "{ $eq: [{ $year: '$fecha_registro' }, { $year: new Date() }] } " +

@@ -48,16 +48,18 @@ public class PostulanteController {
     private final PostulacionService postulacionService;
     private final VacanteService vacanteService;
     private final HistorialService historialService;
+    private final com.project.HireConnect.service.EmpresaService empresaService;
     private final String UPLOAD_DIR = "uploads/cv/";
 
     public PostulanteController(PostulanteService postulanteService,
             PostulacionService postulacionService,
             VacanteService vacanteService,
-            HistorialService historialService) {
+            HistorialService historialService, com.project.HireConnect.service.EmpresaService empresaService) {
         this.postulanteService = postulanteService;
         this.postulacionService = postulacionService;
         this.vacanteService = vacanteService;
         this.historialService = historialService;
+        this.empresaService = empresaService;
     }
 
     private Optional<Postulante> getAuthenticatedPostulante(Authentication authentication) {
@@ -112,17 +114,15 @@ public class PostulanteController {
         }
         Postulante postulante = optPostulante.get();
 
-        List<Vacante> vacantes;
-        if ((query == null || query.isBlank()) && (modalidad == null || modalidad.isBlank())) {
-            vacantes = vacanteService.listarTodas();
-        } else {
-            vacantes = vacanteService.buscarPorTituloYModalidad(query, modalidad);
-        }
+        List<Vacante> vacantes = vacanteService.listarTodas();
+        model.addAttribute("filtro", query);
+        model.addAttribute("modalidad", modalidad);
 
         model.addAttribute("postulante", postulante);
         model.addAttribute("vacantes", vacantes.stream()
                 .filter(v -> v.getEstado() == VacanteEstado.ACTIVA).toList());
         model.addAttribute("activeMenu", "vacantes");
+        agregarConteosVacantes(model);
         return "postulante/vacantePostulante";
     }
 
@@ -148,11 +148,7 @@ public class PostulanteController {
         model.addAttribute("postulante", postulanteOpt.get());
 
         model.addAttribute("vacantes",
-                vacanteService.buscarPorFiltros(
-                        filtro,
-                        modalidad,
-                        salarioMin,
-                        salarioMax).stream()
+                vacanteService.listarTodas().stream()
                         .filter(v -> v.getEstado() == VacanteEstado.ACTIVA)
                         .toList());
 
@@ -163,7 +159,22 @@ public class PostulanteController {
         model.addAttribute("salarioMin", salarioMin);
         model.addAttribute("salarioMax", salarioMax);
 
+        agregarConteosVacantes(model);
         return "postulante/vacantePostulante";
+    }
+
+    private void agregarConteosVacantes(Model model) {
+        Object valor = model.getAttribute("vacantes");
+        if (!(valor instanceof List<?> lista)) return;
+        List<Vacante> vacantes = lista.stream().filter(Vacante.class::isInstance).map(Vacante.class::cast).toList();
+        java.util.Set<String> empresas = vacantes.stream().filter(v -> v.getEmpresa() != null)
+                .map(v -> v.getEmpresa().getId()).filter(java.util.Objects::nonNull)
+                .collect(java.util.stream.Collectors.toSet());
+        model.addAttribute("sectoresEmpresa", empresaService.sectoresPorIds(empresas));
+        java.util.Map<String, Long> cantidades = postulacionService.buscarPorVacantes(vacantes).stream()
+                .filter(p -> p != null && p.getVacante() != null)
+                .collect(java.util.stream.Collectors.groupingBy(p -> p.getVacante().getId(), java.util.stream.Collectors.counting()));
+        vacantes.forEach(v -> v.setTotalPostulaciones(cantidades.getOrDefault(v.getId(), 0L)));
     }
 
     @GetMapping("/vacante/{id}")
@@ -375,7 +386,7 @@ public class PostulanteController {
                 return "redirect:/postulante/perfil";
 
             BeanUtils.copyProperties(postulanteForm, postulanteExistente,
-                    "id", "email", "password", "cv", "fechaRegistro",
+                    "id", "email", "password", "cv", "foto", "fechaRegistro",
                     "habilidades", "educacion", "experiencia", "postulaciones",
                     "tipoDocumento", "identificacion", "fechaNacimiento", "genero");
 
