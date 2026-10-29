@@ -35,9 +35,18 @@ public class FotoEmpresaService {
     }
 
     public String guardar(String email, MultipartFile file) throws IOException {
+        return guardarImagen(email, file, false);
+    }
+
+    public String guardarPortada(String email, MultipartFile file) throws IOException {
+        return guardarImagen(email, file, true);
+    }
+
+    private String guardarImagen(String email, MultipartFile file, boolean portada) throws IOException {
         Empresa user = actual(email);
-        if (file.isEmpty() || file.getSize() > 2 * 1024 * 1024)
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Selecciona una imagen JPG o PNG de hasta 2 MB.");
+        int maxMB = portada ? 5 : 2;
+        if (file.isEmpty() || file.getSize() > maxMB * 1024 * 1024)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Selecciona una imagen JPG o PNG de hasta " + maxMB + " MB.");
         BufferedImage image;
         try (var stream = file.getInputStream(); var input = ImageIO.createImageInputStream(stream)) {
             if (input == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No se pudo leer la imagen.");
@@ -58,37 +67,51 @@ public class FotoEmpresaService {
         } catch (javax.imageio.IIOException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No se pudo leer la imagen. Prueba con otro archivo.");
         }
-        BufferedImage output = new BufferedImage(512, 512, BufferedImage.TYPE_INT_RGB);
+        int width = portada ? 1600 : 512, height = portada ? 400 : 512;
+        BufferedImage output = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         var graphics = output.createGraphics();
         try {
-            graphics.setColor(Color.WHITE); graphics.fillRect(0, 0, 512, 512);
+            graphics.setColor(Color.WHITE); graphics.fillRect(0, 0, width, height);
             graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-            int side = Math.min(image.getWidth(), image.getHeight());
-            int x = (image.getWidth() - side) / 2, y = (image.getHeight() - side) / 2;
-            graphics.drawImage(image, 0, 0, 512, 512, x, y, x + side, y + side, null);
+            double ratio = (double) width / height;
+            int cropWidth = Math.min(image.getWidth(), (int) (image.getHeight() * ratio));
+            int cropHeight = Math.max(1, Math.min(image.getHeight(), (int) (cropWidth / ratio)));
+            int x = (image.getWidth() - cropWidth) / 2, y = (image.getHeight() - cropHeight) / 2;
+            graphics.drawImage(image, 0, 0, width, height, x, y, x + cropWidth, y + cropHeight, null);
         } finally { graphics.dispose(); }
         Files.createDirectories(directory);
-        String filename = "empresa_" + UUID.randomUUID() + ".jpg";
+        String filename = (portada ? "portada_empresa_" : "empresa_") + UUID.randomUUID() + ".jpg";
         Path destination = directory.resolve(filename);
         ImageIO.write(output, "jpg", destination.toFile());
-        String previous = user.getFoto();
-        user.setFoto("/uploads/empresas/" + filename);
+        String previous = portada ? user.getPortada() : user.getFoto();
+        String url = "/uploads/empresas/" + filename;
+        if (portada) user.setPortada(url); else user.setFoto(url);
         try { repository.save(user); }
-        catch (RuntimeException e) { user.setFoto(previous); Files.deleteIfExists(destination); throw e; }
+        catch (RuntimeException e) {
+            if (portada) user.setPortada(previous); else user.setFoto(previous);
+            Files.deleteIfExists(destination); throw e;
+        }
         borrarArchivoAnterior(previous);
-        return user.getFoto();
+        return url;
     }
 
-    public void eliminar(String email) {
+    public void eliminar(String email) { eliminarImagen(email, false); }
+    public void eliminarPortada(String email) { eliminarImagen(email, true); }
+
+    private void eliminarImagen(String email, boolean portada) {
         Empresa user = actual(email);
-        String previous = user.getFoto();
-        user.setFoto(null);
-        repository.save(user);
+        String previous = portada ? user.getPortada() : user.getFoto();
+        if (portada) user.setPortada(null); else user.setFoto(null);
+        try { repository.save(user); }
+        catch (RuntimeException e) {
+            if (portada) user.setPortada(previous); else user.setFoto(previous);
+            throw e;
+        }
         borrarArchivoAnterior(previous);
     }
 
     private void borrarArchivoAnterior(String url) {
-        if (url == null || !url.startsWith("/uploads/empresas/empresa_")) return;
+        if (url == null || !(url.startsWith("/uploads/empresas/empresa_") || url.startsWith("/uploads/empresas/portada_empresa_"))) return;
         Path file = directory.resolve(url.substring("/uploads/empresas/".length())).normalize();
         if (!directory.equals(file.getParent())) return;
         try { Files.deleteIfExists(file); }

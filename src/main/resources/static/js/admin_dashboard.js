@@ -85,205 +85,97 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    function cssVar(name, fallback) {
-        const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-        return v || fallback;
-    }
-
-    function hexToRgba(hex, alpha) {
-        const h = hex.replace("#", "");
-        if (h.length !== 6) return hex;
-        const n = parseInt(h, 16);
-        return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha})`;
-    }
-
-    function palette() {
-        return {
-            primary: cssVar("--morado-c", "#8e22bb"),
-            ok:      cssVar("--pc-ok", "#1f8f62"),
-            text:    cssVar("--gris-o", "#51465a"),
-            grid:    cssVar("--pc-line", "#ece4f1")
-        };
-    }
-
-    const meses        = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
-    const currentMonth = new Date().getMonth();
-    const labels       = meses.slice(0, currentMonth + 1);
-    const rawData      = window.registrosPorMesData || {};
-
-    function buildDataset(tipo) {
-        if (rawData[tipo] && Array.isArray(rawData[tipo])) {
-            return rawData[tipo].slice(0, currentMonth + 1);
-        }
-        return new Array(currentMonth + 1).fill(0);
-    }
-
-    const dsEmpresas    = buildDataset("empresa");
-    const dsPostulantes = buildDataset("postulante");
-    const dsTodos       = dsEmpresas.map((v, i) => v + (dsPostulantes[i] || 0));
-
-    let lineChart = null;
-    let barChart  = null;
-
-    const lineCanvas = document.getElementById("lineChart");
-
-    if (lineCanvas && typeof Chart !== "undefined") {
-        const c = palette();
-
-        lineChart = new Chart(lineCanvas.getContext("2d"), {
-            type: "line",
-            data: {
-                labels,
-                datasets: [{
-                    label: "Usuarios",
-                    data: dsTodos,
-                    borderColor: c.primary,
-                    backgroundColor: hexToRgba(c.primary, 0.12),
-                    borderWidth: 2.5,
-                    pointBackgroundColor: c.primary,
-                    pointRadius: 4,
-                    pointHoverRadius: 6,
-                    tension: 0.4,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    x: {
-                        grid: { display: false },
-                        ticks: { font: { size: 12 }, color: c.text }
-                    },
-                    y: {
-                        grid: { color: c.grid },
-                        ticks: { font: { size: 12 }, color: c.text, stepSize: 1 },
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-
-        document.querySelectorAll(".chart-tabs__btn").forEach(btn => {
-            btn.addEventListener("click", () => {
-                document.querySelectorAll(".chart-tabs__btn").forEach(b => b.classList.remove("active"));
-                btn.classList.add("active");
-
-                const dataMap = {
-                    empresa:    dsEmpresas,
-                    postulante: dsPostulantes,
-                    todos:      dsTodos
-                };
-
-                lineChart.data.datasets[0].data = dataMap[btn.dataset.filter] || dsTodos;
-                lineChart.update();
-            });
-        });
-    }
-
-    const barCanvas = document.getElementById("barChart");
-
-    if (barCanvas && typeof Chart !== "undefined") {
-        const c = palette();
-
-        barChart = new Chart(barCanvas.getContext("2d"), {
-            type: "bar",
-            data: {
-                labels,
-                datasets: [
-                    {
-                        label: "Empresas",
-                        data: dsEmpresas,
-                        backgroundColor: hexToRgba(c.primary, 0.85),
-                        borderRadius: 8,
-                        barPercentage: 0.6
-                    },
-                    {
-                        label: "Postulantes",
-                        data: dsPostulantes,
-                        backgroundColor: hexToRgba(c.ok, 0.8),
-                        borderRadius: 8,
-                        barPercentage: 0.6
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: "top",
-                        labels: {
-                            font: { size: 12 },
-                            color: c.text,
-                            boxWidth: 10,
-                            boxHeight: 10,
-                            usePointStyle: true
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: { display: false },
-                        ticks: { font: { size: 11 }, color: c.text }
-                    },
-                    y: {
-                        grid: { color: c.grid },
-                        ticks: { font: { size: 11 }, color: c.text, stepSize: 1 },
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    }
-
-    /* ── Al cambiar entre modo claro / oscuro, repintar las gráficas ── */
-    function repintarGraficas() {
-        const c = palette();
-
-        if (lineChart) {
-            const ds = lineChart.data.datasets[0];
-            ds.borderColor = c.primary;
-            ds.pointBackgroundColor = c.primary;
-            ds.backgroundColor = hexToRgba(c.primary, 0.12);
-            lineChart.options.scales.x.ticks.color = c.text;
-            lineChart.options.scales.y.ticks.color = c.text;
-            lineChart.options.scales.y.grid.color  = c.grid;
-            lineChart.update();
-        }
-
-        if (barChart) {
-            barChart.data.datasets[0].backgroundColor = hexToRgba(c.primary, 0.85);
-            barChart.data.datasets[1].backgroundColor = hexToRgba(c.ok, 0.8);
-            barChart.options.plugins.legend.labels.color = c.text;
-            barChart.options.scales.x.ticks.color = c.text;
-            barChart.options.scales.y.ticks.color = c.text;
-            barChart.options.scales.y.grid.color  = c.grid;
-            barChart.update();
-        }
-    }
-
-    document.addEventListener("click", (e) => {
-        if (e.target.closest && e.target.closest("[data-theme-toggle]")) {
-            // theme.js cambia el atributo en el mismo evento; esperamos un instante
-            setTimeout(repintarGraficas, 50);
-        }
+    const source = window.adminDashboardData || { registros: {}, estados: {}, year: new Date().getFullYear(), month: 1 };
+    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    const period = document.getElementById('chartPeriod');
+    const table = document.getElementById('registrationsData');
+    const registrationEmpty = document.getElementById('registrationEmpty');
+    const vacancyEmpty = document.getElementById('vacancyEmpty');
+    if (!period || !table) return;
+    const reducedMotion = () => document.documentElement.hasAttribute('data-reduce-motion') || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const colors = () => {
+        const style = getComputedStyle(document.documentElement);
+        return { text: style.getPropertyValue('--gris-o').trim() || '#51465a', grid: style.getPropertyValue('--pc-line').trim() || '#ece4f1', purple: style.getPropertyValue('--morado-c').trim() || '#8e22bb' };
+    };
+    const count = value => Math.max(0, Number(value) || 0);
+    const states = ['ACTIVA', 'PENDIENTE', 'CERRADA'];
+    const stateLabels = ['Activas', 'Pendientes', 'Cerradas'];
+    const stateColors = ['#24b88b', '#e9a23b', '#a98aba'];
+    const stateCounts = states.map(state => count(source.estados[state]));
+    const total = stateCounts.reduce((sum, value) => sum + value, 0);
+    const legend = document.getElementById('vacancyLegend');
+    stateCounts.forEach((value, index) => {
+        const item = document.createElement('li');
+        const label = document.createElement('span');
+        const dot = document.createElement('i'); dot.style.backgroundColor = stateColors[index];
+        label.append(dot, stateLabels[index]);
+        const number = document.createElement('strong'); number.textContent = value + ' · ' + (total ? (value / total * 100).toFixed(1) : '0') + '%';
+        item.append(label, number); legend.append(item);
     });
-
-    document.querySelectorAll(".filter-tabs__btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-            document.querySelectorAll(".filter-tabs__btn").forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-
-            const tab = btn.dataset.tab;
-
-            document.querySelectorAll("#registrosMesList .user-item").forEach(item => {
-                const tipo    = (item.dataset.tipo || "").toLowerCase();
-                const visible = tab === "todos" || tipo.includes(tab);
-                item.style.display = visible ? "flex" : "none";
-            });
+    vacancyEmpty.hidden = total > 0;
+    document.getElementById('vacancyChart').parentElement.hidden = !total;
+    let line, donut;
+    if (typeof Chart !== 'undefined') {
+        const palette = colors();
+        const options = { responsive: true, maintainAspectRatio: false, animation: reducedMotion() ? false : { duration: 450 }, plugins: { legend: { display: false } } };
+        line = new Chart(document.getElementById('lineChart'), {
+            type: 'line',
+            data: { labels: [], datasets: [
+                { label: 'Empresas', data: [], borderColor: palette.purple, backgroundColor: palette.purple + '16', fill: true, tension: .25, pointRadius: 2, pointHoverRadius: 5, borderWidth: 2.5 },
+                { label: 'Postulantes', data: [], borderColor: '#329ad6', backgroundColor: '#329ad610', fill: true, tension: .25, pointRadius: 2, pointHoverRadius: 5, borderWidth: 2.5 }
+            ] },
+            options: { ...options, interaction: { mode: 'index', intersect: false }, scales: {
+                x: { grid: { display: false }, ticks: { color: palette.text } },
+                y: { beginAtZero: true, ticks: { precision: 0, color: palette.text }, grid: { color: palette.grid } }
+            } }
         });
+        donut = new Chart(document.getElementById('vacancyChart'), {
+            type: 'doughnut', data: { labels: stateLabels, datasets: [{ data: stateCounts, backgroundColor: stateColors, borderWidth: 0, hoverOffset: 5, spacing: 4, borderRadius: 7 }] },
+            options: { ...options, cutout: '76%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: context => context.label + ': ' + context.raw + ' (' + (total ? (context.raw / total * 100).toFixed(1) : 0) + '%)' } } } }
+        });
+    } else {
+        document.querySelector('[data-registration-chart]').hidden = true;
+        document.getElementById('vacancyChart').parentElement.hidden = true;
+        document.querySelector('.overview-data').open = true;
+    }
+    function rows() {
+        const end = Math.min(12, Math.max(1, source.month));
+        const start = Math.max(0, end - Number(period.value));
+        return Array.from({ length: end - start }, (_, offset) => {
+            const index = start + offset;
+            return { month: months[index], date: source.year + '-' + String(index + 1).padStart(2, '0'), empresa: count(source.registros.empresa?.[index]), postulante: count(source.registros.postulante?.[index]) };
+        });
+    }
+    function render() {
+        const data = rows(); table.replaceChildren();
+        data.forEach(row => {
+            const tr = document.createElement('tr');
+            [row.month + ' ' + source.year, row.empresa, row.postulante].forEach(value => { const td = document.createElement('td'); td.textContent = value; tr.append(td); });
+            table.append(tr);
+        });
+        registrationEmpty.hidden = data.some(row => row.empresa || row.postulante);
+        if (line) {
+            line.data.labels = data.map(row => row.month);
+            line.data.datasets[0].data = data.map(row => row.empresa);
+            line.data.datasets[1].data = data.map(row => row.postulante);
+            line.update();
+        }
+    }
+    period.addEventListener('change', render); render();
+    document.getElementById('downloadChart').addEventListener('click', () => {
+        const csv = ['Mes,Empresas,Postulantes', ...rows().map(row => [row.date, row.empresa, row.postulante].join(','))].join('\r\n');
+        const url = URL.createObjectURL(new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' }));
+        const link = document.createElement('a'); link.href = url; link.download = 'hireconnect-registros-' + source.year + '.csv';
+        document.body.append(link); link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 1000);
     });
+    new MutationObserver(() => {
+        if (!line) return;
+        const palette = colors();
+        line.data.datasets[0].borderColor = palette.purple;
+        line.data.datasets[0].backgroundColor = palette.purple + '16';
+        line.options.scales.x.ticks.color = line.options.scales.y.ticks.color = palette.text;
+        line.options.scales.y.grid.color = palette.grid;
+        line.options.animation = donut.options.animation = reducedMotion() ? false : { duration: 450 };
+        line.update('none'); donut.update('none');
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'data-reduce-motion'] });
 });

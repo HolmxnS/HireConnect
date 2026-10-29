@@ -69,23 +69,27 @@ public class AdminController {
 
     @GetMapping("/dashboard")
     public String dashboard(Model model, Authentication auth) {
-        Long totalEmpresas = empresaService.contarEmpresas();
-        Long totalPostulantes = postulanteService.contarPostulantes();
-        Long totalVacantes = vacanteService.contarVacantes();
-        Long postulacionesHoy = postulacionService.contarPostulacionesDeHoy();
-
         model.addAttribute("activeMenu", "home");
-        model.addAttribute("empresas", totalEmpresas);
-        model.addAttribute("postulantes", totalPostulantes);
-        model.addAttribute("vacantes", totalVacantes);
-        model.addAttribute("postulacionesHoy", postulacionesHoy);
-
-        List<RegistroMensualDTO> registrosMes = registroMensualService.registrosDelMes();
-        model.addAttribute("registrosMes", registrosMes);
-        model.addAttribute("totalRegistrosMes", registrosMes.size());
-
-        Map<String, List<Integer>> registrosPorMes = registroMensualService.registrosPorMes();
-        model.addAttribute("registrosPorMes", registrosPorMes);
+        model.addAttribute("empresas", empresaService.contarEmpresas());
+        model.addAttribute("postulantes", postulanteService.contarPostulantes());
+        List<Vacante> vacantes = vacanteService.listarTodas();
+        Map<String, Long> estados = new java.util.LinkedHashMap<>();
+        for (VacanteEstado estado : VacanteEstado.values()) {
+            estados.put(estado.name(), vacantes.stream().filter(v -> v.getEstado() == estado).count());
+        }
+        model.addAttribute("estadosVacantes", estados);
+        model.addAttribute("vacantesActivas", estados.get("ACTIVA"));
+        model.addAttribute("vacantesPendientes", estados.get("PENDIENTE"));
+        model.addAttribute("vacantesSinEstado", vacantes.stream().filter(v -> v.getEstado() == null).count());
+        model.addAttribute("proximasVacantes", vacantes.stream()
+                .filter(v -> v.getEstado() == VacanteEstado.PENDIENTE)
+                .sorted(java.util.Comparator.comparing(Vacante::getFechaInicio,
+                        java.util.Comparator.nullsLast(java.util.Comparator.naturalOrder())))
+                .limit(6).toList());
+        java.time.LocalDate hoy = java.time.LocalDate.now(java.time.ZoneId.of("America/Bogota"));
+        model.addAttribute("dashboardYear", hoy.getYear());
+        model.addAttribute("dashboardMonth", hoy.getMonthValue());
+        model.addAttribute("registrosPorMes", registroMensualService.registrosPorMes());
 
         List<Notificacion> todas = notificacionService.obtenerTodasOrdenadas();
 
@@ -102,7 +106,6 @@ public class AdminController {
             model.addAttribute("admin", admin);
         }
 
-        model.addAttribute("activeMenu", "dashboard");
         return "admin/admin_dashboard";
     }
 
@@ -297,9 +300,8 @@ public class AdminController {
     }
 
     @GetMapping("/resumen")
-    public String verResumen(Model model) {
-        model.addAttribute("activeMenu", "resumen");
-        return "admin/resumen_admin";
+    public String verResumen() {
+        return "redirect:/admin/dashboard";
     }
 
     @GetMapping("/editar")

@@ -226,12 +226,32 @@ public class EmpresaController {
 
             model.addAttribute("activeMenu", "perfil");
             model.addAttribute("empresa", empresa);
+            model.addAttribute("publicacionesEmpresa", com.project.HireConnect.service.PublicacionesSociales.mostrar(empresa.getPublicacionesSociales()));
+            model.addAttribute("empleosEmpresa", vacanteService.buscarPorEmpresa(empresa).stream()
+                    .sorted(java.util.Comparator.comparing(Vacante::getFechaPublicacion,
+                            java.util.Comparator.nullsLast(java.util.Comparator.reverseOrder()))
+                            .thenComparing(Vacante::getId, java.util.Comparator.nullsLast(java.util.Comparator.naturalOrder())))
+                    .toList());
             return "empresa/editar_perfil";
 
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error al cargar el perfil.");
             return "redirect:/empresa/home";
         }
+    }
+
+    private static String validarRedSocial(String value, String nombre, String... dominios) {
+        if (value == null || value.isBlank()) return null;
+        String url = value.trim();
+        try {
+            java.net.URI uri = java.net.URI.create(url);
+            String host = uri.getHost();
+            boolean dominioValido = host != null && java.util.Arrays.stream(dominios)
+                    .anyMatch(d -> host.equalsIgnoreCase(d) || host.toLowerCase(java.util.Locale.ROOT).endsWith("." + d));
+            if (url.length() <= 2048 && "https".equalsIgnoreCase(uri.getScheme()) && dominioValido
+                    && uri.getUserInfo() == null && (uri.getPort() == -1 || uri.getPort() == 443)) return url;
+        } catch (IllegalArgumentException ignored) { }
+        throw new IllegalArgumentException("El enlace de " + nombre + " debe empezar por https:// y pertenecer a esa red social.");
     }
 
     @PostMapping("/guardar-perfil")
@@ -250,6 +270,7 @@ public class EmpresaController {
             empresaForm.setId(oldEmpresa.getId());
             empresaForm.setEmail(oldEmpresa.getEmail());
             empresaForm.setRol(oldEmpresa.getRol());
+            empresaForm.setPortada(oldEmpresa.getPortada());
 
             if (empresaForm.getPassword() == null || empresaForm.getPassword().isEmpty()) {
                 empresaForm.setPassword(oldEmpresa.getPassword());
@@ -258,6 +279,11 @@ public class EmpresaController {
                 empresaForm.setPassword(oldEmpresa.getPassword());
             }
 
+            empresaForm.setPublicacionesSociales(com.project.HireConnect.service.PublicacionesSociales.normalizar(empresaForm.getPublicacionesSociales()));
+            empresaForm.setThreads(validarRedSocial(empresaForm.getThreads(), "Threads", "threads.com", "threads.net"));
+            empresaForm.setInstagram(validarRedSocial(empresaForm.getInstagram(), "Instagram", "instagram.com"));
+            empresaForm.setFacebook(validarRedSocial(empresaForm.getFacebook(), "Facebook", "facebook.com"));
+            empresaForm.setX(validarRedSocial(empresaForm.getX(), "X", "x.com", "twitter.com"));
             empresaService.guardar(empresaForm);
 
             redirectAttributes.addFlashAttribute("success", "Perfil de la empresa actualizado exitosamente.");
@@ -335,6 +361,11 @@ public class EmpresaController {
         datos.put("sector", p.getSector());
         datos.put("ubicacion", p.getUbicacion());
         datos.put("website", p.getWebsite());
+        datos.put("threads", p.getThreads());
+        datos.put("publicacionesSociales", p.getPublicacionesSociales());
+        datos.put("instagram", p.getInstagram());
+        datos.put("facebook", p.getFacebook());
+        datos.put("x", p.getX());
         datos.put("descripcion", p.getDescripcion());
         datos.put("fechaRegistro", p.getFechaRegistro());
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)

@@ -52,18 +52,19 @@ public class RegistroMensualService {
         }
 
         public Map<String, List<Integer>> registrosPorMes() {
+                java.time.LocalDate hoy = java.time.LocalDate.now(java.time.ZoneId.of("America/Bogota"));
                 List<Integer> empresa = new ArrayList<>(java.util.Collections.nCopies(12, 0));
                 List<Integer> postulante = new ArrayList<>(java.util.Collections.nCopies(12, 0));
 
                 empresaRepo.findAll().forEach(e -> {
-                        if (e.getFechaRegistro() != null) {
+                        if (e.getFechaRegistro() != null && e.getFechaRegistro().getYear() == hoy.getYear() && !e.getFechaRegistro().isAfter(hoy)) {
                                 int mes = e.getFechaRegistro().getMonthValue() - 1; // 0-indexado
                                 empresa.set(mes, empresa.get(mes) + 1);
                         }
                 });
 
                 postulanteRepo.findAll().forEach(p -> {
-                        if (p.getFechaRegistro() != null) {
+                        if (p.getFechaRegistro() != null && p.getFechaRegistro().getYear() == hoy.getYear() && !p.getFechaRegistro().isAfter(hoy)) {
                                 int mes = p.getFechaRegistro().getMonthValue() - 1;
                                 postulante.set(mes, postulante.get(mes) + 1);
                         }

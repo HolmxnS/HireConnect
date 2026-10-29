@@ -27,23 +27,64 @@
         <p th:if="${success}" th:text="${success}" class="settings-notice" role="status"></p>
         <p th:if="${error}" th:text="${error}" class="settings-notice settings-notice--error" role="alert"></p>
       <section class="profile-hero" aria-label="Mi perfil">
-        <div class="profile-hero__cover" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="profile-hero__cover" data-company-cover th:data-cover-url="@{/empresa/portada}">
+          <img th:if="${not #strings.isEmpty(empresa.portada)}" th:src="${empresa.portada}" alt="Portada de la empresa" data-cover-image />
+          <div class="company-cover-actions"><button type="button" data-cover-choose><i class="fa-solid fa-camera" aria-hidden="true"></i> <span data-cover-label th:text="${#strings.isEmpty(empresa.portada) ? 'Subir portada' : 'Cambiar portada'}"></span></button><button type="button" data-cover-remove th:hidden="${#strings.isEmpty(empresa.portada)}">Quitar</button></div>
+          <input type="file" accept="image/jpeg,image/png" data-cover-input hidden />
+        </div>
         <div class="profile-hero__body">
           <button type="button" class="profile-avatar-large" id="profileAvatarClickArea" aria-label="Cambiar foto de perfil">
             <img th:if="${not #strings.isEmpty(empresa.foto)}" th:src="${empresa.foto}" alt="" id="profileImage" />
-            <span th:if="${#strings.isEmpty(empresa.foto)}" class="photo-placeholder"><i class="fa-solid fa-user" aria-hidden="true"></i></span>
+            <span th:if="${#strings.isEmpty(empresa.foto)}" class="photo-placeholder"><i class="fa-solid fa-building" aria-hidden="true"></i></span>
             <span class="upload-overlay" aria-hidden="true"><i class="fa-solid fa-camera"></i></span>
           </button>
           <form th:action="@{/empresa/subirFoto(id=${empresa.id})}" method="post" enctype="multipart/form-data" id="fotoUploadForm" th:data-photo-url="@{/empresa/foto}" hidden><input type="file" name="file" accept="image/jpeg,image/png" id="fileInput" aria-label="Foto de perfil" /></form>
-          <div class="profile-hero__identity"><h1 th:text="${empresa.nombreLegal}"></h1><p class="profile-hero__title" th:text="${#strings.isEmpty(empresa.sector) ? 'Empresa' : empresa.sector}"></p><p class="profile-hero__email" th:text="${empresa.email}"></p></div>
-          <div class="profile-hero__actions"><button type="button" class="profile-delete-photo" data-photo-remove th:hidden="${#strings.isEmpty(empresa.foto)}">Quitar foto</button></div>
+          <div class="profile-hero__identity"><h1 th:text="${empresa.nombreLegal}"></h1><p class="profile-hero__title" th:text="${#strings.isEmpty(empresa.sector) ? 'Empresa' : empresa.sector}"></p><p class="company-profile-meta"><span th:if="${not #strings.isEmpty(empresa.ubicacion)}" th:text="${empresa.ubicacion}"></span><span><strong th:text="${#lists.size(empleosEmpresa)}">0</strong> empleos publicados</span></p></div>
+          <div class="profile-hero__actions"><button type="button" class="profile-edit-button" data-company-edit aria-controls="company-edit-form" aria-expanded="false"><i class="fa-solid fa-pen" aria-hidden="true"></i> Editar perfil</button><button type="button" class="profile-delete-photo" data-photo-remove th:hidden="${#strings.isEmpty(empresa.foto)}">Quitar foto</button></div>
         </div>
       </section>
       <p class="profile-photo-feedback" data-photo-feedback role="status" aria-live="polite" hidden></p>
-        <div class="profile profile-section">
+        <p class="company-cover-feedback" data-cover-feedback role="status" aria-live="polite" hidden></p>
+        <nav class="profile-tabs company-profile-tabs" aria-label="Secciones del perfil" data-company-tabs>
+          <button type="button" class="profile-tab profile-tab--active" data-company-tab="company-info">Información</button>
+          <button type="button" class="profile-tab" data-company-tab="company-jobs">Empleos <span class="company-jobs-count" th:text="${#lists.size(empleosEmpresa)}">0</span></button>
+        </nav>
+        <div class="profile profile-section" id="company-info">
             <div class="profile__container">
-                <h3>Información de la empresa</h3>
-                <div class="profile__field">
+              <div class="company-about" data-company-read>
+                <div class="company-about__story"><p th:if="${not #strings.isEmpty(empresa.descripcion)}" th:text="${empresa.descripcion}"></p><p th:if="${#strings.isEmpty(empresa.descripcion)}" class="company-about__empty">Añade una descripción para presentar tu empresa.</p></div>
+                <section class="company-social" aria-label="Enlaces de la empresa">
+                  <div class="company-social__links" th:if="${not #strings.isEmpty(empresa.threads) or not #strings.isEmpty(empresa.instagram) or not #strings.isEmpty(empresa.facebook) or not #strings.isEmpty(empresa.x)}">
+                    <a th:if="${not #strings.isEmpty(empresa.threads)}" th:href="${empresa.threads}" target="_blank" rel="noopener noreferrer" aria-label="Threads de la empresa (abre otra pestaña)"><i class="fa-brands fa-threads" aria-hidden="true"></i> Threads</a>
+                    <a th:if="${not #strings.isEmpty(empresa.instagram)}" th:href="${empresa.instagram}" target="_blank" rel="noopener noreferrer" aria-label="Instagram de la empresa (abre otra pestaña)"><i class="fa-brands fa-instagram" aria-hidden="true"></i> Instagram</a>
+                    <a th:if="${not #strings.isEmpty(empresa.facebook)}" th:href="${empresa.facebook}" target="_blank" rel="noopener noreferrer" aria-label="Facebook de la empresa (abre otra pestaña)"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i> Facebook</a>
+                    <a th:if="${not #strings.isEmpty(empresa.x)}" th:href="${empresa.x}" target="_blank" rel="noopener noreferrer" aria-label="X de la empresa (abre otra pestaña)"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i> X</a>
+                  </div>
+                  <p class="company-social__empty" th:unless="${not #strings.isEmpty(empresa.threads) or not #strings.isEmpty(empresa.instagram) or not #strings.isEmpty(empresa.facebook) or not #strings.isEmpty(empresa.x)}">Añade tus redes desde Editar perfil.</p>
+                </section>
+                <dl class="company-about__details">
+                  <div><dt>Sector</dt><dd th:text="${#strings.isEmpty(empresa.sector) ? 'Sin especificar' : empresa.sector}"></dd></div>
+                  <div><dt>Ubicación</dt><dd th:text="${#strings.isEmpty(empresa.ubicacion) ? 'Sin especificar' : empresa.ubicacion}"></dd></div>
+                  <div><dt>Sitio web</dt><dd th:text="${#strings.isEmpty(empresa.website) ? 'Sin especificar' : empresa.website}"></dd></div>
+                  <div><dt>Correo</dt><dd th:text="${empresa.email}"></dd></div>
+                  <div><dt>Teléfono</dt><dd th:text="${#strings.isEmpty(empresa.telefono) ? 'Sin especificar' : empresa.telefono}"></dd></div>
+                  <div><dt>RUT / NIT</dt><dd th:text="${empresa.rut}"></dd></div>
+                </dl>
+                <section class="company-posts" aria-labelledby="company-posts-title" th:if="${(not #strings.isEmpty(empresa.threads) or not #strings.isEmpty(empresa.instagram) or not #strings.isEmpty(empresa.facebook) or not #strings.isEmpty(empresa.x)) and not #lists.isEmpty(publicacionesEmpresa)}">
+                  <div class="company-posts__heading"><h2 id="company-posts-title">Publicaciones</h2><p>Una mirada a lo que compartimos.</p></div>
+                  <div class="company-posts__list" th:if="${not #lists.isEmpty(publicacionesEmpresa)}">
+                    <article class="company-post" th:each="publicacion : ${publicacionesEmpresa}" th:data-social-network="${publicacion.red}" th:data-social-url="${publicacion.url}">
+                      <span class="company-post__network" th:text="${publicacion.red}"></span>
+                      <div data-social-embed></div>
+                      <a th:href="${publicacion.url}" target="_blank" rel="noopener noreferrer" th:text="${'Ver publicación en ' + publicacion.red}"></a>
+                    </article>
+                  </div>
+                  <div class="company-posts__more" th:if="${#lists.size(publicacionesEmpresa) > 5}"><button type="button" class="profile-edit-button" data-social-more hidden>Ver más publicaciones</button></div>
+                  <p class="company-posts__note" th:unless="${#lists.isEmpty(publicacionesEmpresa)}">Si una publicación no se muestra aquí, puedes abrirla en su red social.</p>
+                </section>
+              </div>
+                <div class="profile__field" id="company-edit-form" hidden>
+                    <div class="company-edit-heading"><h2>Editar información</h2><button type="button" data-company-edit-cancel>Cancelar</button></div>
                     <form th:action="@{/empresa/guardar-perfil}" th:object="${empresa}" method="post"
                         enctype="multipart/form-data" id="empresaForm">
                         <div class="form">
@@ -94,6 +135,13 @@
                                 <p class="error" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}">
                                 </p>
                             </div>
+                            <div class="form__field full-width company-social__form-title"><p>Opcionales. Pega el enlace completo de cada perfil.</p></div>
+                            <div class="form__field"><label for="threads">Threads</label><input type="url" th:field="*{threads}" id="threads" maxlength="2048" placeholder="https://www.threads.com/@tuempresa" /></div>
+                            <div class="form__field"><label for="instagram">Instagram</label><input type="url" th:field="*{instagram}" id="instagram" maxlength="2048" placeholder="https://www.instagram.com/tuempresa" /></div>
+                            <div class="form__field"><label for="facebook">Facebook</label><input type="url" th:field="*{facebook}" id="facebook" maxlength="2048" placeholder="https://www.facebook.com/tuempresa" /></div>
+                            <div class="form__field"><label for="x">X (Twitter)</label><input type="url" th:field="*{x}" id="x" maxlength="2048" placeholder="https://x.com/tuempresa" /></div>
+                            <div class="form__field full-width company-social__form-title"><h3>Publicaciones destacadas</h3><p>Añade hasta 6 enlaces de publicaciones públicas de Instagram, Threads, Facebook o X. Deja el campo vacío para quitar una publicación.</p></div>
+                            <div class="form__field" th:each="indice : ${#numbers.sequence(0, 5)}"><label th:for="${'social-post-' + indice}" th:text="${'Publicación ' + (indice + 1)}"></label><input type="url" name="publicacionesSociales" th:id="${'social-post-' + indice}" th:value="${empresa.publicacionesSociales != null and #lists.size(empresa.publicacionesSociales) > indice ? empresa.publicacionesSociales[indice] : ''}" maxlength="2048" placeholder="https://…" /></div>
                             <div class="form__actions">
                                 <button type="submit" form="empresaForm" class="save">Guardar Cambios</button>
                             </div>
@@ -102,6 +150,21 @@
                 </div>
             </div>
         </div>
+
+        <section class="company-jobs" id="company-jobs" aria-labelledby="company-jobs-title">
+          <div class="company-jobs__heading"><div><h2 id="company-jobs-title">Empleos</h2><p>Las vacantes más recientes de tu empresa.</p></div><a class="profile-edit-button" th:href="@{/empresa/vacantes/nueva}"><i class="fa-solid fa-plus" aria-hidden="true"></i> Publicar vacante</a></div>
+          <div class="company-jobs__empty" th:if="${#lists.isEmpty(empleosEmpresa)}"><i class="fa-solid fa-briefcase" aria-hidden="true"></i><h3>Aún no has publicado vacantes</h3><p>Cuando publiques una, aparecerá aquí.</p></div>
+          <div class="company-jobs__list" id="company-jobs-list" th:unless="${#lists.isEmpty(empleosEmpresa)}">
+            <article class="company-job" data-company-job th:each="empleo : ${empleosEmpresa}">
+              <div class="company-job__top"><span class="company-job__icon"><i class="fa-solid fa-briefcase" aria-hidden="true"></i></span><span class="company-job__state" th:classappend="${empleo.estado != null ? 'company-job__state--' + #strings.toLowerCase(empleo.estado.name()) : ''}" th:text="${empleo.estado != null ? (empleo.estado.name() == 'ACTIVA' ? 'Activa' : (empleo.estado.name() == 'CERRADA' ? 'Cerrada' : 'Pendiente')) : 'Sin estado'}"></span></div>
+              <h3><a th:href="@{/empresa/vacante/{id}(id=${empleo.id})}" th:text="${empleo.titulo}"></a></h3>
+              <div class="company-job__tags"><span th:if="${empleo.modalidad != null}" th:text="${empleo.modalidad.descripcion}"></span><span th:if="${empleo.tipoContrato != null}" th:text="${empleo.tipoContrato.descripcion}"></span></div>
+              <p class="company-job__description" th:if="${not #strings.isEmpty(empleo.descripcion)}" th:text="${empleo.descripcion}"></p>
+              <div class="company-job__footer"><span th:if="${empleo.fechaPublicacion != null}" th:text="${#temporals.format(empleo.fechaPublicacion, 'dd MMM yyyy')}"></span><a th:href="@{/empresa/vacante/{id}(id=${empleo.id})}" th:attr="aria-label=${'Ver vacante ' + empleo.titulo}">Ver vacante <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></div>
+            </article>
+          </div>
+          <div class="company-jobs__more" th:unless="${#lists.isEmpty(empleosEmpresa)}"><p data-jobs-progress role="status" aria-live="polite"></p><button type="button" class="profile-edit-button" data-jobs-more aria-controls="company-jobs-list" hidden>Ver más empleos</button></div>
+        </section>
 
     </main>
 
@@ -114,7 +177,11 @@
       <p data-photo-editor-message role="status" aria-live="polite"></p>
       <div class="profile-photo-dialog__actions"><button type="button" data-photo-cancel>Cancelar</button><button type="button" class="profile-edit-button" data-photo-save>Guardar foto</button></div>
     </dialog>
+    <dialog class="company-cover-dialog" aria-labelledby="cover-dialog-title"><h2 id="cover-dialog-title">Ajusta tu portada</h2><p>JPG o PNG de hasta 5 MB. Recomendado: 1600 × 400 px.</p><canvas width="1600" height="400" data-cover-preview aria-label="Vista previa de la portada"></canvas><label for="coverZoom">Zoom</label><input id="coverZoom" type="range" min="1" max="3" step="0.01" value="1" /><label for="coverPosition">Posición vertical</label><input id="coverPosition" type="range" min="0" max="1" step="0.01" value="0.5" /><p data-cover-message role="status" aria-live="polite"></p><div class="company-cover-dialog__actions"><button type="button" data-cover-cancel>Cancelar</button><button type="button" class="profile-edit-button" data-cover-save>Guardar portada</button></div></dialog>
+    <script th:src="@{/js/empresa_portada.js}" defer></script>
     <script th:src="@{/js/perfil_foto.js}" defer></script>
+    <script th:src="@{/js/empresa_perfil.js}" defer></script>
+    <script th:src="@{/js/empresa_publicaciones.js}" defer></script>
 
 
 </body>

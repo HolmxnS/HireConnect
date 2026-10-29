@@ -69,6 +69,12 @@ public class Empresa {
     private String sector;
 
     private String foto;
+    private String portada;
+    private List<String> publicacionesSociales = new ArrayList<>();
+    private String threads;
+    private String instagram;
+    private String facebook;
+    private String x;
 
     @Field("fechaRegistro")
     private LocalDate fechaRegistro = LocalDate.now();
