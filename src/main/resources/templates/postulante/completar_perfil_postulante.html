@@ -21,14 +21,12 @@
                     <h2 class="register__title">Completa tu perfil</h2>
                     <p class="register__subtitle">Para continuar, necesitamos esta información</p>
 
-                    <!-- Mensajes de éxito/error -->
                     <div th:if="${exito}" class="alert alert-success" th:text="${exito}"></div>
                     <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
 
                     <form class="register__form" th:action="@{/postulante/completar_perfil_postulante}" 
                           th:object="${postulante}" method="post" novalidate>
 
-                        <!-- Tipo de documento -->
                         <div class="form-group">
                             <label>Tipo de documento</label>
                             <div class="select-wrapper">
@@ -44,7 +42,6 @@
                                th:text="${#fields.errors('tipoDocumento')[0]}"></p>
                         </div>
 
-                        <!-- Identificación -->
                         <div class="form-group">
                             <label>Número de identificación</label>
                             <input type="text" th:field="*{identificacion}" 
@@ -54,7 +51,6 @@
                                th:text="${#fields.errors('identificacion')[0]}"></p>
                         </div>
 
-                        <!-- Fecha de nacimiento -->
                         <div class="form-group">
                             <label>Fecha de nacimiento</label>
                             <input type="date" th:field="*{fechaNacimiento}" required
@@ -64,7 +60,6 @@
                                th:text="${#fields.errors('fechaNacimiento')[0]}"></p>
                         </div>
 
-                        <!-- Género -->
                         <div class="form-group">
                             <label>Género</label>
                             <div class="select-wrapper">
@@ -79,7 +74,6 @@
                                th:text="${#fields.errors('genero')[0]}"></p>
                         </div>
 
-                        <!-- Teléfono -->
                         <div class="form-group">
                             <label>Teléfono</label>
                             <input type="text" th:field="*{telefono}" 

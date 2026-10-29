@@ -4,15 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--Styles-->
     <link rel="stylesheet" th:href="@{/styles/fragments/admin/sidebar.css}">
     <link rel="stylesheet" th:href="@{/styles/admin/admin_dashboard.css}">
     <link rel="stylesheet" th:href="@{/styles/admin/theme.css}">
     <script th:src="@{/js/theme.js}"></script>
-    <!--Fonts-->
     <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
     <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
-    <!--Icons-->
     <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
     <link rel="icon" type="image/svg+xml" sizes="any" th:href="@{/source/img/favicon.svg}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -27,7 +24,6 @@
 
         <div th:replace="~{fragments/admin/header_admin :: topbar('Panel de administración', 'Actividad reciente de HireConnect')}"></div>
 
-        <!-- Bienvenida -->
         <section class="hero">
             <div class="hero__text">
                 <span class="hero__eyebrow"><i class="fa-solid fa-shield-halved"></i> Panel de administración</span>
@@ -48,7 +44,6 @@
             <img class="hero__logo" th:src="@{/source/img/isotipo.png}" alt="" aria-hidden="true">
         </section>
 
-        <!-- Métricas -->
         <section class="kpis" aria-label="Métricas principales">
             <div class="kpi">
                 <span class="kpi__icon"><i class="fa-solid fa-building"></i></span>
@@ -80,7 +75,6 @@
             </div>
         </section>
 
-        <!-- Gráficas -->
         <section class="dash-grid">
             <div class="panel">
                 <div class="panel__head">
@@ -102,7 +96,6 @@
             </div>
         </section>
 
-        <!-- Últimos registros -->
         <section class="panel">
             <div class="panel__head">
                 <h2 class="panel__title"><i class="fa-solid fa-user-plus"></i> Últimos registros del mes</h2>

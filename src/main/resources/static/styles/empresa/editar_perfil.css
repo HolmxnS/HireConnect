@@ -39,7 +39,6 @@ body {
     font-family: var(--font-satoshi);
 }
 
-/*Perfil*/
 .content {
     margin-left: 28rem;
     padding: 30px;
@@ -179,7 +178,6 @@ body {
     font-size: 1.3rem;
 }
 
-/*section*/
 .form__actions button {
     background-color: var(--morado-c);
     border: none;

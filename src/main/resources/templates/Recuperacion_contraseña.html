@@ -15,13 +15,10 @@
             document.documentElement.setAttribute('data-theme', theme);
         })();
     </script>
-    <!--Styles-->
     <link rel="stylesheet" th:href="@{/styles/recover_password.css}">
-    <!--Fonts-->
     <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
     <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
     <link rel="icon" type="image/svg+xml" sizes="any" th:href="@{/source/img/favicon.svg}">
-    <!--Icons (font awesome kit)-->
     <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
     <title>Recuperar Contraseña - HireConnect</title>
     <link rel="stylesheet" th:href="@{/styles/brand.css}" />
@@ -34,7 +31,6 @@
                     <span class="hc-logo-mark" aria-hidden="true"><img th:src="@{/source/img/isotipo.png}" alt="" /></span>
         </a>
 
-        <!--Formulario-->
         <div class="recover__view" id="form-view">
             <div class="recover__intro">
                 <h1 class="recover__title">¿Olvidaste tu contraseña?</h1>
@@ -66,7 +62,6 @@
             </p>
         </div>
 
-        <!--Vista despues de enviar el enlace-->
         <div class="recover__view recover__view--success" id="success-view" hidden>
             <span class="recover__success-icon" aria-hidden="true"><i class="fa-solid fa-envelope"></i></span>
             <h2 class="recover__title">Revisa tu correo</h2>
@@ -92,11 +87,9 @@
             var email = (meta && meta.dataset.email) || '';
 
             if (emailSent) {
-                // Ocultar formulario y mostrar la vista de éxito
                 document.getElementById('form-view').hidden = true;
                 document.getElementById('success-view').hidden = false;
 
-                // Mostrar el correo del usuario
                 document.getElementById('sent-email-display').textContent = email;
             }
         })();

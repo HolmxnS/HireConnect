@@ -41,7 +41,6 @@ body {
     flex: 1;
 }
 
-/*main content*/
 .main__dashboard {
     background-color: var(--bg-card);
     border-radius: 0.5rem;
@@ -90,7 +89,6 @@ body {
     gap: 0.5rem;
 }
 
-/*Dashboard*/
 .dashboard{
     border-radius: 0.5rem;
     overflow: hidden;
@@ -140,7 +138,6 @@ body {
     font-size: 1.7rem;
 }
 
-/* Filters*/
 .dashboard__filter {
     display: flex;
     gap: 1rem;
@@ -183,7 +180,6 @@ body {
     cursor: pointer;
 }
 
-/*Vacancies*/
 .vacancies {
     display: flex;
     flex-direction: column;
@@ -230,7 +226,6 @@ body {
     color: var(--gris-c-2);
 }
 
-/* Estado*/
 .vacancy-status span {
     font-size: 1.2rem;
 }
@@ -262,7 +257,6 @@ body {
     color: #f59e0b;
 }
 
-/* Acciones */
 .vacancy-actions {
     justify-content: flex-end;
     gap: 0.75rem;

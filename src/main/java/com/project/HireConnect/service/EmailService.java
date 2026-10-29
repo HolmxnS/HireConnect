@@ -34,6 +34,7 @@ public class EmailService {
 
         MimeMessage mensaje = mailSender.createMimeMessage();
         try {
+            // Las versiones HTML y texto requieren un mensaje multipart.
             MimeMessageHelper helper = new MimeMessageHelper(mensaje, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
                     StandardCharsets.UTF_8.name());
             helper.setTo(destinatario);

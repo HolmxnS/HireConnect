@@ -25,7 +25,6 @@ public class RegistroMensualService {
         public List<RegistroMensualDTO> registrosDelMes() {
                 List<RegistroMensualDTO> registros = new ArrayList<>();
 
-                // Mapeo de Postulantes → RegistroMensualDTO
                 List<RegistroMensualDTO> postulantes = postulanteRepo.findPostulantesRegistradosMesActual()
                                 .stream()
                                 .map(p -> new RegistroMensualDTO(
@@ -36,7 +35,6 @@ public class RegistroMensualService {
                                                 p.getFoto()))
                                 .collect(Collectors.toList());
 
-                // Mapeo de Empresas → RegistroMensualDTO
                 List<RegistroMensualDTO> empresas = empresaRepo.findEmpresasRegistradasMesActual()
                                 .stream()
                                 .map(e -> new RegistroMensualDTO(

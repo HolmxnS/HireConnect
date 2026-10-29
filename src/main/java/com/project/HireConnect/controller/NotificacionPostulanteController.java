@@ -44,7 +44,8 @@ public class NotificacionPostulanteController {
 
     private NotificacionDto aDto(NotificacionPostulante n) {
         String enlace = (n.getPostulacionId() != null)
-                ? "/postulante/postulacion/detalle/" + n.getPostulacionId()
+                ? "/postulante/postulaciones?postulacion="
+                        + java.net.URLEncoder.encode(n.getPostulacionId(), java.nio.charset.StandardCharsets.UTF_8)
                 : "/postulante/postulaciones";
         return new NotificacionDto(n.getId(), n.getMensaje(), n.getEstado(),
                 n.getFecha() != null ? n.getFecha().toString() : null, n.isLeida(), enlace);

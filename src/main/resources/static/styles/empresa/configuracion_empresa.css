@@ -1,5 +1,4 @@
 :root {
-    /* Paleta base */
     --violeta: #9c4bff;
     --morado-c: #9400D3;
     --morado-o: #29003a;
@@ -36,7 +35,6 @@ body {
     font-family: var(--font-satoshi);
 }
 
-/*Main*/
 .main {
     margin-top: 2rem;
     margin-left: 24rem;
@@ -65,7 +63,6 @@ body {
     font-family: inherit;
 }
 
-/*Settings section*/
 .settings {
     width: 80%;
     height: 100%;
@@ -100,7 +97,6 @@ body {
     padding: 0 .8rem;
 }
 
-/*Settings form*/
 .form {
     display: grid;
     gap: 1.25rem;
@@ -165,7 +161,6 @@ body {
     transform: scale(0.97);
 }
 
-/*Alert error*/
 .flash-alert {
     margin-top: 2rem;
     padding: 1rem 1.25rem;
@@ -193,7 +188,6 @@ body {
     margin-top: 0.25rem;
 }
 
-/* Sección de eliminar cuenta */
 .settings--danger {
     margin-top: 4rem;
     border: 2px solid #fee2e2;
@@ -246,7 +240,6 @@ body {
     transform: scale(0.97);
 }
 
-/* Modal de eliminación */
 .modal__title--danger {
     color: var(--rojo);
     display: flex;
@@ -329,7 +322,6 @@ body {
     background-color: #991b1b;
 }
 
-/*modal*/
 .modal {
     position: fixed;
     inset: 0;

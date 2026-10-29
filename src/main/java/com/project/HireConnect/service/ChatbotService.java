@@ -38,7 +38,6 @@ public class ChatbotService {
     private final String apiKey;
     private final List<String> modelos;
 
-    // Si la clave no existe, la app ARRANCA igual y el chat avisa
     public ChatbotService(VacanteRepository vacanteRepository,
             @Value("${gemini.api.key:}") String apiKey,
             @Value("${gemini.model:gemini-3.5-flash}") String model,

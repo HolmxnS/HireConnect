@@ -56,6 +56,7 @@ public class PasswordResetService {
             throw new Exception("No existe un usuario registrado con ese correo.");
         }
         
+        // Un nuevo enlace invalida los tokens anteriores de ese correo.
         tokenRepository.deleteByEmail(email);
         
         String token = UUID.randomUUID().toString();
@@ -121,6 +122,7 @@ public class PasswordResetService {
             empresaRepository.save(e);
         }
         
+        // El enlace es de un solo uso, incluso si aún no ha vencido.
         resetToken.setUsed(true);
         tokenRepository.save(resetToken);
     }

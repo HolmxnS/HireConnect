@@ -16,7 +16,6 @@
     --white-smoke: #f6f1f9;
     --crimson: #d6314f;
 
-    /* Alias que usan las páginas existentes */
     --primary-color: var(--morado-c);
     --primary-color-hover: var(--morado-h);
     --primary: var(--morado-c);
@@ -38,7 +37,6 @@
     --color-bg-card: var(--pc-surface);
     --gris-4: var(--lila);
 
-    /* Tokens del tema */
     --pc-bg: #faf7fc;
     --pc-surface: #ffffff;
     --pc-line: #ece4f1;
@@ -56,7 +54,6 @@
     --pc-bad-bg: #fdecef;
 }
 
-/* ---------- Modo oscuro ---------- */
 :root[data-theme="dark"] {
     --morado-c: #b04ad6;
     --morado-h: #c26be3;
@@ -89,7 +86,6 @@
     color-scheme: dark;
 }
 
-/* ---------- Base ---------- */
 html { font-size: 10px; }
 
 * {
@@ -116,7 +112,6 @@ h1, h2, h3 {
 
 a { color: inherit; }
 
-/* ---------- Estructura de contenido ---------- */
 body main,
 body .main,
 body .content {
@@ -141,7 +136,6 @@ body .detalle {
     margin-inline: auto;
 }
 
-/* Títulos de página */
 .main__header h1,
 .main__dashboard-title,
 .content__title h1,
@@ -173,7 +167,6 @@ body .detalle {
     font-weight: 600;
 }
 
-/* ---------- Tarjetas y contenedores ---------- */
 .cards .card,
 .info,
 .vacancies__card,
@@ -252,7 +245,6 @@ body .detalle {
     color: var(--violeta);
 }
 
-/* ---------- Botones ---------- */
 .btn-primary,
 .main__btn-add-vacancy,
 .btn-save,
@@ -306,7 +298,6 @@ body .detalle {
     background: var(--lila);
 }
 
-/* Acciones de cada vacante */
 .btn-view,
 .btn-edit,
 .btn-close,
@@ -376,7 +367,6 @@ body .detalle {
 .modal__btn-cancel { border-radius: 99rem; }
 .modal__btn-confirm-delete { border-radius: 99rem; }
 
-/* ---------- Estados / etiquetas ---------- */
 .estado,
 .status-badge,
 .estado-badge {
@@ -420,7 +410,6 @@ body .detalle {
     border-radius: 99rem;
 }
 
-/* ---------- Pestañas del dashboard ---------- */
 .dashboard { padding: 2.4rem; }
 
 .dashboard__nav {
@@ -458,7 +447,6 @@ body .detalle {
     color: var(--negro-1);
 }
 
-/* ---------- Filtros y formularios ---------- */
 .filters .filters__input,
 .filter__input {
     background: var(--lila);
@@ -539,7 +527,6 @@ input:disabled,
 
 .card__data-value { color: var(--negro-1); }
 
-/* ---------- Alertas ---------- */
 .alert.success,
 .alert-success,
 .flash-alert.success {
@@ -558,7 +545,6 @@ input:disabled,
     border-radius: 1.2rem;
 }
 
-/* ---------- Detalles ---------- */
 .detalle-item,
 .card__data-item,
 .card__skills-container,
@@ -589,7 +575,6 @@ input:disabled,
     border: .3rem solid var(--lila);
 }
 
-/* ---------- Perfil de empresa ---------- */
 .profile-banner__background {
     background: linear-gradient(120deg, var(--morado-o) 0%, var(--morado-c) 100%);
     border-radius: var(--pc-radius);
@@ -604,7 +589,6 @@ input:disabled,
 
 .profile__container h3 { color: var(--negro-1); }
 
-/* ---------- Modales ---------- */
 .modal,
 .content-overlay {
     z-index: 100;
@@ -616,7 +600,6 @@ input:disabled,
     color: var(--negro-1);
 }
 
-/* ---------- Modo oscuro: detalles que no usan tokens ---------- */
 :root[data-theme="dark"] .vacancy-item:hover,
 :root[data-theme="dark"] .table tbody tr:hover {
     background: rgba(255, 255, 255, .04);
@@ -626,9 +609,6 @@ input:disabled,
     background: rgba(0, 0, 0, .7);
 }
 
-/* ==========================================================================
-   RESPONSIVE
-   ========================================================================== */
 
 @media (max-width: 1100px) {
     .detalle-grid,
@@ -639,7 +619,6 @@ input:disabled,
     }
 }
 
-/* Tablet: sidebar compacto de íconos */
 @media (max-width: 900px) {
     body main,
     body .main,
@@ -652,7 +631,6 @@ input:disabled,
     .vacancies { grid-template-columns: 1fr; }
 }
 
-/* Móvil: barra de navegación inferior */
 @media (max-width: 700px) {
     .sidebar {
         top: auto;
@@ -741,7 +719,6 @@ input:disabled,
         border-radius: 0 0 .4rem .4rem;
     }
 
-    /* Contenido */
     body main,
     body .main,
     body .content,
@@ -916,7 +893,6 @@ input:disabled,
         font-size: 1.9rem;
     }
 
-    /* Cerrar sesión siempre reconocible */
     .sidebar ul li a.sidebar__logout {
         color: var(--crimson);
     }

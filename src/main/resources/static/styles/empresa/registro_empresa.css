@@ -1,6 +1,4 @@
-/*Paletts and fonts*/
 :root {
-    /*Colors*/
     --morado-c: #8e22bb;
     --morado-h: #7c1da4;
     --violeta: #c780e6;
@@ -16,11 +14,9 @@
     --negro: #09080b;
     --morado-chip: #24152f;
     --rojo: #c0262d;
-    /*fonts*/
     --font-satoshi: 'Satoshi', 'Segoe UI', system-ui, sans-serif;
     --font-clash: 'ClashDisplay', 'Segoe UI', system-ui, sans-serif;
 
-    /*Tema claro (por defecto)*/
     --bg: var(--blanco);
     --fg: var(--negro-1);
     --muted: var(--gris-o);
@@ -38,7 +34,6 @@
     color-scheme: light;
 }
 
-/*Tema oscuro*/
 :root[data-theme="dark"] {
     --bg: var(--negro);
     --fg: var(--lila);
@@ -55,7 +50,6 @@
     color-scheme: dark;
 }
 
-/*Global*/
 * {
     margin: 0;
     padding: 0;
@@ -85,7 +79,6 @@ a {
     outline-offset: 0.2rem;
 }
 
-/*Registro (dos columnas: formulario | imagen)*/
 .signup {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -100,7 +93,6 @@ a {
     align-items: center;
     min-height: 0;
     padding: 2.4rem 2.4rem 2rem;
-    /*Solo hay scroll interno si la pantalla es muy baja*/
     overflow-y: auto;
 }
 
@@ -133,7 +125,6 @@ a {
     padding-block: 1.6rem;
 }
 
-/*Encabezado*/
 .signup__intro {
     margin-block: 2.4rem 2.8rem;
     text-align: center;
@@ -150,7 +141,6 @@ a {
     word-spacing: 0.1em;
 }
 
-/*Subrayado morado corto*/
 .signup__title::after {
     content: '';
     position: absolute;
@@ -169,7 +159,6 @@ a {
     color: var(--muted);
 }
 
-/*Barra de pasos: el paso actual lo marca data-step (1, 2 o 3)*/
 .stepper {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -185,7 +174,6 @@ a {
     text-align: center;
 }
 
-/*Linea que une cada paso con el anterior*/
 .stepper__step:not(:first-child)::before {
     content: '';
     position: absolute;
@@ -220,7 +208,6 @@ a {
     transition: color 0.4s ease;
 }
 
-/*Pasos alcanzados: circulo y linea moradas*/
 .stepper[data-step="1"] .stepper__step:nth-child(-n+1)::before,
 .stepper[data-step="2"] .stepper__step:nth-child(-n+2)::before,
 .stepper[data-step="3"] .stepper__step:nth-child(-n+3)::before {
@@ -235,13 +222,11 @@ a {
     border-color: var(--accent);
 }
 
-/*Pasos ya completados: nombre morado*/
 .stepper[data-step="2"] .stepper__step:nth-child(-n+1) .stepper__label,
 .stepper[data-step="3"] .stepper__step:nth-child(-n+2) .stepper__label {
     color: var(--accent-ink);
 }
 
-/*Paso actual: nombre en negrita*/
 .stepper[data-step="1"] .stepper__step:nth-child(1) .stepper__label,
 .stepper[data-step="2"] .stepper__step:nth-child(2) .stepper__label,
 .stepper[data-step="3"] .stepper__step:nth-child(3) .stepper__label {
@@ -249,7 +234,6 @@ a {
     color: var(--fg);
 }
 
-/*Formulario*/
 .form__step[hidden] {
     display: none;
 }
@@ -281,7 +265,6 @@ a {
     }
 }
 
-/*Titulo de seccion dentro del formulario*/
 .form__section {
     display: flex;
     align-items: center;
@@ -346,7 +329,6 @@ a {
     box-shadow: 0 0 0 0.3rem rgba(142, 34, 187, 0.18);
 }
 
-/*Select con flecha propia*/
 .form__select {
     position: relative;
 }
@@ -370,7 +352,6 @@ a {
     pointer-events: none;
 }
 
-/*Contraseña con boton de ojo*/
 .form__password {
     position: relative;
 }
@@ -416,7 +397,6 @@ a {
     display: grid;
 }
 
-/*Avisos del formulario*/
 .form__alert {
     display: flex;
     align-items: flex-start;
@@ -438,7 +418,6 @@ a {
     list-style: none;
 }
 
-/*Errores de validacion*/
 .form__error {
     font-size: 1.2rem;
     font-weight: 500;
@@ -474,7 +453,6 @@ a {
     transform: translateY(-0.1rem);
 }
 
-/*Pie*/
 .signup__footer {
     margin-top: 2.4rem;
     text-align: center;
@@ -494,7 +472,6 @@ a {
     color: var(--accent-ink);
 }
 
-/*Imagen decorativa*/
 .signup__art {
     position: relative;
     overflow: hidden;
@@ -511,7 +488,6 @@ a {
     image-rendering: pixelated;
 }
 
-/*Tinte morado sutil sobre el puntillado*/
 .signup__art::after {
     content: '';
     position: absolute;
@@ -521,10 +497,8 @@ a {
     pointer-events: none;
 }
 
-/*Responsive - tablet y moviles*/
 @media (max-width: 1024px) {
 
-    /*La imagen es decorativa: se oculta y el formulario ocupa todo el ancho*/
     .signup {
         grid-template-columns: 1fr;
         height: auto;
@@ -555,7 +529,6 @@ a {
         font-size: 1.1rem;
     }
 
-    /*Una sola columna*/
     .form__row {
         grid-template-columns: 1fr;
         gap: 1.6rem;

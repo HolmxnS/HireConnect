@@ -1,19 +1,5 @@
-/*
-    Layout del postulante: menu lateral plegable, tema, notificaciones y atajo de busqueda.
-    Lo carga sidebar_postulante.html, asi que no hay que incluirlo en cada pagina.
-
-    Contrato de las notificaciones (GET /postulante/notificaciones):
-    {
-        "noLeidas": 2,
-        "items": [
-            { "id": "...", "mensaje": "Tu postulación a Scrum Master cambió a Aceptada",
-              "estado": "ACEPTADA", "fecha": "2026-10-28T09:12:00", "leida": false,
-              "enlace": "/postulante/postulaciones" }
-        ]
-    }
-    POST /postulante/notificaciones/leer-todas
-    POST /postulante/notificaciones/{id}/leer
-*/
+/* La campana consulta GET /postulante/notificaciones (noLeidas, items).
+   Los POST /leer-todas y /{id}/leer, bajo esa ruta, actualizan el estado de lectura. */
 (function () {
   "use strict";
 
@@ -34,7 +20,6 @@
     }
   }
 
-  /* ---------- Menu lateral ---------- */
   var toggle = document.getElementById("sidebarToggle");
   var opener = document.getElementById("sidebarOpener");
   var overlay = document.getElementById("sidebarOverlay");
@@ -109,7 +94,6 @@
   // theme.js gestiona el tema y las etiquetas de [data-theme-toggle].
   // No registrar otro cambio aquí: un segundo listener revierte el mismo clic.
 
-  /* ---------- Notificaciones ---------- */
   var caja = document.querySelector("[data-notif]");
   var panel = null;
   var boton = null;
@@ -150,7 +134,6 @@
       return fecha.toLocaleDateString("es");
     }
 
-    // Color e icono segun el estado de la postulacion
     function tono(estado) {
       var e = String(estado || "").toLowerCase();
       if (/acept|contrat|selecc|oferta/.test(e))
@@ -235,7 +218,6 @@
           a.appendChild(punto);
         }
 
-        // Al abrirla se marca como leida (la navegacion sigue su curso)
         a.addEventListener("click", function () {
           if (n.leida || !n.id) return;
           try {
@@ -329,7 +311,6 @@
       if (document.visibilityState === "visible") cargar();
     });
 
-    // Permite que otros scripts cierren el panel
     caja.cerrarNotificaciones = cerrar;
 
     cargar();
@@ -338,7 +319,6 @@
 
   if (caja) iniciarNotificaciones(caja);
 
-  /* ---------- Atajos de teclado ---------- */
   document.addEventListener("keydown", function (e) {
     if (e.key === "Escape") {
       if (root.classList.contains("is-sidebar-open")) cerrarPanelMovil();

@@ -10,17 +10,10 @@
 </head>
 
   <body>
-    <!--
-        Barra superior del postulante.
-        Uso: <div th:replace="~{fragments/postulante/header_postulante :: menu-fragment(true)}"></div>
-        mostrarBusqueda: true en la lista de vacantes, false en el resto de paginas.
-        Requiere sidebar_postulante en la misma pagina (el JS del layout viene con el).
-    -->
+    <!-- mostrarBusqueda activa el buscador; sidebar_postulante carga el JS de este layout. -->
     <header th:fragment="menu-fragment(mostrarBusqueda)">
-      <!-- Overlay del panel -->
       <div class="filter-overlay" id="filterOverlay"></div>
 
-      <!-- Panel lateral de filtros -->
       <div class="filter-panel" id="filterPanel">
         <div class="filter-panel__header">
           <h2 class="filter-panel__title">Filtros</h2>
@@ -39,7 +32,6 @@
           th:action="@{/postulante/vacantes/listar}"
           autocomplete="off"
         >
-          <!-- Sección: Rango de Salario -->
           <div class="filter-section">
             <h3 class="filter-section__title">Rango de Salario</h3>
             <p class="filter-section__subtitle">
@@ -85,7 +77,6 @@
             </div>
           </div>
 
-          <!-- Sección: Modalidad -->
           <div class="filter-section">
             <h3 class="filter-section__title">Modalidad</h3>
             <div class="filter-cards">
@@ -152,7 +143,6 @@
             </div>
           </div>
 
-          <!-- Sección: Tipo de Contrato -->
           <div class="filter-section">
             <h3 class="filter-section__title">Tipo de contrato</h3>
             <div class="filter-chips">
@@ -201,7 +191,6 @@
             />
           </div>
 
-          <!-- Sección: Fecha de Publicación -->
           <div class="filter-section">
             <h3 class="filter-section__title">Fecha de publicación</h3>
             <div class="filter-chips">
@@ -259,10 +248,9 @@
             />
           </div>
 
-          <!-- Preserve filtro de búsqueda -->
+          <!-- Conserva la búsqueda al enviar los filtros del panel. -->
           <input type="hidden" name="filtro" th:value="${filtro}" />
 
-          <!-- Footer del panel -->
           <div class="filter-panel__footer">
             <button type="button" class="btn-clear-all" id="btnLimpiarFiltros">
               Limpiar todo
@@ -274,7 +262,6 @@
         </form>
       </div>
 
-      <!-- Barra superior -->
       <div class="header-container" th:classappend="${mostrarBusqueda} ? 'header-container--search' : ''">
         <div class="header-content">
           <div th:if="${mostrarBusqueda}" class="search-wrapper">
@@ -359,7 +346,6 @@
             </div>
           </div>
 
-          <!-- Acciones de la derecha: tema, notificaciones y perfil -->
           <div class="topbar-actions">
             <button
               type="button"
@@ -451,7 +437,6 @@
           </div>
         </div>
 
-        <!-- Chips de filtros activos (flotan debajo de la barra) -->
         <div
           th:if="${mostrarBusqueda}"
           class="active-filters"

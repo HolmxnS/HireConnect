@@ -43,7 +43,6 @@ main {
     margin-left: 26rem;
 }
 
-/*Main*/
 .content {
     flex: 1;
     overflow-y: auto;
@@ -216,7 +215,6 @@ main {
     font-size: 1.3rem;
 }
 
-/*vacantes*/
 .vacancies__title {
     font-size: 1.4rem;
 }
@@ -231,7 +229,6 @@ main {
 
 }
 
-/*Tablas*/
 .vacancies__table{
     margin-top: 2rem;
 }
@@ -267,7 +264,6 @@ main {
     color: var(--rojo-2);
 }
 
-/* ---------- Detalle de empresa / vacante ---------- */
 .detail-top {
     display: flex;
     align-items: center;
@@ -350,7 +346,6 @@ main {
 .rich-text ul { list-style: disc; padding-left: 2rem; }
 .rich-text ol { padding-left: 2rem; }
 
-/* ---------- Tablas ---------- */
 .table-panel { padding: 0; overflow: hidden; }
 
 .table-scroll { overflow-x: auto; max-height: 60rem; overflow-y: auto; }

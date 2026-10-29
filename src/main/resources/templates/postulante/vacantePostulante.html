@@ -4,16 +4,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!--Styles-->
   <link rel="stylesheet" th:href="@{/styles/fragments/postulante/header.css}">
   <link rel="stylesheet" th:href="@{/styles/fragments/postulante/sidebar.css}">
   <link rel="stylesheet" th:href="@{/styles/postulante/vacantePostulante.css}">
   <link rel="stylesheet" th:href="@{/styles/postulante/theme.css}">
   <script th:src="@{/js/theme.js}"></script>
-  <!--Fonts-->
   <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
   <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
-  <!--Icons-->
   <link rel="icon" type="image/svg+xml" sizes="any" th:href="@{/source/img/favicon.svg}">
   <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous" defer></script>
 
@@ -61,7 +58,6 @@
         th:data-fecha="${#temporals.format(vacante.fechaPublicacion, 'yyyy-MM-dd')}"
         th:data-tipo-contrato="${vacante.tipoContrato.descripcion}">
 
-        <!-- Header de la card: foto + info + fecha -->
         <div class="vacancies__header">
           <div class="vacancies__section">
             <div class="vacancies__company-photo">
@@ -80,7 +76,6 @@
             </div>
           </div>
 
-          <!-- Fecha relativa -->
           <span class="vacancies__date" th:data-fecha="${vacante.fechaPublicacion}">
           </span>
         </div>
@@ -90,12 +85,10 @@
           th:text="${vacante.modalidad.descripcion}">
         </span>
 
-        <!-- Descripción truncada -->
         <div class="vacancies__description">
           <p th:text="${vacante.descripcion}"></p>
         </div>
 
-        <!-- Info: solo salario y contrato -->
         <div class="vacancies__info">
           <p>
             <i class="fa-solid fa-file-contract"></i>
@@ -132,7 +125,6 @@
   <script th:src="@{/js/filter.js}"></script>
   <script th:src="@{/js/modal.js}"></script>
   <script th:src="@{/js/vacante_postulante.js}"></script>
-      <!-- Chat IA -->
     <div th:replace="~{fragments/postulante/chatbot :: chatbot}"></div>
 </body>
 

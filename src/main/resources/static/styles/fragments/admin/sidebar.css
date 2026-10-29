@@ -1,4 +1,3 @@
-/*Paletts and fonts*/
 :root {
     --morado-c: #8e22bb;
     --morado-h: #7c1da4;
@@ -180,7 +179,6 @@ body {
     background: var(--morado-c);
 }
 
-/* Botón de tema: muestra luna en claro y sol en oscuro */
 .sidebar ul li.sidebar__theme-item {
     margin-top: auto;
     padding-top: 1.2rem;
@@ -205,7 +203,6 @@ body {
     display: inline;
 }
 
-/* Cerrar sesión */
 .sidebar ul li:last-child {
     margin-top: .4rem;
 }
@@ -219,7 +216,6 @@ body {
     background: var(--pc-surface);
 }
 
-/* Tablet / móvil: barra compacta solo con íconos */
 @media (max-width: 900px) {
     .sidebar {
         width: 7.6rem;
@@ -250,7 +246,6 @@ body {
     }
 }
 
-/* Rail de íconos en pantallas bajas (celular en horizontal): todo cabe o hace scroll */
 @media (min-width: 701px) and (max-width: 900px) and (max-height: 620px) {
     .sidebar {
         padding: 1rem .8rem;

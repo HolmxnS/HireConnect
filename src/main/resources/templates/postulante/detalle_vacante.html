@@ -4,15 +4,12 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!--Styles-->
     <link rel="stylesheet" th:href="@{/styles/postulante/detalle_vacante.css}" />
     <link rel="stylesheet" th:href="@{/styles/fragments/postulante/sidebar.css}" />
     <link rel="stylesheet" th:href="@{/styles/postulante/theme.css}">
     <script th:src="@{/js/theme.js}"></script>
-    <!--Fonts-->
     <link rel="stylesheet" th:href="@{/styles/satoshi.css}" />
     <link rel="stylesheet" th:href="@{/styles/clash-display.css}" />
-    <!--Icons-->
     <link rel="icon" type="image/svg+xml" sizes="any" th:href="@{/source/img/favicon.svg}" />
     <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
 
@@ -26,7 +23,6 @@
     <div class="details">
         <div class="details__layout">
 
-            <!-- IZQUIERDA -->
             <div class="details__main">
 
                 <div class="details__card">
@@ -81,7 +77,6 @@
                         </div>
                     </div>
 
-                    <!-- BLOQUE DEL MODELO PREDICTIVO -->
                     <div class="details__section" th:if="${probabilidad != null and probabilidad > 0}"
                         style="background-color: #f8f5ff; border: 1.5px solid #9c4bff; padding: 1.2rem; border-radius: 12px; margin-bottom: 1.5rem;">
                         <h3
@@ -92,7 +87,6 @@
                             Probabilidad estimada de contratación: <strong th:text="${probabilidad} + '%'">0%</strong>
                         </p>
 
-                        <!-- Badges de Compatibilidad -->
                         <span th:if="${compatibilidad == 'Alta'}"
                             style="background-color: #e6f4ea; color: #137333; padding: 0.4rem 1rem; border-radius: 50px; font-weight: 600; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 0.4rem;">
                             <i class="fa-solid fa-circle-check"></i> Compatibilidad Alta
@@ -144,7 +138,6 @@
 
             </div>
 
-            <!-- DERECHA -->
             <aside class="similar-jobs">
 
                 <div class="similar-jobs__header">
@@ -196,7 +189,6 @@
 
         </div>
     </div>
-    <!-- Chat IA -->
     <div th:replace="~{fragments/postulante/chatbot :: chatbot}"></div>
 </body>
 

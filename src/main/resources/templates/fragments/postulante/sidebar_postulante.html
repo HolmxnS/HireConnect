@@ -14,11 +14,7 @@
 
 <body>
 
-    <!--
-        Menu lateral del postulante.
-        Uso: <div th:replace="~{fragments/postulante/sidebar_postulante :: sidebar ('vacantes')}"></div>
-        activeMenu acepta: vacantes | postulaciones (o mis_postulaciones) | perfil | configuracion
-    -->
+    <!-- activeMenu identifica la opción seleccionada: vacantes, postulaciones, perfil o configuracion. -->
     <th:block th:fragment="sidebar (activeMenu)">
 
         <!--Aplica el estado plegado antes de pintar para que no haya parpadeo (solo en escritorio)-->
@@ -32,7 +28,6 @@
             })();
         </script>
 
-        <!--Boton para abrir el menu en movil (en escritorio queda oculto)-->
         <button type="button" class="sidebar-opener" id="sidebarOpener" aria-label="Abrir menú" aria-controls="sidebar"
             aria-expanded="false">
             <span class="sidebar-opener__icon"><i class="fa-solid fa-bars"></i></span>

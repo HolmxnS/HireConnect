@@ -15,13 +15,10 @@
             document.documentElement.setAttribute('data-theme', theme);
         })();
     </script>
-    <!--Styles-->
     <link rel="stylesheet" th:href="@{/styles/empresa/registro_empresa.css}" />
-    <!--Fonts-->
     <link rel="stylesheet" th:href="@{/styles/satoshi.css}" />
     <link rel="stylesheet" th:href="@{/styles/clash-display.css}" />
     <link rel="icon" type="image/svg+xml" sizes="any" th:href="@{/source/img/favicon.svg}">
-    <!--Icons (font awesome kit)-->
     <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
     <title>Registro - Empresa</title>
     <link rel="stylesheet" th:href="@{/styles/brand.css}" />
@@ -30,7 +27,6 @@
 <body>
     <main class="signup">
 
-        <!--Columna del formulario-->
         <section class="signup__panel">
 
             <header class="signup__top">
@@ -41,7 +37,6 @@
 
             <div class="signup__content">
 
-                <!--Barra de pasos (el paso actual lo marca data-step; registro_postulante.js lo actualiza)-->
                 <ol class="stepper" id="stepper" aria-label="Progreso del registro"
                     th:attr="data-step=${mostrarPaso2} ? 2 : 1" data-step="1">
                     <li class="stepper__step">
@@ -68,7 +63,6 @@
 
                     <input type="hidden" id="currentStep" name="step" value="1" />
 
-                    <!--Avisos: errores del servidor (por ejemplo, no se pudo enviar el codigo) y errores de campos del paso 1 que no se ven en el paso 2-->
                     <div class="form__alert" role="alert" th:if="${error}">
                         <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
                         <p th:text="${error}">Error</p>
@@ -80,7 +74,6 @@
                         </ul>
                     </div>
 
-                    <!--Paso 1: informacion legal-->
                     <div id="step-1" class="form__step">
 
                         <div class="form__row">
@@ -122,7 +115,6 @@
                         </button>
                     </div>
 
-                    <!--Paso 2: contacto y cuenta-->
                     <div id="step-2" class="form__step" hidden>
 
                         <div class="form__row">
@@ -192,7 +184,6 @@
             </div>
         </section>
 
-        <!--Columna de la imagen (decorativa)-->
         <aside class="signup__art">
             <img class="signup__art-img" th:src="@{/source/img/login-art.png}" alt="">
         </aside>

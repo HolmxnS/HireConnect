@@ -2,9 +2,6 @@ version: "3.9"
 
 services:
 
-  # ──────────────────────────────
-  # Base de datos MongoDB
-  # ──────────────────────────────
   mongodb:
     image: mongo:7
     container_name: hireconnect-db
@@ -18,9 +15,6 @@ services:
     networks:
       - hireconnect-net
 
-  # ──────────────────────────────
-  # Aplicación Spring Boot
-  # ──────────────────────────────
   app:
     build:
       context: .

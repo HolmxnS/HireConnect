@@ -61,7 +61,6 @@
         >
       </div>
 
-      <!-- Banner de perfil -->
       <div class="profile-banner">
         <div class="profile-banner__background"></div>
         <div class="profile-banner__content">
@@ -100,7 +99,6 @@
         </div>
       </div>
 
-      <!-- ===== TABS NAV ===== -->
       <nav class="profile-tabs">
         <button class="profile-tab" data-tab="basica">
           <i class="fa-solid fa-user"></i> Información Básica
@@ -116,7 +114,6 @@
         </button>
       </nav>
 
-      <!-- ===== SECCIÓN: INFORMACIÓN BÁSICA ===== -->
       <div id="section-basica" class="profile-section profile-section--hidden">
         <div class="profile-card">
           <h5><span>Información Básica</span></h5>
@@ -234,7 +231,6 @@
           </form>
         </div>
 
-        <!-- CV dentro de Info Básica -->
         <div class="profile-card cv-section">
           <h3><i class="fa-solid fa-file-lines"></i> Currículum Vitae</h3>
           <form
@@ -271,7 +267,6 @@
         </div>
       </div>
 
-      <!-- ===== SECCIÓN: HABILIDADES ===== -->
       <div
         id="section-habilidades"
         class="profile-section profile-section--hidden"
@@ -325,7 +320,6 @@
         </div>
       </div>
 
-      <!-- ===== SECCIÓN: EDUCACIÓN ===== -->
       <div
         id="section-educacion"
         class="profile-section profile-section--hidden"
@@ -407,7 +401,6 @@
         </div>
       </div>
 
-      <!-- ===== SECCIÓN: EXPERIENCIA ===== -->
       <div
         id="section-experiencia"
         class="profile-section profile-section--hidden"
@@ -504,7 +497,6 @@
     <script th:src="@{/js/foto.js}"></script>
     <script th:src="@{/js/modal_postulante.js}"></script>
     <script th:src="@{/js/perfil_tabs.js}"></script>
-    <!-- Chat IA -->
     <div th:replace="~{fragments/postulante/chatbot :: chatbot}"></div>
   </body>
 </html>

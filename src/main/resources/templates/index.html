@@ -15,13 +15,11 @@
             document.documentElement.setAttribute('data-theme', theme);
         })();
     </script>
-    <!--Styles-->
     <link rel="stylesheet" th:href="@{/styles/style.css}">
-    <!--Fonts-->
     <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
     <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
     <link rel="icon" type="image/svg+xml" sizes="any" th:href="@{/source/img/favicon.svg}">
-    <!--Icons (font awesome kit)-->
+    <!-- Kit de Font Awesome utilizado por los iconos de la interfaz. -->
     <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
     <title>Inicio</title>
     <link rel="stylesheet" th:href="@{/styles/brand.css}" />
@@ -29,7 +27,6 @@
 
 <body>
 
-    <!--Menu-->
     <header class="menu">
         <div class="menu__container">
             <a th:href="@{/}" class="menu__logo" aria-label="HireConnect, inicio"><span class="hc-logo-mark" aria-hidden="true"><img th:src="@{/source/img/isotipo.png}" alt="" /></span><span class="hc-logo-name">Hire<span
@@ -64,7 +61,6 @@
 
     <main>
 
-        <!--Hero-->
         <section class="hero" id="inicio">
             <div class="hero__container">
                 <div class="hero__content">
@@ -96,7 +92,6 @@
             </div>
         </section>
 
-        <!--Section - Ofertas-->
         <section class="offers" id="ofertas">
             <div class="offers__container">
                 <div class="section-head">

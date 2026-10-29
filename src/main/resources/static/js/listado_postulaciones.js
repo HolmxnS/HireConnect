@@ -1,4 +1,3 @@
-// Ordenar Vacantes
 document.addEventListener("DOMContentLoaded", function () {
     const list = document.getElementById('vacantesList');
     const select = document.getElementById('sortFilterVacantes');
@@ -26,7 +25,6 @@ document.addEventListener("DOMContentLoaded", function () {
     sortVacantes();
 });
 
-// Ordenar Postulaciones
 document.addEventListener("DOMContentLoaded", function () {
     const list = document.getElementById('postulacionesList');
     const select = document.getElementById('sortFilterPostulaciones');
@@ -57,7 +55,6 @@ document.addEventListener("DOMContentLoaded", function () {
     sortPostulaciones();
 });
 
-// Filtrar Vacantes
 function filterVacantes() {
     const input = document.getElementById('searchInputVacantes');
     const filterText = input.value.toUpperCase();
@@ -71,7 +68,6 @@ function filterVacantes() {
     });
 }
 
-// Filtrar Postulantes
 function filterPostulantes() {
     const input = document.getElementById('searchInputPostulantes');
     const filterText = input ? input.value.toUpperCase() : '';

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="contenido" class="application-detail" data-application-detail
+     th:with="empresa=${vacante?.empresa},estado=${postulacion.estado != null ? postulacion.estado.name() : 'PENDIENTE'}">
+    <div class="application-detail__identity">
+        <span class="applications__logo" aria-hidden="true">
+            <img th:if="${not #strings.isEmpty(empresa?.foto)}" th:src="${empresa.foto}" alt="" />
+            <i th:unless="${not #strings.isEmpty(empresa?.foto)}" class="fa-regular fa-building"></i>
+        </span>
+        <div><h2 th:text="${vacante?.titulo ?: 'Vacante no disponible'}"></h2><p th:text="${empresa?.nombre ?: 'Empresa no disponible'}"></p></div>
+    </div>
+    <section class="application-detail__section">
+        <h3>Estado de tu candidatura</h3>
+        <span class="applications__badge" th:attr="data-state=${estado}"><span th:text="${estado == 'EN_REVISION' ? 'En revisión' : (postulacion.estado?.descripcion ?: 'Pendiente')}"></span></span>
+        <p class="application-detail__status-copy" th:switch="${estado}">
+            <span th:case="'PENDIENTE'">Tu candidatura está registrada y pendiente de revisión.</span>
+            <span th:case="'EN_REVISION'">Tu candidatura está en revisión. Te avisaremos cuando cambie su estado.</span>
+            <span th:case="'ENTREVISTA_PENDIENTE'">Tu candidatura avanzó a la etapa de entrevista. Revisa tus canales de contacto para conocer los siguientes pasos.</span>
+            <span th:case="'ACEPTADA'">La empresa aceptó tu postulación. Consulta sus indicaciones para continuar.</span>
+            <span th:case="'RECHAZADA'">Tu candidatura no continúa en este proceso. Puedes seguir explorando otras oportunidades.</span>
+        </p>
+        <p class="application-detail__date" th:if="${postulacion.fechaPostulacion != null}">Postulación enviada el <time th:datetime="${postulacion.fechaPostulacion}" th:text="${#temporals.format(postulacion.fechaPostulacion, 'dd/MM/yyyy')}"></time>.</p>
+    </section>
+    <section class="application-detail__section" th:if="${not #strings.isEmpty(postulacion.mensaje)}">
+        <h3>Información adicional</h3><p class="application-detail__message" th:text="${postulacion.mensaje}"></p>
+    </section>
+    <section class="application-detail__section" th:if="${vacante != null}">
+        <h3>Sobre la vacante</h3>
+        <dl class="application-detail__facts">
+            <div><dt>Modalidad</dt><dd th:text="${vacante.modalidad?.descripcion ?: 'No especificada'}"></dd></div>
+            <div><dt>Contrato</dt><dd th:text="${vacante.tipoContrato?.descripcion ?: 'No especificado'}"></dd></div>
+            <div><dt>Experiencia</dt><dd th:text="${vacante.experienciaRequerida?.descripcion ?: 'No especificada'}"></dd></div>
+            <div><dt>Salario</dt><dd th:text="${vacante.salario != null and vacante.salario > 0} ? ${'$' + #numbers.formatDecimal(vacante.salario, 0, 'POINT', 0, 'COMMA') + ' COP'} : 'A convenir'"></dd></div>
+        </dl>
+    </section>
+    <section class="application-detail__section" th:if="${not #strings.isEmpty(vacante?.descripcion)}">
+        <h3>Descripción</h3><p class="application-detail__description" th:text="${vacante.descripcion}"></p>
+    </section>
+    <section class="application-detail__section" th:if="${not #strings.isEmpty(vacante?.habilidadesRequeridas)}">
+        <h3>Habilidades requeridas</h3><ul class="application-detail__skills"><li th:each="habilidad : ${#strings.arraySplit(vacante.habilidadesRequeridas, ',')}" th:text="${#strings.trim(habilidad)}"></li></ul>
+    </section>
+</div>
+</body>
+</html>

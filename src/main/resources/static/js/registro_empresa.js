@@ -1,4 +1,3 @@
-/*Registro de postulante: pasos, barra de progreso y contraseñas*/
 (function () {
     'use strict';
 
@@ -30,13 +29,11 @@
         marcarPaso(1);
     }
 
-    // Animacion de salida al enviar cada paso
     form.addEventListener('submit', function () {
         var actual = stepInput.value === '2' ? step2 : step1;
         actual.classList.add('form__step--leave');
     });
 
-    // Mostrar u ocultar contraseña
     Array.prototype.forEach.call(document.querySelectorAll('[data-toggle-password]'), function (boton) {
         boton.addEventListener('click', function () {
             var input = document.getElementById(boton.getAttribute('data-toggle-password'));
@@ -49,7 +46,6 @@
         });
     });
 
-    // Aviso en vivo si las contraseñas no coinciden
     var password = document.getElementById('password');
     var confirmar = document.getElementById('confirmPassword');
     var aviso = document.querySelector('[data-match-error]');

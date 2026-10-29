@@ -60,7 +60,6 @@ public class PostulanteController {
         this.historialService = historialService;
     }
 
-    // Get Postulante
     private Optional<Postulante> getAuthenticatedPostulante(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return Optional.empty();
@@ -98,7 +97,6 @@ public class PostulanteController {
         historialService.limpiar(auth.getName());
     }
 
-    // ofertas de empleo
     @GetMapping("/vacantes")
     public String vacantesPostulantes(
             @RequestParam(value = "query", required = false) String query,
@@ -168,7 +166,6 @@ public class PostulanteController {
         return "postulante/vacantePostulante";
     }
 
-    // Ver vacante
     @GetMapping("/vacante/{id}")
     public String verDetalleVacante(@PathVariable("id") String idVacante,
             Authentication authentication,
@@ -190,10 +187,8 @@ public class PostulanteController {
 
         Vacante vacante = optVacante.get();
 
-        // PRIMERA PALABRA DEL TITULO
         String primeraPalabra = vacante.getTitulo().split(" ")[0];
 
-        // BUSCAR SIMILARES
         List<Vacante> vacantesSimilares = vacanteService.buscarPorTituloYModalidad(
                 primeraPalabra,
                 null).stream()
@@ -207,7 +202,6 @@ public class PostulanteController {
         return "postulante/detalle_vacante";
     }
 
-    // Postularse a una vacante
     @GetMapping("/postular")
     public String postular(@RequestParam String vacanteId,
             Authentication authentication,
@@ -228,13 +222,11 @@ public class PostulanteController {
         Postulante postulante = optPostulante.get();
         Vacante vacante = optVacante.get();
 
-        // Validacion (que ya se ha postulado a la vacante)
         if (postulacionService.existePostulacion(postulante, vacante)) {
             redirectAttributes.addFlashAttribute("error", "Ya te has postulado a esta vacante.");
             return "redirect:/postulante/vacantes";
         }
 
-        // Crear postulacion
         Postulacion nuevaPostulacion = new Postulacion();
         nuevaPostulacion.setPostulante(postulante);
         nuevaPostulacion.setVacante(vacante);
@@ -248,9 +240,9 @@ public class PostulanteController {
         return "redirect:/postulante/vacantes";
     }
 
-    // Ver detalle de postulacion
     @GetMapping("/postulacion/detalle/{id}")
     public String verDetallePostulacion(@PathVariable("id") String idPostulacion,
+            @RequestParam(name = "panel", defaultValue = "false") boolean panel,
             Authentication authentication,
             Model model,
             RedirectAttributes redirectAttributes) {
@@ -279,10 +271,10 @@ public class PostulanteController {
         model.addAttribute("vacante", postulacion.getVacante());
         model.addAttribute("postulante", postulante);
 
-        return "postulante/detalle_postulacion";
+        return panel ? "postulante/fragments/detalle_postulacion_panel :: contenido"
+                : "postulante/detalle_postulacion";
     }
 
-    // Postulaciones del postulante
     @GetMapping("/postulaciones")
     public String verPostulaciones(Authentication authentication, Model model, RedirectAttributes redirectAttributes) {
 
@@ -293,22 +285,38 @@ public class PostulanteController {
         }
 
         Postulante postulante = optPostulante.get();
-        List<Postulacion> postulaciones = postulacionService.buscarPorPostulante(postulante);
+        List<Postulacion> postulaciones = postulacionService.buscarPorPostulante(postulante).stream()
+                .sorted(java.util.Comparator.comparing(Postulacion::getFechaPostulacion,
+                        java.util.Comparator.nullsLast(java.util.Comparator.reverseOrder()))
+                        .thenComparing(Postulacion::getId,
+                                java.util.Comparator.nullsLast(java.util.Comparator.reverseOrder())))
+                .toList();
 
         model.addAttribute("postulante", postulante);
         model.addAttribute("postulaciones", postulaciones);
+        model.addAttribute("postulacionesEnProceso", postulaciones.stream()
+                .filter(p -> p.getEstado() == PostulacionEstado.PENDIENTE || p.getEstado() == PostulacionEstado.EN_REVISION).count());
+        model.addAttribute("postulacionesEntrevista", postulaciones.stream()
+                .filter(p -> p.getEstado() == PostulacionEstado.ENTREVISTA_PENDIENTE).count());
+        model.addAttribute("postulacionesAceptadas", postulaciones.stream()
+                .filter(p -> p.getEstado() == PostulacionEstado.ACEPTADA).count());
         model.addAttribute("activeMenu", "mis_postulaciones");
 
         return "postulante/mis_postulaciones";
     }
 
-    // eliminar una postulacion
     @PostMapping("/eliminar/{id}")
-    public String eliminarPostulacion(@PathVariable String id, RedirectAttributes redirectAttributes) {
+    public String eliminarPostulacion(@PathVariable String id, Authentication authentication, RedirectAttributes redirectAttributes) {
         try {
             Optional<Postulacion> opt = postulacionService.buscarPorId(id);
             if (opt.isEmpty()) {
                 redirectAttributes.addFlashAttribute("error", "La postulación no existe o ya fue eliminada.");
+                return "redirect:/postulante/postulaciones";
+            }
+            Optional<Postulante> actual = getAuthenticatedPostulante(authentication);
+            if (actual.isEmpty()) return "redirect:/login";
+            if (opt.get().getPostulante() == null || !actual.get().getId().equals(opt.get().getPostulante().getId())) {
+                redirectAttributes.addFlashAttribute("error", "No puedes retirar una postulación de otra cuenta.");
                 return "redirect:/postulante/postulaciones";
             }
             postulacionService.eliminar(id);
@@ -320,7 +328,6 @@ public class PostulanteController {
         return "redirect:/postulante/postulaciones";
     }
 
-    // Perfil
     @GetMapping("/perfil")
     public String verPerfil(Authentication authentication,
             Model model,
@@ -346,7 +353,6 @@ public class PostulanteController {
         return "postulante/perfil_postulante";
     }
 
-    // Actualizar información
     @PostMapping("/actualizar")
     public String actualizarDatos(
             @ModelAttribute Postulante postulanteForm,
@@ -412,7 +418,6 @@ public class PostulanteController {
                 return "redirect:/postulante/perfil";
             }
 
-            // CORRECCIÓN: El tamaño máximo debe ser un long, no un String
             long maxSizeBytes = 2 * 1024 * 1024; // 2MB
             if (file.getSize() > maxSizeBytes) {
                 redirectAttributes.addFlashAttribute("error", "El archivo excede el tamaño máximo permitido (2MB).");
@@ -475,7 +480,6 @@ public class PostulanteController {
         return "redirect:/postulante/perfil";
     }
 
-    // Agregar habilidad
     @PostMapping("/agregarHabilidad")
     public String agregarHabilidad(@RequestParam String id,
             @RequestParam String habilidad,
@@ -496,7 +500,6 @@ public class PostulanteController {
         return "redirect:/postulante/perfil";
     }
 
-    // Agregar estudio
     @PostMapping("/agregarEstudio")
     public String agregarEstudio(@RequestParam String id,
             @RequestParam String institucion,
@@ -527,7 +530,6 @@ public class PostulanteController {
         return "redirect:/postulante/perfil";
     }
 
-    // Agregar experiencia
     @PostMapping("/agregarExperiencia")
     public String agregarExperiencia(
             @RequestParam String id,
@@ -572,7 +574,6 @@ public class PostulanteController {
         return "redirect:/postulante/perfil";
     }
 
-    // Eliminar habilidad
     @GetMapping("/eliminarHabilidad")
     public String eliminarHabilidad(@RequestParam String id, @RequestParam int index,
             Authentication authentication,
@@ -599,7 +600,6 @@ public class PostulanteController {
         return "redirect:/postulante/perfil";
     }
 
-    // Eliminar estudio
     @GetMapping("/eliminarEstudio")
     public String eliminarEstudio(@RequestParam String id,
             @RequestParam int index,
@@ -624,7 +624,6 @@ public class PostulanteController {
         return "redirect:/postulante/perfil";
     }
 
-    // eliminar experiencia
     @GetMapping("/eliminarExperiencia")
     public String eliminarExperiencia(@RequestParam String id,
             @RequestParam int index,
@@ -649,7 +648,6 @@ public class PostulanteController {
         return "redirect:/postulante/perfil";
     }
 
-    // Descargar archivo CV
     @GetMapping("/descargarCV/{id}")
     public ResponseEntity<Resource> descargarCV(@PathVariable String id, Authentication authentication) {
         Optional<Postulante> optPostulanteAuth = getAuthenticatedPostulante(authentication);
@@ -691,7 +689,6 @@ public class PostulanteController {
         }
     }
 
-    // Subir archivo CV
     @PostMapping("/subirCV")
     public String subirCV(@RequestParam("file") MultipartFile file,
             @RequestParam("id") String id,
@@ -732,7 +729,6 @@ public class PostulanteController {
                 }
             }
 
-            // Guarda CV
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
             String dbPath = UPLOAD_DIR + fileName;
             postulanteService.actualizarCv(id, dbPath);
@@ -749,7 +745,6 @@ public class PostulanteController {
         return "redirect:/postulante/perfil";
     }
 
-    // Configuracion
     @GetMapping("/configuracion")
     public String mostrarConfiguracion(Authentication authentication, Model model,
             RedirectAttributes redirectAttributes) {

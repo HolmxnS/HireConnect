@@ -24,7 +24,6 @@ public class DashboardController {
         this.empresaService = empresaService;
     }
 
-    // Muestra una vista segun el rol del usuario
     @GetMapping("/dashboard")
     public String determineHome(Authentication authentication, RedirectAttributes redirectAttributes) {
         

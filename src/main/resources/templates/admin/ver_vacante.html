@@ -4,15 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--Styles-->
     <link rel="stylesheet" th:href="@{/styles/fragments/admin/sidebar.css}">
     <link rel="stylesheet" th:href="@{/styles/admin/ver_vacante.css}">
     <link rel="stylesheet" th:href="@{/styles/admin/theme.css}">
     <script th:src="@{/js/theme.js}"></script>
-    <!--Fonts-->
     <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
     <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
-    <!--Icons-->
     <link rel="icon" type="image/svg+xml" sizes="any" th:href="@{/source/img/favicon.svg}">
     <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
     <title th:text="'Detalle de Vacante - ' + ${vacante.titulo}"></title>
@@ -30,7 +27,6 @@
             </a>
         </div>
 
-        <!-- Cabecera -->
         <section class="panel">
             <div class="detail-top" style="margin-bottom: 0; padding-bottom: 0; border-bottom: none;">
                 <div class="detail-top__heading">
@@ -50,7 +46,6 @@
             </div>
         </section>
 
-        <!-- Información + descripción -->
         <section class="panel">
             <div class="detail-grid">
                 <div>
@@ -75,7 +70,6 @@
             </div>
         </section>
 
-        <!-- Postulaciones -->
         <section class="panel table-panel">
             <div class="panel__head" style="padding: 2.4rem 2.4rem 0;">
                 <h2 class="panel__title"><i class="fa-solid fa-users-line"></i> Postulaciones</h2>

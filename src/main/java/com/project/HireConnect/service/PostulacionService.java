@@ -43,43 +43,36 @@ public class PostulacionService {
         return postulacionRepository.countByEstado(PostulacionEstado.ACEPTADA);
     }
 
-    // buscar postulaciones por postulante
     public List<Postulacion> buscarPorPostulante(Postulante postulante) {
         return postulacionRepository.findByPostulante(postulante);
     }
 
-    // listar todas las postulaciones
     public List<Postulacion> listarTodas() {
         return postulacionRepository.findAll();
     }
 
-    // buscar postulacion por id - Asegurando uso de String
     public Optional<Postulacion> buscarPorId(String id) {
         return postulacionRepository.findById(id);
     }
 
-    // buscar postulaciones por vacante
     public List<Postulacion> buscarPorVacante(Vacante vacante) {
         return postulacionRepository.findByVacante(vacante);
     }
 
-    // buscar vacantes por empresa
     public List<Postulacion> buscarPorEmpresa(Empresa empresa) {
         return postulacionRepository.findByVacante_Empresa(empresa);
     }
 
-    // guardar o actualizar postulacion
     public Postulacion guardar(Postulacion postulacion) {
         return postulacionRepository.save(postulacion);
     }
 
-    // eliminar postulacion por id (tambien sus avisos, que ya no apuntan a nada)
+    // Elimina también los avisos para evitar enlaces a postulaciones retiradas.
     public void eliminar(String id) {
         postulacionRepository.deleteById(id);
         notificacionService.eliminarPorPostulacion(id);
     }
 
-    // Verificar si una postulacion ya existe
     public boolean existePostulacion(Postulante postulante, Vacante vacante) {
         if (postulante == null || vacante == null)
             return false;

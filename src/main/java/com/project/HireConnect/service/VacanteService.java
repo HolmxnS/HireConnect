@@ -115,12 +115,11 @@ public class VacanteService {
             return List.of();
         }
 
-        // Buscar vacantes activas donde habilidadesRequeridas contenga alguna habilidad
         List<Vacante> candidatas = mongoTemplate.find(
                 new Query(Criteria.where("estado").is(VacanteEstado.ACTIVA)),
                 Vacante.class);
 
-        // Ordenar por cantidad de coincidencias
+        // Ordena por coincidencias textuales de habilidades; no calcula una probabilidad.
         return candidatas.stream()
                 .filter(v -> v.getHabilidadesRequeridas() != null)
                 .map(v -> {

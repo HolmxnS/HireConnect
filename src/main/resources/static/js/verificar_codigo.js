@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const timerText = document.getElementById('timerText');
     const countdown = document.getElementById('countdown');
 
-    // ===== COMPORTAMIENTO DE LOS INPUTS =====
 
     inputs.forEach((input, index) => {
         input.addEventListener('keydown', function (e) {
@@ -88,7 +87,6 @@ document.addEventListener('DOMContentLoaded', function () {
         inputs[0].focus();
     };
 
-    // ===== TIMER DE REENVÍO =====
 
     function iniciarTimer(segundos) {
         btnResend.disabled = true;

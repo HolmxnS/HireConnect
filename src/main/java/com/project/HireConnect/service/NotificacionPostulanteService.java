@@ -18,9 +18,6 @@ public class NotificacionPostulanteService {
         this.notificacionRepository = notificacionRepository;
     }
 
-    /**
-     * Crea el aviso para el postulante cuando el estado de su postulacion cambia.
-     */
     public void notificarCambioEstado(Postulacion postulacion, PostulacionEstado nuevoEstado) {
         if (postulacion == null || postulacion.getPostulante() == null || nuevoEstado == null) {
             return;
@@ -66,14 +63,12 @@ public class NotificacionPostulanteService {
         notificacionRepository.saveAll(pendientes);
     }
 
-    /** Si el postulante retira la postulacion, sus avisos ya no apuntan a nada. */
     public void eliminarPorPostulacion(String postulacionId) {
         if (postulacionId != null) {
             notificacionRepository.deleteByPostulacionId(postulacionId);
         }
     }
 
-    // Texto con tilde para mostrar al usuario
     private String etiqueta(PostulacionEstado estado) {
         switch (estado.name()) {
             case "EN_REVISION":

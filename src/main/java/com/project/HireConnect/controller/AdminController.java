@@ -67,7 +67,6 @@ public class AdminController {
         this.notificacionService = notificacionService;
     }
 
-    // Home
     @GetMapping("/dashboard")
     public String dashboard(Model model, Authentication auth) {
         Long totalEmpresas = empresaService.contarEmpresas();
@@ -107,7 +106,6 @@ public class AdminController {
         return "admin/admin_dashboard";
     }
 
-    // Notificaciones
     @PostMapping("/notificaciones/leida/todas")
     @ResponseBody
     public Map<String, Object> marcarTodasComoLeidas() {
@@ -138,7 +136,6 @@ public class AdminController {
         return Map.of("success", true, "unreadCount", 0);
     }
 
-    // Option gestionar empresas
     @GetMapping("/empresas")
     public String revisarEmpresas(Model model, Authentication auth) {
 
@@ -172,7 +169,6 @@ public class AdminController {
 
     
 
-    // Ver perfiles empresas
     @GetMapping("/empresas/ver/{id}")
     public String verEmpresa(@PathVariable String id, Model model) {
 
@@ -188,14 +184,12 @@ public class AdminController {
         return "admin/ver_empresa";
     }
 
-    // Eliminar empresa
     @GetMapping("/empresas/eliminar/{id}")
     public String eliminarEmpresa(@PathVariable String id) {
         empresaService.eliminar(id);
         return "redirect:/admin/empresas";
     }
 
-    // Aprobar empresa
     @GetMapping("/empresas/aprobar/{id}")
     public String aprobarEmpresa(@PathVariable String id) {
         Empresa empresa = empresaService.obtenerPorId(id)
@@ -207,7 +201,6 @@ public class AdminController {
         return "redirect:/admin/empresas";
     }
 
-    // suspender empresa
     @GetMapping("/empresas/suspender/{id}")
     public String suspenderEmpresa(@PathVariable String id) {
         Empresa empresa = empresaService.obtenerPorId(id)
@@ -232,7 +225,6 @@ public class AdminController {
         return "redirect:/admin/empresas";
     }
 
-    // ver vacantes de la empresa
     @GetMapping("/vacantes/ver/{id}")
     public String verVacante(@PathVariable String id, Model model) {
         Optional<Vacante> vacanteOpt = vacanteService.buscarPorId(id);
@@ -250,7 +242,6 @@ public class AdminController {
         return "admin/ver_vacante";
     }
 
-    // cerrar vacantes de empresa
     @GetMapping("/vacantes/cerrar/{id}")
     public String cerrarVacante(@PathVariable String id) {
         Optional<Vacante> vacanteOpt = vacanteService.buscarPorId(id);
@@ -264,7 +255,6 @@ public class AdminController {
         return "redirect:/admin/vacantes";
     }
 
-    // gestion de postulantes
     @GetMapping("/postulantes")
     public String revisarPostulantes(Model model, Authentication auth) {
 
@@ -312,7 +302,6 @@ public class AdminController {
         return "admin/resumen_admin";
     }
 
-    // Perfil admin
     @GetMapping("/editar")
     public String mostrarFormularioEdicionAdmin(Authentication auth,
             Model model,

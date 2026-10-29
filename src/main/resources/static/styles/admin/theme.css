@@ -35,7 +35,6 @@
     --font-clash: 'ClashDisplay', 'Segoe UI', system-ui, sans-serif;
 }
 
-/* ---------- Modo oscuro ---------- */
 :root[data-theme="dark"] {
     --morado-c: #b04ad6;
     --morado-h: #c26be3;
@@ -67,7 +66,6 @@
     color-scheme: dark;
 }
 
-/* ---------- Base ---------- */
 html { font-size: 10px; }
 
 * {
@@ -108,7 +106,6 @@ button { font-family: inherit; }
     pointer-events: none;
 }
 
-/* ---------- Estructura ---------- */
 .main {
     margin-left: 24rem;
     padding: 3.2rem 4rem 6rem;
@@ -118,7 +115,6 @@ button { font-family: inherit; }
 .main > * { max-width: 120rem; margin-inline: auto; }
 .main > * + * { margin-top: 2.4rem; }
 
-/* ---------- Barra superior / cabecera de página ---------- */
 .topbar,
 .page-head {
     display: flex;
@@ -177,7 +173,6 @@ button { font-family: inherit; }
     font-size: 1.8rem;
 }
 
-/* ---------- Notificaciones ---------- */
 .notification { position: relative; }
 
 .notification__icon {
@@ -340,7 +335,6 @@ button { font-family: inherit; }
 
 .notification__empty i { font-size: 2.8rem; }
 
-/* ---------- Paneles ---------- */
 .panel {
     padding: 2.4rem;
     background: var(--pc-surface);
@@ -370,7 +364,6 @@ button { font-family: inherit; }
 
 .panel__count { font-family: var(--font-satoshi); font-size: 1.3rem; font-weight: 500; color: var(--gris-o); }
 
-/* ---------- Insignias ---------- */
 .badge {
     display: inline-flex;
     align-items: center;
@@ -386,7 +379,6 @@ button { font-family: inherit; }
 .badge--bad { background: var(--pc-bad-bg); color: var(--pc-bad); }
 .badge--warn { background: var(--pc-warn-bg); color: var(--pc-warn); }
 
-/* ---------- Botones ---------- */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -441,9 +433,6 @@ button { font-family: inherit; }
 
 :root[data-theme="dark"] .badge--warn { color: var(--violeta); }
 
-/* ==========================================================================
-   RESPONSIVE (compartido: sidebar, cabecera y notificaciones)
-   ========================================================================== */
 @media (max-width: 900px) {
     .main { margin-left: 7.6rem; padding: 2.4rem 1.8rem 5rem; }
 }

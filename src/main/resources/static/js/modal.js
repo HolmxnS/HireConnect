@@ -48,7 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Funciones para modal de eliminar cuenta
 function mostrarModalEliminar() {
     const modal = document.getElementById('deleteModal');
     if (modal) {
@@ -63,7 +62,6 @@ function cerrarModalEliminar() {
     }
 }
 
-// Cerrar modal al hacer clic fuera
 document.addEventListener('DOMContentLoaded', () => {
     const deleteModal = document.getElementById('deleteModal');
     

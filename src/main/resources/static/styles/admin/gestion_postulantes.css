@@ -44,7 +44,6 @@ body {
     overflow-y: auto;
 }
 
-/*Header*/
 .main__header {
     display: flex;
     align-items: center;
@@ -55,7 +54,6 @@ body {
     margin-bottom: 3rem;
 }
 
-/*Menu*/
 .main__title {
     font-size: 2.5rem;
     font-weight: 700;
@@ -72,7 +70,6 @@ body {
     font-size: 1.7rem;
 }
 
-/*Notification*/
 .notification {
     position: relative;
     display: flex;
@@ -270,7 +267,6 @@ body {
     background: var(--negro-1);
 }
 
-/*Content*/
 .section__header-group {
     margin-bottom: 1.5rem;
 }
@@ -287,7 +283,6 @@ body {
     margin-top: 1rem;
 }
 
-/*Cards*/
 .cards {
     margin: 4rem 0;
     display: grid;
@@ -319,7 +314,6 @@ body {
     color: var(--text-strong);
 }
 
-/*Filters*/
 .filters.filters-postulantes {
     display: flex;
     gap: 1.5rem;
@@ -374,7 +368,6 @@ body {
     cursor: pointer;
 }
 
-/*Table*/
 .table {
     margin: 1.5rem;
     border: .1rem solid var(--border-color);
@@ -482,7 +475,6 @@ body {
     }
 }
 
-/* ---------- Tarjetas de métricas (KPI) ---------- */
 .kpis {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(17.5rem, 1fr));
@@ -541,7 +533,6 @@ body {
     color: var(--gris-o);
 }
 
-/* ---------- Barra de filtros ---------- */
 .toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -588,7 +579,6 @@ body {
     box-shadow: 0 0 0 .4rem rgba(142, 34, 187, .12);
 }
 
-/* ---------- Tablas ---------- */
 .table-panel { padding: 0; overflow: hidden; }
 
 .table-scroll { overflow-x: auto; max-height: 60rem; overflow-y: auto; }

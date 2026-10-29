@@ -16,7 +16,6 @@
     --crimson: #DC143C;
     --white-smoke: #F5F5F5;
 
-    /* Fonts */
     --font-satoshi: 'Satoshi';
     --font-clash: 'ClashDisplay';
     --primary-color: var(--morado-c);
@@ -44,7 +43,6 @@
     --color-danger: var(--rojo-2);
 }
 
-/* Global*/
 * {
     margin: 0;
     padding: 0;
@@ -73,7 +71,6 @@ main {
     color: var(--text-strong);
 }
 
-/*Profile*/
 .profile {
     height: 27rem;
     margin-bottom: .2rem;
@@ -191,7 +188,6 @@ main {
     font-size: 1.3rem;
 }
 
-/*Section - Personal Data*/
 .profile__section {
     display: flex;
     justify-content: center;
@@ -298,7 +294,6 @@ main {
 }
 
 
-/* ---------- Perfil del administrador ---------- */
 .profile-banner { position: relative; }
 
 .profile-banner__bg {

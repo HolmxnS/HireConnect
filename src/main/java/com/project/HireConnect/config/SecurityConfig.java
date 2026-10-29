@@ -64,7 +64,6 @@ public class SecurityConfig {
                                                                 "/empresa/completar_perfil_empresa")
                                                 .hasAnyRole("PERSONA", "EMPRESA")
 
-                                                // ✅ Chat IA - permite POST autenticado con rol PERSONA
                                                 .requestMatchers(HttpMethod.POST, "/postulante/chat").hasRole("PERSONA")
 
                                                 .requestMatchers("/postulante/descargarCV/**")

@@ -1,4 +1,3 @@
-/*Carrusel de vacantes (landing)*/
 (function () {
     'use strict';
 
@@ -11,7 +10,6 @@
     var slides = Array.prototype.slice.call(carrusel.querySelectorAll('.offers__slide'));
     if (slides.length < 2) return;
 
-    // 0 = centro, 1 = derecha, 2 = izquierda
     var orden = slides.slice();
     var timer = null;
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -59,7 +57,6 @@
         timer = null;
     }
 
-    // Pausa
     carrusel.addEventListener('mouseenter', detener);
     carrusel.addEventListener('mouseleave', iniciar);
     carrusel.addEventListener('focusin', detener);
@@ -73,7 +70,6 @@
         }
     });
 
-    //Si se toca la vacante de atras, pasa al frente
     slides.forEach(function (slide) {
         slide.addEventListener('click', function (e) {
             if (!mobile.matches && !slide.classList.contains('offers__slide--center')) {
@@ -83,6 +79,7 @@
         });
     });
 
+    // En móvil se usa scroll nativo; en escritorio, rotación de tarjetas superpuestas.
     function adaptar() {
         detener();
         pintar();

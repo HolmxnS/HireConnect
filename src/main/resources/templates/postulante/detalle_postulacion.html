@@ -1,133 +1,35 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="es">
-
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--Styles-->
-    <link rel="stylesheet" th:href="@{/styles/fragments/postulante/sidebar.css}">
-    <link rel="stylesheet" th:href="@{/styles/postulante/detalle_postulacion.css}">
-    <link rel="stylesheet" th:href="@{/styles/postulante/theme.css}">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" th:href="@{/styles/fragments/postulante/sidebar.css}" />
+    <link rel="stylesheet" th:href="@{/styles/fragments/postulante/header.css}" />
+    <link rel="stylesheet" th:href="@{/styles/postulante/theme.css}" />
+    <link rel="stylesheet" th:href="@{/styles/postulante/mis_postulaciones.css}" />
+    <link rel="stylesheet" th:href="@{/styles/postulante/detalle_postulacion.css}" />
     <script th:src="@{/js/theme.js}"></script>
-    <!--Fonts-->
-    <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
-    <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
-    <!--Icons-->
-    <link rel="icon" type="image/svg+xml" sizes="any" th:href="@{/source/img/favicon.svg}">
-    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
-
-    <title>Postulación - HireConnect</title>
+    <link rel="stylesheet" th:href="@{/styles/satoshi.css}" />
+    <link rel="stylesheet" th:href="@{/styles/clash-display.css}" />
     <link rel="stylesheet" th:href="@{/styles/brand.css}" />
+    <link rel="icon" type="image/svg+xml" sizes="any" th:href="@{/source/img/favicon.svg}" />
+    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous" defer></script>
+    <title>Detalle de la postulación | HireConnect</title>
 </head>
-
-<body>
-
-    <div th:replace="~{fragments/postulante/sidebar_postulante :: sidebar ('postulaciones')}"></div>
-
-    <header class="header">
-        <a th:href="@{/postulante/postulaciones(postulanteId=${postulanteId})}" class="header__btn-back">
-            <i class="fa-solid fa-arrow-left"></i> Volver
-        </a>
-        <h1>
-            <i class="fa-solid fa-list-check"></i> Detalle de la Postulación
-        </h1>
-    </header>
-
-    <main class="main">
-
-        <div class="info">
-            <div class="info__card" th:classappend="${postulacion.estado.descripcion == 'Aceptada' ? 'border-aceptada' : 
-                                     (postulacion.estado.descripcion == 'Rechazada' ? 'border-rechazada' : 
-                                     'border-revision') }">
-                <h2>Estado Actual</h2>
-
-                <div class="info__status">
-                    <div class="status-icon-container" th:classappend="${postulacion.estado.descripcion == 'Aceptada' ? 'text-aceptada' : 
-                                             (postulacion.estado.descripcion == 'Rechazada' ? 'text-rechazada' : 
-                                             'text-revision') }">
-                        <i class="fa-solid" th:classappend="${postulacion.estado.descripcion == 'Aceptada' ? 'fa-check-circle' : 
-                                                 (postulacion.estado.descripcion == 'Rechazada' ? 'fa-times-circle' : 
-                                                 'fa-hourglass-half') }"></i>
-                    </div>
-                    <div>
-                        <p>Última Actualización:</p>
-                        <span th:classappend="${postulacion.estado.descripcion == 'Aceptada' ? 'text-aceptada' : 
-                                                 (postulacion.estado.descripcion == 'Rechazada' ? 'text-rechazada' : 
-                                                 'text-revision') }" th:text="${postulacion.estado.descripcion}">En Revisión</span>
-                    </div>
-                </div>
-
-                <p class="info__date">
-                    Fecha de Postulación:
-                    <span class="font-medium"
-                        th:text="${#temporals.format(postulacion.fechaPostulacion, 'dd/MM/yyyy')}"></span>
-                </p>
-
-                <p th:if="${postulacion.estado.descripcion} == 'En revision'" class="info__message revision">
-                    <i class="fa-solid fa-info-circle"></i> Tu solicitud está siendo evaluada por el equipo de
-                    recursos humanos de la empresa.
-                </p>
-                <p th:if="${postulacion.estado.descripcion == 'Aceptada'}" class="info__message aceptada">
-                    <i class="fa-solid fa-medal"></i> ¡Felicidades! Tu postulación ha sido aceptada. La empresa se
-                    pondrá en contacto pronto para los siguientes pasos.
-                </p>
-                <p th:if="${postulacion.estado.descripcion == 'Rechazada'}" class="info__message rechazada">
-                    <i class="fa-solid fa-face-frown-open"></i> Lamentamos informarte que tu postulación no ha sido
-                    seleccionada en esta ocasión.
-                </p>
+<body class="applications-page application-detail-page">
+    <div th:replace="~{fragments/postulante/sidebar_postulante :: sidebar('postulaciones')}"></div>
+    <div th:replace="~{fragments/postulante/header_postulante :: menu-fragment(false)}"></div>
+    <main class="main applications">
+        <article class="application-detail-page__card" aria-labelledby="application-detail-page-title">
+            <header class="application-detail-page__header">
+                <a class="application-detail-page__back" th:href="@{/postulante/postulaciones}"><span aria-hidden="true">←</span> Mis postulaciones</a>
+                <h1 id="application-detail-page-title">Detalle de la postulación</h1>
+            </header>
+            <div class="application-detail-page__body">
+                <!-- Comparte contenido y estilos con el panel para evitar dos versiones del detalle. -->
+                <div th:replace="~{postulante/fragments/detalle_postulacion_panel :: contenido}"></div>
             </div>
-
-            <div class="info__card details">
-                <h2>Detalles de la Vacante</h2>
-
-                <div class="details__vacancy">
-                    <p class="border-b pb-2"><i class="fa-solid fa-briefcase"></i>
-                        <strong>Título:</strong> <span class="font-semibold" th:text="${vacante.titulo}"></span>
-                    </p>
-
-                    <p class="border-b pb-2"><i class="fa-solid fa-building"></i>
-                        <strong>Empresa:</strong> <span class="font-semibold"
-                            th:text="${vacante.empresa.nombre}"></span>
-                    </p>
-
-                    <p class="border-b pb-2"><i class="fa-solid fa-location-dot"></i>
-                        <strong>Modalidad:</strong> <span class="font-light" th:text="${vacante.modalidad.descripcion}"></span>
-                    </p>
-
-                    <p class="border-b pb-2"><i class="fa-solid fa-file-contract"></i>
-                        <strong>Contrato:</strong> <span class="font-light" th:text="${vacante.tipoContrato.descripcion}"></span>
-                    </p>
-
-                    <p class="border-b pb-2"><i class="fa-solid fa-star"></i>
-                        <strong>Experiencia:</strong> <span class="font-light"
-                            th:text="${vacante.experienciaRequerida.descripcion}"></span>
-                    </p>
-
-                    <p class="border-b pb-2"><i class="fa-solid fa-sack-dollar"></i>
-                        <strong>Salario:</strong> <span class="font-bold text-success-600"
-                            th:text="'$' + ${#numbers.formatDecimal(vacante.salario, 0, 'COMMA', 0, 'POINT')}"></span>
-                    </p>
-                </div>
-
-                <div class="details__description">
-                    <h3>Descripción Breve:</h3>
-                    <p class="text-gray-600 text-sm" th:text="${vacante.descripcion}"></p>
-                </div>
-
-                <div class="details__actions">
-                    <a th:href="@{/postulante/vacante/{id}(id=${vacante.id}, postulanteId=${postulanteId})}"
-                        class="btn-ver-completa">
-                        Ver Vacante Completa
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <footer class="main__footer">
-            © <span th:text="${#dates.year(#dates.createNow())}">2025</span> HireConnect. Todos los derechos reservados.
-        </footer>
+        </article>
     </main>
-
 </body>
-
 </html>

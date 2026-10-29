@@ -1,5 +1,4 @@
 :root {
-  /* Colors */
   --violeta: #9c4bff;
   --morado-c: #9400d3;
   --morado-o: #29003a;
@@ -16,7 +15,6 @@
   --rojo-2: #c84153;
   --crimson: #dc143c;
   --white-smoke: #f5f5f5;
-  /* Fonts */
   --font-satoshi: "Satoshi";
   --font-clash: "ClashDisplay";
 
@@ -261,20 +259,17 @@ body {
   border: none;
 }
 
-/* LAYOUT GENERAL */
 .details__layout {
   display: flex;
   gap: 3rem;
   align-items: flex-start;
 }
 
-/* COLUMNA IZQUIERDA */
 .details__main {
   flex: 1;
   min-width: 0;
 }
 
-/* SIDEBAR DERECHA */
 .similar-jobs {
   width: 35rem;
   background-color: var(--bg-card);
@@ -291,7 +286,6 @@ body {
   flex-direction: column;
 }
 
-/* HEADER */
 .similar-jobs__header {
   margin-bottom: 2rem;
   border-bottom: 1px solid var(--border-color);
@@ -304,7 +298,6 @@ body {
   color: var(--text-strong);
 }
 
-/* LISTA SCROLLEABLE */
 .similar-jobs__list {
   overflow-y: auto;
   display: flex;
@@ -314,7 +307,6 @@ body {
   padding-right: 0.5rem;
 }
 
-/* CARD */
 .similar-job-card {
   background-color: var(--bg-detalle);
   border-radius: 1rem;
@@ -330,7 +322,6 @@ body {
   transform: translateY(-2px);
 }
 
-/* TOP CARD */
 .similar-job-card__top {
   display: flex;
   align-items: flex-start;
@@ -338,7 +329,6 @@ body {
   margin-bottom: 1.2rem;
 }
 
-/* FOTO */
 .similar-job-card__photo {
   width: 5rem;
   height: 5rem;
@@ -353,7 +343,6 @@ body {
   border: 1px solid var(--border-color);
 }
 
-/* PLACEHOLDER */
 .similar-job-card__placeholder {
   width: 100%;
   height: 100%;
@@ -370,7 +359,6 @@ body {
   color: white;
 }
 
-/* INFO */
 .similar-job-card__info {
   flex: 1;
   min-width: 0;
@@ -380,7 +368,6 @@ body {
   margin-bottom: 0.8rem;
 }
 
-/* TITULO */
 .similar-job-card h4 {
   font-size: 1.6rem;
   font-weight: 800;
@@ -388,7 +375,6 @@ body {
   margin-bottom: 1rem;
 }
 
-/* MODALIDAD */
 .similar-job-card__mode {
   display: inline-block;
   font-size: 1.2rem;
@@ -403,7 +389,6 @@ body {
   margin-bottom: 1rem;
 }
 
-/* DESCRIPCIÓN */
 .similar-job-card p {
   font-size: 1.25rem;
   line-height: 1.5;
@@ -412,7 +397,6 @@ body {
   margin-bottom: 1.5rem;
 }
 
-/* LINK */
 .similar-job-card a {
   text-decoration: none;
   color: var(--primary-color);

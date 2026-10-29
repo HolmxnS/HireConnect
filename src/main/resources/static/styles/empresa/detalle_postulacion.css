@@ -1,6 +1,4 @@
-/*Paletts and fonts*/
 :root {
-    /*Colors*/
     --violeta: #9c4bff;
     --morado-c: #9400D3;
     --morado-o: #29003a;
@@ -19,12 +17,10 @@
     --white-smoke: #F5F5F5;
     --gris-3: #999;
     --gris-4: #FAFAFA;
-    /*fonts*/
     --font-satoshi: 'Satoshi';
     --font-clash: 'ClashDisplay';
 }
 
-/*Universal Styles*/
 * {
     margin: 0;
     padding: 0;
@@ -37,7 +33,6 @@ body {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
-/*Main content*/
 .content {
     padding: 3rem;
     margin-left: 27rem;
@@ -82,7 +77,6 @@ body {
     font-weight: 600;
 }
 
-/*Cards*/
 .content__cards {
     width: 100%;
     display: flex;

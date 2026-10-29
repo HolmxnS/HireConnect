@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
+    // Combina los filtros sobre las tarjetas cargadas, sin consultar de nuevo al servidor.
     function filtrarVacantes() {
         const texto = buscador?.value.toLowerCase().trim() || "";
         const modalidad = document.querySelector('.filter-card input[type="radio"]:checked')?.value.toLowerCase() || "";

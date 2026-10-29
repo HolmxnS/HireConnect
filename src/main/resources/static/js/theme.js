@@ -1,4 +1,3 @@
-/* HireConnect · modo claro / oscuro */
 (function () {
     var root = document.documentElement;
     var KEY = 'hc-theme';

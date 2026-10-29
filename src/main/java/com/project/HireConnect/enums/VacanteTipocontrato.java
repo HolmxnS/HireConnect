@@ -33,7 +33,7 @@ public enum VacanteTipocontrato {
         throw new IllegalArgumentException("Tipo de contrato desconocido: " + value);
     }
 
-    // Mantenemos este método para no romper lógica existente en otros servicios
+    // Alias conservado para los servicios que todavía usan fromDescripcion.
     public static VacanteTipocontrato fromDescripcion(String descripcion) {
         return fromString(descripcion);
     }

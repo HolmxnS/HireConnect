@@ -61,7 +61,6 @@ public class LoginController {
     private final EmailService emailService;
     private final VacanteService vacanteService;
 
-    // Cantidad de vacantes que se muestran en la landing
     private static final int MAX_VACANTES_LANDING = 3;
 
     @GetMapping("/")
@@ -105,6 +104,7 @@ public class LoginController {
             return "postulante/registro_postulante";
         }
 
+        // Conserva los datos validados del paso 1 para reconstruir el registro en el paso 2.
         session.setAttribute("reg_nombre", postulante.getNombre());
         session.setAttribute("reg_apellido", postulante.getApellido());
         session.setAttribute("reg_tipoDocumento", postulante.getTipoDocumento());
@@ -147,6 +147,7 @@ public class LoginController {
 
         String codigo = String.format("%06d", new Random().nextInt(999999));
 
+        // La cuenta queda en sesión y solo se persiste después de verificar el código.
         session.setAttribute("verify_tipo", "POSTULANTE");
         session.setAttribute("verify_postulante", postulante);
         session.setAttribute("verify_codigo", codigo);
@@ -185,7 +186,6 @@ public class LoginController {
         return "verificar_correo";
     }
 
-    // verificar código
     @PostMapping("/register/verificar-codigo")
     public String verificarCodigo(
             @RequestParam("codigo") String codigoIngresado,
@@ -263,7 +263,6 @@ public class LoginController {
         }
     }
 
-    // Reenviar código de verificación
     @PostMapping("/register/reenviar-codigo")
     public String reenviarCodigo(HttpSession session, RedirectAttributes redirectAttributes) {
         String email = (String) session.getAttribute("verify_email");
@@ -288,14 +287,12 @@ public class LoginController {
         return "redirect:/register/verificar-codigo";
     }
 
-    // Empresa - GET
     @GetMapping("/register/empresa")
     public String registerEmpresaForm(Model model) {
         model.addAttribute("empresa", new Empresa());
         return "empresa/registro_empresa";
     }
 
-    // Empresa - Paso 1
     @PostMapping(value = "/empresa/crear", params = "step=1")
     public String empresaPaso1(
             @Validated(Paso1.class) @ModelAttribute("empresa") Empresa empresa,
@@ -318,7 +315,6 @@ public class LoginController {
         return "empresa/registro_empresa";
     }
 
-    // Empresa - Paso 2
     @PostMapping(value = "/empresa/crear", params = "step=2")
     public String empresaPaso2(
             @Validated(Paso2.class) @ModelAttribute("empresa") Empresa empresa,
@@ -357,6 +353,7 @@ public class LoginController {
         }
         String codigo = String.format("%06d", new Random().nextInt(999999));
 
+        // La cuenta queda en sesión y solo se persiste después de verificar el código.
         session.setAttribute("verify_tipo", "EMPRESA");
         session.setAttribute("verify_empresa", empresa);
         session.setAttribute("verify_codigo", codigo);
@@ -632,14 +629,12 @@ public class LoginController {
         return "redirect:/empresa/home";
     }
 
-    // Vacantes activas mas recientes para la landing (no se muestran las de
-    // empresas suspendidas)
     private List<VacanteDestacada> obtenerVacantesDestacadas() {
         List<Vacante> activas = vacanteService.buscarPorFiltros(null, null, null, null).stream()
                 .filter(v -> v != null && v.getEstado() == VacanteEstado.ACTIVA && v.getEmpresa() != null)
                 .sorted(Comparator.comparing(Vacante::getFechaPublicacion,
                         Comparator.nullsLast(Comparator.<java.time.LocalDate>reverseOrder()))
-                        // MongoDB ObjectIds provide creation order for same-day publications.
+                        // El ObjectId desempata por creación las publicaciones del mismo día.
                         .thenComparing(Vacante::getId, Comparator.nullsLast(Comparator.reverseOrder())))
                 .toList();
 

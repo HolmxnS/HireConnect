@@ -3,9 +3,6 @@ package com.project.HireConnect.enums;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-/**
- * Representa los diferentes estados por los que puede pasar una postulación.
- */
 public enum PostulacionEstado {
     PENDIENTE("Pendiente"),
     EN_REVISION("En revision"),

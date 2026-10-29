@@ -33,7 +33,6 @@
 body {
     font-family: var(--font-satoshi);
 }
-/*Main*/
 .content {
     flex: 1;
     margin-left: 27rem;
@@ -54,7 +53,6 @@ body {
 .back-btn i {
     font-size: 1.5rem;
 }
-/*Info - vacancy*/
 .vacancy,
 .applicants {
     background: var(--card);
@@ -170,7 +168,6 @@ body {
     padding: 1rem;
 }
 
-/*Applicants*/
 .applicants {
     margin-top: 2rem;
 }
@@ -219,7 +216,6 @@ body {
 }
 
 
-/* ---------- Detalle de empresa / vacante ---------- */
 .detail-top {
     display: flex;
     align-items: center;
@@ -302,7 +298,6 @@ body {
 .rich-text ul { list-style: disc; padding-left: 2rem; }
 .rich-text ol { padding-left: 2rem; }
 
-/* ---------- Tablas ---------- */
 .table-panel { padding: 0; overflow: hidden; }
 
 .table-scroll { overflow-x: auto; max-height: 60rem; overflow-y: auto; }

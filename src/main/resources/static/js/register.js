@@ -1,4 +1,3 @@
-/*Selección de tipo de cuenta (registro)*/
 (function () {
     'use strict';
 
@@ -8,7 +7,6 @@
 
     if (!opciones.length) return;
 
-    // Ajusta el destino del botón de continuar según la opción marcada
     function actualizar() {
         var elegida = document.querySelector('.roles__input:checked');
         if (!elegida) return;

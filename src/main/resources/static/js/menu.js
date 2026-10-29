@@ -14,7 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
         setOpen(!menu.classList.contains('menu--open'));
     });
 
-    // Cerrar al tocar un enlace del panel, con Escape, o al pasar a escritorio
     panel.querySelectorAll('a').forEach((a) => {
         a.addEventListener('click', () => setOpen(false));
     });
@@ -25,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.matches) setOpen(false);
     });
 
-    // Sombra sutil en el header cuando ya se hizo scroll
     const onScroll = () => menu.classList.toggle('menu--scrolled', window.scrollY > 8);
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });

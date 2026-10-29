@@ -16,7 +16,6 @@ import com.project.HireConnect.model.Postulante;
 import com.project.HireConnect.service.ChatbotService;
 import com.project.HireConnect.service.PostulanteService;
 
-// POST /postulante/chat -> ya está protegido en SecurityConfig con hasRole("PERSONA")
 @RestController
 @RequestMapping("/postulante/chat")
 public class ChatController {

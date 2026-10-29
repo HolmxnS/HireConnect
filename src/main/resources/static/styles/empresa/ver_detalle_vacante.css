@@ -1,5 +1,4 @@
 :root {
-    /* Colors */
     --violeta: #9c4bff;
     --morado-c: #9400D3;
     --morado-o: #29003a;
@@ -16,11 +15,9 @@
     --rojo-2: #c84153;
     --crimson: #DC143C;
     --white-smoke: #F5F5F5;
-    /* Fonts */
     --font-satoshi: 'Satoshi';
     --font-clash: 'ClashDisplay';
 
-    /* Colores derivados para la vista */
     --primary-color: var(--morado-c);
     --primary-color-hover: #7E00B0;
     --bg-page: #f3f4f6;

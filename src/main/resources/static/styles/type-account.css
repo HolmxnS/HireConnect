@@ -1,6 +1,4 @@
-/*Paletts and fonts*/
 :root {
-    /*Colors*/
     --morado-c: #8e22bb;
     --morado-h: #7c1da4;
     --violeta: #c780e6;
@@ -15,11 +13,9 @@
     --negro-2: #131017;
     --negro: #09080b;
     --morado-chip: #24152f;
-    /*fonts*/
     --font-satoshi: 'Satoshi', 'Segoe UI', system-ui, sans-serif;
     --font-clash: 'ClashDisplay', 'Segoe UI', system-ui, sans-serif;
 
-    /*Tema claro (por defecto)*/
     --bg: var(--blanco);
     --fg: var(--negro-1);
     --muted: var(--gris-o);
@@ -35,7 +31,6 @@
     color-scheme: light;
 }
 
-/*Tema oscuro*/
 :root[data-theme="dark"] {
     --bg: var(--negro);
     --fg: var(--lila);
@@ -49,7 +44,6 @@
     color-scheme: dark;
 }
 
-/*Global*/
 * {
     margin: 0;
     padding: 0;
@@ -79,7 +73,6 @@ a {
     outline-offset: 0.3rem;
 }
 
-/*Pagina*/
 .type {
     min-height: 100vh;
     min-height: 100dvh;
@@ -87,7 +80,6 @@ a {
     flex-direction: column;
 }
 
-/*Cabecera*/
 .type__header {
     display: flex;
     align-items: center;
@@ -127,7 +119,6 @@ a {
     background-color: var(--chip);
 }
 
-/*Cuerpo*/
 .type__body {
     flex: 1;
     display: flex;
@@ -156,7 +147,6 @@ a {
     text-wrap: balance;
 }
 
-/*Subrayado morado corto*/
 .type__title::after {
     content: '';
     position: absolute;
@@ -179,7 +169,6 @@ a {
     color: var(--muted);
 }
 
-/*Opciones (tarjetas seleccionables)*/
 .roles {
     display: flex;
     justify-content: center;
@@ -262,7 +251,6 @@ a {
     transition: color 0.25s ease;
 }
 
-/*Seleccionada: se rellena de morado*/
 .roles__input:checked+.roles__card {
     background-color: var(--accent);
     color: var(--on-accent);
@@ -285,7 +273,6 @@ a {
     outline-offset: 0.4rem;
 }
 
-/*Acciones: volver y continuar*/
 .type__actions {
     display: flex;
     align-items: center;
@@ -335,7 +322,6 @@ a {
     transform: translateX(0.2rem);
 }
 
-/*Beneficios*/
 .trust {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -385,7 +371,6 @@ a {
     color: var(--muted);
 }
 
-/*Responsive - tablet y moviles*/
 @media (max-width: 700px) {
     .type__header {
         flex-wrap: wrap;

@@ -1,8 +1,4 @@
-/*
-    Barra superior del postulante (busqueda, tema, notificaciones, perfil) y panel de filtros.
-    Usa las variables --hc-* definidas en sidebar.css, que ya traen el modo claro y oscuro.
-    Importante: las paginas tienen "* { font-size: 10px }", por eso cada texto define su tamano.
-*/
+/* --hc-* viene de sidebar.css; los tamaños explícitos evitan heredar el reset de cada página. */
 
 .header-container i,
 .header-container svg,
@@ -35,7 +31,6 @@
   padding: 0 2.4rem;
 }
 
-/*Buscador*/
 .search-wrapper {
   flex: 1;
   min-width: 0;
@@ -219,7 +214,6 @@
   background: var(--hc-surface);
 }
 
-/*Historial de busquedas*/
 .historial-dropdown {
   display: none;
   position: absolute;
@@ -289,7 +283,6 @@
   display: none;
 }
 
-/*Acciones de la derecha*/
 .topbar-actions {
   display: flex;
   align-items: center;
@@ -338,7 +331,6 @@
   display: none;
 }
 
-/*Notificaciones*/
 .notif {
   position: relative;
 }
@@ -540,7 +532,6 @@
   color: var(--hc-muted);
 }
 
-/*Perfil*/
 .profile-box a {
   display: flex;
   align-items: center;
@@ -578,7 +569,6 @@
   outline-offset: 0.2rem;
 }
 
-/* ===================== PANEL DE FILTROS ===================== */
 .filter-overlay {
   position: fixed;
   inset: 0;
@@ -936,7 +926,6 @@
   margin-right: 0.25rem;
 }
 
-/*Tablet y movil*/
 @media (max-width: 900px) {
   .header-content {
     padding: 0 1.6rem 0 6.4rem;
@@ -1004,7 +993,6 @@
     transition: none;
   }
 }
-/* El buscador conserva espacio propio en pantallas estrechas. */
 @media (max-width: 640px) {
   .vacancy-browser { --header-h: 13rem; }
   .header-container--search .header-content {
@@ -1026,7 +1014,6 @@
   .vacancy-browser > main { margin-top: calc(var(--header-h) + 1.6rem); }
 }
 
-/* Vacantes: barra superior estable, sin desplazamiento animado al recargar. */
 .vacancy-browser .header-container {
   animation: none;
   transition: none;

@@ -85,7 +85,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    /* ── Colores de las gráficas tomados del tema (claro / oscuro) ── */
     function cssVar(name, fallback) {
         const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
         return v || fallback;
@@ -107,7 +106,6 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     }
 
-    /* ── Datos ── */
     const meses        = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
     const currentMonth = new Date().getMonth();
     const labels       = meses.slice(0, currentMonth + 1);
@@ -127,7 +125,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let lineChart = null;
     let barChart  = null;
 
-    /* ── Gráfica de línea ── */
     const lineCanvas = document.getElementById("lineChart");
 
     if (lineCanvas && typeof Chart !== "undefined") {
@@ -168,7 +165,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        /* Tabs de filtro de la gráfica de línea */
         document.querySelectorAll(".chart-tabs__btn").forEach(btn => {
             btn.addEventListener("click", () => {
                 document.querySelectorAll(".chart-tabs__btn").forEach(b => b.classList.remove("active"));
@@ -186,7 +182,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    /* ── Gráfica de barras ── */
     const barCanvas = document.getElementById("barChart");
 
     if (barCanvas && typeof Chart !== "undefined") {
@@ -277,7 +272,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    /* ── Tabs de filtro de la lista de registros ── */
     document.querySelectorAll(".filter-tabs__btn").forEach(btn => {
         btn.addEventListener("click", () => {
             document.querySelectorAll(".filter-tabs__btn").forEach(b => b.classList.remove("active"));

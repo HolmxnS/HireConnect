@@ -40,7 +40,6 @@ main {
   padding: 4rem 8rem;
 }
 
-/*Header*/
 .main__header {
   display: flex;
   justify-content: space-between;
@@ -70,7 +69,6 @@ i {
   font-size: 1.5rem;
 }
 
-/*Form*/
 .form {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(900px, 1fr));
@@ -91,7 +89,6 @@ i {
   width: 100%;
 }
 
-/*Fields*/
 .form__group {
   flex: 1;
   display: grid;

@@ -46,7 +46,6 @@ public class VacanteController {
         this.predictionService = predictionService;
     }
 
-    // Get Company
     private Optional<Empresa> getAuthenticatedEmpresa(Authentication auth) {
         if (auth == null || auth.getName() == null) {
             return Optional.empty();
@@ -61,7 +60,6 @@ public class VacanteController {
         model.addAttribute("nivelesExperiencia", VacanteExperienciaRequerida.values());
     }
 
-    // Vacantes de la empresa
     @GetMapping
     public String listarVacantesEmpresa(Authentication auth, Model model, RedirectAttributes redirectAttributes) {
         Optional<Empresa> empresaOpt = getAuthenticatedEmpresa(auth);
@@ -82,7 +80,6 @@ public class VacanteController {
         return "empresa/dashboard_vacantes";
     }
 
-    // Nueva vacante
     @GetMapping("/nueva")
     public String mostrarFormulario(Authentication auth, Model model, RedirectAttributes redirectAttributes) {
         Optional<Empresa> empresaOpt = getAuthenticatedEmpresa(auth);
@@ -102,7 +99,6 @@ public class VacanteController {
         return "empresa/nueva_vacante";
     }
 
-    // Guardar vacante
     @PostMapping("/guardar")
     public String guardarVacante(
             @Valid @ModelAttribute("vacante") Vacante vacante,
@@ -177,7 +173,6 @@ public class VacanteController {
         }
     }
 
-    // Editar vacante
     @GetMapping("/editar/{id}")
     public String editarVacante(@PathVariable String id,
             Authentication auth,
@@ -204,7 +199,6 @@ public class VacanteController {
         return "empresa/editar_vacante";
     }
 
-    // Activar vacante
     @GetMapping("/activar/{id}")
     public String activarVacante(@PathVariable String id,
             Authentication auth,
@@ -261,7 +255,6 @@ public class VacanteController {
         return "redirect:/empresa/vacantes";
     }
 
-    // Cerrar vacante
     @GetMapping("/cerrar/{id}")
     public String cerrarVacante(@PathVariable String id,
             Authentication auth,
@@ -288,7 +281,6 @@ public class VacanteController {
         return "redirect:/empresa/vacantes";
     }
 
-    // listado de vacantes
     @GetMapping("/listar")
     public String listarVacantesPublicas(
             @RequestParam(value = "filtro", required = false) String filtro,
@@ -323,7 +315,6 @@ public class VacanteController {
         return "postulante/vacantePostulante";
     }
 
-    // Ver detalle de vacante
     @GetMapping("/{id}")
     public String verDetalleVacante(@PathVariable String id,
             Authentication authentication,
@@ -345,13 +336,13 @@ public class VacanteController {
         }
 
         PrediccionRequestDTO dto = new PrediccionRequestDTO();
-        dto.setEdad(22); // Si tienes la edad en postulante, pon postulante.getEdad()
+        // Esta integración todavía envía valores de prueba, no datos del perfil real.
+        dto.setEdad(22);
         dto.setExperienciaAnos(2);
         dto.setCoincidenciaHabilidades(80);
         dto.setModalidad(vacante.getModalidad() != null ? vacante.getModalidad().name() : "");
         dto.setTipoContrato(vacante.getTipoContrato() != null ? vacante.getTipoContrato().name() : "");
 
-        // Petición al servicio de Python
         Map<String, Object> prediccion = predictionService.obtenerPrediccion(dto);
 
         model.addAttribute("vacante", vacante);

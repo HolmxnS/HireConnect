@@ -11,10 +11,9 @@ import java.util.stream.Collectors;
 @Service
 public class NotificacionService {
 
-    // Lista thread-safe compartida por todos los admins
+    // Lista segura para concurrencia, compartida entre administradores; se pierde al reiniciar.
     private final List<Notificacion> notificaciones = new CopyOnWriteArrayList<>();
 
-    // Crear notificación
     public void crearNotificacion(String nombre, Notificacion.TipoNotificacion tipo) {
         Notificacion n = new Notificacion();
         n.setNombreRelacionado(nombre);
@@ -28,7 +27,6 @@ public class NotificacionService {
         notificaciones.add(n);
     }
 
-    // Obtener notificaciones no leídas
     public List<Notificacion> obtenerNuevas() {
         return notificaciones.stream()
             .filter(n -> !n.isLeida())
@@ -36,21 +34,18 @@ public class NotificacionService {
             .collect(Collectors.toList());
     }
 
-    // Contar notificaciones no leídas
     public int contarNuevas() {
         return (int) notificaciones.stream()
             .filter(n -> !n.isLeida())
             .count();
     }
 
-    // Obtener todas ordenadas por fecha
     public List<Notificacion> obtenerTodasOrdenadas() {
         return notificaciones.stream()
             .sorted(Comparator.comparing(Notificacion::getFecha).reversed())
             .collect(Collectors.toList());
     }
 
-    // Marcar una como leída
     public void marcarUnaComoLeida(String id) {
         notificaciones.stream()
             .filter(n -> n.getId().equals(id))
@@ -58,17 +53,14 @@ public class NotificacionService {
             .ifPresent(n -> n.setLeida(true));
     }
 
-    // Marcar todas como leídas
     public void marcarTodasComoLeidas() {
         notificaciones.forEach(n -> n.setLeida(true));
     }
 
-    // Eliminar una notificación
     public void eliminarUna(String id) {
         notificaciones.removeIf(n -> n.getId().equals(id));
     }
 
-    // Eliminar todas las notificaciones
     public void eliminarTodas() {
         notificaciones.clear();
     }

@@ -38,7 +38,6 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
                 String apellido = oauth2User.getAttribute("family_name");
                 String foto = oauth2User.getAttribute("picture");
 
-                // Buscar si ya existe como Postulante
                 Optional<Postulante> postulanteOpt = postulanteService.buscarPorEmail(email);
                 if (postulanteOpt.isPresent()) {
                         Postulante p = postulanteOpt.get();
@@ -46,7 +45,6 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
                         return;
                 }
 
-                // Buscar si ya existe como Empresa
                 Optional<Empresa> empresaOpt = empresaService.buscarPorEmailEmpresa(email);
                 if (empresaOpt.isPresent()) {
                         Empresa e = empresaOpt.get();
@@ -70,6 +68,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
                                 email, null, Collections.singletonList(new SimpleGrantedAuthority(rol)));
 
                 SecurityContextHolder.getContext().setAuthentication(auth);
+                // Guarda la autenticación local para conservarla en la siguiente petición.
                 request.getSession(true).setAttribute(
                                 HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
                                 SecurityContextHolder.getContext());

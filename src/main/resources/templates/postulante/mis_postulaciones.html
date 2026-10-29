@@ -1,122 +1,94 @@
 <!doctype html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!--Styles-->
-    <link
-      rel="stylesheet"
-      th:href="@{/styles/fragments/postulante/sidebar.css}"
-    />
-    <link
-      rel="stylesheet"
-      th:href="@{/styles/fragments/postulante/header.css}"
-    />
-    <link
-      rel="stylesheet"
-      th:href="@{/styles/postulante/mis_postulaciones.css}"
-    />
+    <link rel="stylesheet" th:href="@{/styles/fragments/postulante/sidebar.css}" />
+    <link rel="stylesheet" th:href="@{/styles/fragments/postulante/header.css}" />
     <link rel="stylesheet" th:href="@{/styles/postulante/theme.css}" />
+    <link rel="stylesheet" th:href="@{/styles/postulante/mis_postulaciones.css}" />
     <script th:src="@{/js/theme.js}"></script>
-    <!--Fonts-->
     <link rel="stylesheet" th:href="@{/styles/satoshi.css}" />
     <link rel="stylesheet" th:href="@{/styles/clash-display.css}" />
-    <!--Icons-->
-    <link
-      rel="icon"
-      type="image/svg+xml"
-      sizes="any"
-      th:href="@{/source/img/favicon.svg}"
-    />
-    <script
-      src="https://kit.fontawesome.com/e71256cba2.js"
-      crossorigin="anonymous"
-    ></script>
-
-    <title>Mis Postulaciones</title>
-      <link rel="stylesheet" th:href="@{/styles/brand.css}" />
+    <link rel="stylesheet" th:href="@{/styles/brand.css}" />
+    <link rel="icon" type="image/svg+xml" sizes="any" th:href="@{/source/img/favicon.svg}" />
+    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous" defer></script>
+    <title>Mis postulaciones | HireConnect</title>
 </head>
-
-  <body>
-    <div
-      th:replace="~{fragments/postulante/sidebar_postulante :: sidebar ('postulaciones')}"
-    ></div>
-
-    <div
-      th:replace="~{fragments/postulante/header_postulante :: menu-fragment(false)}"
-    ></div>
-    <div
-      th:replace="~{fragments/postulante/header_postulante :: menu-fragment(false)}"
-    ></div>
-    
-    <main class="main">
-      <h2 class="main__title">
-        <i class="fa-solid fa-clipboard-list icon"></i> Mis Postulaciones
-      </h2>
-
-      <section class="table-container">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Vacante</th>
-              <th>Empresa</th>
-              <th>Estado</th>
-              <th>Acción</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr th:each="postulacion : ${postulaciones}">
-              <td th:text="${postulacion.vacante.titulo}"></td>
-              <td th:text="${postulacion.vacante.empresa.nombre}"></td>
-              <td>
-                <span
-                  th:text="${postulacion.estado.descripcion}"
-                  th:classappend="${postulacion.estado.descripcion == 'En revision' ? 'estado-aplicado' :
-                                    postulacion.estado.descripcion == 'RECHAZADO' ? 'estado-rechazado' :
-                                    'estado-aceptado'}"
-                  class="table__status"
-                ></span>
-              </td>
-              <td class="table__field-action">
-                <a
-                  th:href="@{/postulante/postulacion/detalle/{id}(id=${postulacion.id}, postulanteId=${postulante.id})}"
-                  class="table__action-view"
-                >
-                  <i class="fa-solid fa-eye"></i> Ver
-                </a>
-
-                <form
-                  th:action="@{/postulante/eliminar/{id}(id=${postulacion.id})}"
-                  method="post"
-                  onsubmit="
-                    return confirm(
-                      '¿Seguro que deseas retirar tu postulación?',
-                    );
-                  "
-                  class="form__delete"
-                >
-                  <button type="submit" class="table__action-delete">
-                    <i class="fa-solid fa-trash-can"></i> Eliminar
-                  </button>
-                </form>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-
-      <div th:if="${postulaciones.isEmpty()}" class="not__applicants">
-        <i class="fa-regular fa-folder-open not__icon"></i>
-        <h3>Aún no has aplicado a ninguna vacante.</h3>
-        <p>¡Explora nuestras ofertas y encuentra tu próximo empleo!</p>
-        <a th:href="@{/postulante/vacantes}" class="link-explorer"
-          >Explorar Vacantes</a
-        >
-      </div>
+<body class="applications-page">
+    <div th:replace="~{fragments/postulante/sidebar_postulante :: sidebar('postulaciones')}"></div>
+    <div th:replace="~{fragments/postulante/header_postulante :: menu-fragment(false)}"></div>
+    <main class="main applications">
+        <div class="applications__heading">
+            <div><p class="applications__eyebrow">TU BÚSQUEDA DE EMPLEO</p><h1>Mis postulaciones</h1>
+                <p class="applications__subtitle">Consulta tus candidaturas y sigue los avances de cada proceso.</p></div>
+            <a class="applications__explore" th:href="@{/postulante/vacantes}">Explorar vacantes <span aria-hidden="true">↗</span></a>
+        </div>
+        <p class="applications__alert" role="status" th:if="${exito}" th:text="${exito}"></p>
+        <p class="applications__alert applications__alert--error" role="alert" th:if="${error}" th:text="${error}"></p>
+        <section class="applications__summary" aria-label="Resumen de postulaciones">
+            <div class="applications__metric"><span>Total de postulaciones</span><strong th:text="${#lists.size(postulaciones)}">0</strong></div>
+            <div class="applications__metric"><span>En proceso</span><strong th:text="${postulacionesEnProceso}">0</strong></div>
+            <div class="applications__metric"><span>Entrevistas pendientes</span><strong th:text="${postulacionesEntrevista}">0</strong></div>
+            <div class="applications__metric"><span>Aceptadas</span><strong th:text="${postulacionesAceptadas}">0</strong></div>
+        </section>
+        <div th:unless="${#lists.isEmpty(postulaciones)}">
+            <div class="applications__tools" data-application-tools hidden>
+                <div class="applications__search"><label for="application-search">Buscar en mis postulaciones</label>
+                    <input type="search" id="application-search" placeholder="Cargo o empresa" autocomplete="off" /></div>
+                <div class="applications__filter"><label for="application-state">Estado</label>
+                    <select id="application-state"><option value="">Todos los estados</option><option value="PENDIENTE">Pendiente</option><option value="EN_REVISION">En revisión</option><option value="ENTREVISTA_PENDIENTE">Entrevista pendiente</option><option value="ACEPTADA">Aceptada</option><option value="RECHAZADA">Rechazada</option></select></div>
+            </div>
+            <p class="applications__count" aria-live="polite" data-application-count th:text="${#lists.size(postulaciones) + ' postulaciones · Más recientes primero'}"></p>
+            <div class="applications__columns" aria-hidden="true"><span>Vacante</span><span>Empresa</span><span>Fecha de envío</span><span>Estado</span><span>Acciones</span></div>
+            <section class="applications__list" aria-label="Tus postulaciones">
+                <article class="applications__card" th:each="postulacion : ${postulaciones}"
+                    th:with="vacante=${postulacion.vacante},empresa=${vacante?.empresa},estado=${postulacion.estado != null ? postulacion.estado.name() : 'PENDIENTE'}"
+                    th:attr="data-application-card=true,data-state=${estado},data-title=${vacante?.titulo},data-company=${empresa?.nombre}">
+                    <div class="applications__identity">
+                        <span class="applications__logo" aria-hidden="true">
+                            <img th:if="${not #strings.isEmpty(empresa?.foto)}" th:src="${empresa.foto}" alt="" loading="lazy" />
+                            <i th:unless="${not #strings.isEmpty(empresa?.foto)}" class="fa-regular fa-building"></i>
+                        </span>
+                        <div class="applications__job"><h2 th:text="${vacante?.titulo ?: 'Vacante no disponible'}"></h2>
+                        </div>
+                    </div>
+                    <p class="applications__company" th:text="${empresa?.nombre ?: 'Empresa no disponible'}"></p>
+                    <p class="applications__date"><time th:if="${postulacion.fechaPostulacion != null}" th:datetime="${postulacion.fechaPostulacion}" th:text="${#temporals.format(postulacion.fechaPostulacion, 'dd/MM/yyyy')}"></time><span th:unless="${postulacion.fechaPostulacion != null}">Sin fecha</span></p>
+                    <div class="applications__status">
+                        <span class="applications__badge" th:attr="data-state=${estado}"><span th:text="${estado == 'EN_REVISION' ? 'En revisión' : (postulacion.estado?.descripcion ?: 'Pendiente')}">Pendiente</span></span>
+                    </div>
+                    <div class="applications__actions">
+                        <a th:if="${vacante != null}" class="applications__detail" data-application-open th:attr="data-application-id=${postulacion.id}" th:href="@{/postulante/postulacion/detalle/{id}(id=${postulacion.id})}">Ver detalle</a>
+                        <details class="applications__more"><summary aria-label="Más acciones">⋯</summary>
+                        <form th:action="@{/postulante/eliminar/{id}(id=${postulacion.id})}" method="post" onsubmit="return confirm('¿Quieres retirar esta postulación? Esta acción no se puede deshacer.');">
+                            <button class="applications__withdraw" type="submit" th:attr="aria-label=${'Retirar postulación a ' + (vacante?.titulo ?: 'vacante no disponible')}">Retirar postulación</button>
+                        </form>
+                        </details>
+                    </div>
+                </article>
+            </section>
+            <div class="applications__empty" data-application-no-results hidden><span class="applications__empty-icon" aria-hidden="true">⌕</span><h2>No hay coincidencias</h2><p>Prueba con otro cargo, empresa o estado.</p><button class="applications__detail" type="button" data-application-reset>Limpiar búsqueda</button></div>
+        </div>
+        <section class="applications__empty" th:if="${#lists.isEmpty(postulaciones)}">
+            <span class="applications__empty-icon" aria-hidden="true"><i class="fa-regular fa-folder-open"></i></span>
+            <h2>Tu próxima oportunidad empieza con una postulación</h2><p>Cuando te postules a una vacante, podrás seguir su estado desde aquí.</p>
+            <a class="applications__detail" th:href="@{/postulante/vacantes}">Explorar vacantes <span aria-hidden="true">→</span></a>
+        </section>
     </main>
-
-    <script th:src="@{/js/filter.js}"></script>
-    <!-- Chat IA -->
+    <dialog class="application-drawer" id="application-drawer" aria-labelledby="application-drawer-title">
+        <div class="application-drawer__header">
+            <h2 id="application-drawer-title">Detalle de la postulación</h2>
+            <div class="application-drawer__controls">
+                <button type="button" data-application-previous aria-label="Postulación anterior">←</button>
+                <button type="button" data-application-next aria-label="Postulación siguiente">→</button>
+                <button type="button" data-application-close aria-label="Cerrar detalle" autofocus>×</button>
+            </div>
+        </div>
+        <div class="application-drawer__body" data-application-content aria-live="polite"></div>
+    </dialog>
+    <script th:src="@{/js/mis_postulaciones.js}" defer></script>
+    <script th:src="@{/js/detalle_postulacion_panel.js}" defer></script>
     <div th:replace="~{fragments/postulante/chatbot :: chatbot}"></div>
-  </body>
+</body>
 </html>

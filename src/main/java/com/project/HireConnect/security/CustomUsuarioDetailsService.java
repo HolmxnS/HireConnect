@@ -32,11 +32,9 @@ public class CustomUsuarioDetailsService implements UserDetailsService {
         this.empresaService = empresaService;
     }
 
-    // busca usuario por email
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        // admin
         Optional<Admin> adminOpt = adminService.buscarPorEmail(email);
         if (adminOpt.isPresent()) {
             Admin admin = adminOpt.get();
@@ -46,7 +44,6 @@ public class CustomUsuarioDetailsService implements UserDetailsService {
                     Collections.singletonList(new SimpleGrantedAuthority(admin.getRol().name())));
         }
 
-        // persona
         Optional<Postulante> postulanteOpt = postulanteService.buscarPorEmail(email);
         if (postulanteOpt.isPresent()) {
             Postulante postulante = postulanteOpt.get();
@@ -61,7 +58,6 @@ public class CustomUsuarioDetailsService implements UserDetailsService {
                     Collections.singletonList(new SimpleGrantedAuthority("ROLE_PERSONA")));
         }
 
-        // empresa
         Optional<Empresa> empresaOpt = empresaService.buscarPorEmailEmpresa(email);
         if (empresaOpt.isPresent()) {
             Empresa empresa = empresaOpt.get();

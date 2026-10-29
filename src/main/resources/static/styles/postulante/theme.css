@@ -52,7 +52,6 @@
     --pc-bad-bg: #fdecef;
 }
 
-/* ---------- Base ---------- */
 html { font-size: 10px; }
 
 * {
@@ -76,7 +75,6 @@ h1, h2, h3 {
 
 a { color: inherit; }
 
-/* ---------- Estructura de contenido ---------- */
 body main,
 body .main,
 body main.content {
@@ -123,7 +121,6 @@ body:has(.header-container) .main {
     font-size: 1.8rem;
 }
 
-/* ---------- Barra superior (buscador) ---------- */
 .active-filter-chip {
     background: var(--lila);
     color: var(--morado-c);
@@ -150,7 +147,6 @@ body:has(.header-container) .main {
     color: var(--morado-c);
 }
 
-/* Panel de filtros */
 .filter-card--active,
 .filter-chip--active {
     border-color: var(--morado-c);
@@ -165,7 +161,6 @@ body:has(.header-container) .main {
 
 .btn-apply:hover { background: var(--morado-h); }
 
-/* ---------- Tarjetas ---------- */
 .vacancies__card,
 .table-container,
 .profile-card,
@@ -191,7 +186,6 @@ body:has(.header-container) .main {
     height: auto;
 }
 
-/* ---------- Botones ---------- */
 .btn--postulate,
 .btn-submit-save,
 .btn-upload-cv,
@@ -234,7 +228,6 @@ body:has(.header-container) .main {
 
 .btn { border-radius: 99rem; }
 
-/* ---------- Formularios ---------- */
 .form-input,
 .form__input,
 textarea,
@@ -275,7 +268,6 @@ select:focus {
     border-radius: 1.2rem;
 }
 
-/* ---------- Vacantes (cuadrícula) ---------- */
 .vacancies {
     width: 100%;
     max-width: 120rem;
@@ -319,7 +311,6 @@ select:focus {
     color: var(--morado-c);
 }
 
-/* ---------- Mis postulaciones ---------- */
 .table-container {
     padding: 0;
     overflow: hidden;
@@ -417,7 +408,6 @@ select:focus {
     text-decoration: none;
 }
 
-/* ---------- Perfil ---------- */
 .profile-tabs {
     gap: .6rem;
     padding: .6rem;
@@ -462,7 +452,6 @@ select:focus {
     color: var(--negro-1);
 }
 
-/* ---------- Configuración / modales ---------- */
 .modal__container,
 .modal-content {
     border-radius: var(--pc-radius);
@@ -471,7 +460,6 @@ select:focus {
 
 .settings h5 { color: var(--negro-1); }
 
-/* ---------- Detalle de vacante / postulación ---------- */
 body > .details {
     margin-left: var(--sidebar-w, 24rem);
     max-width: none;
@@ -508,13 +496,11 @@ body > .details {
     border-radius: 99rem;
 }
 
-/* ---------- Scrollbar sutil ---------- */
 * {
     scrollbar-width: thin;
     scrollbar-color: var(--violeta) transparent;
 }
 
-/* ---------- Responsive ---------- */
 @media (max-width: 900px) {
     body main,
     body .main,
@@ -549,9 +535,6 @@ body > .details {
     max-width: calc(100vw - 4.8rem);
 }
 
-/* ==========================================================================
-   MODO CLARO / OSCURO
-   ========================================================================== */
 :root[data-theme="dark"] {
     --morado-c: #b04ad6;
     --morado-h: #c26be3;
@@ -582,7 +565,6 @@ body > .details {
     color-scheme: dark;
 }
 
-/* Superficies (tarjetas, paneles, modales) */
 :root[data-theme="dark"] .vacancies__card,
 :root[data-theme="dark"] .profile-card,
 :root[data-theme="dark"] .settings,
@@ -650,7 +632,6 @@ body > .details {
     color: #8e22bb;
 }
 
-/* Asistente IA en oscuro */
 :root[data-theme="dark"] .hc-chat-root {
     --hc-humo: #120b17;
     --hc-gris: #3a2d45;
@@ -681,13 +662,7 @@ body > .details {
     border-color: var(--pc-line);
 }
 
-/* ==========================================================================
-   RESPONSIVE · todas las páginas del postulante
-   Breakpoints: 1100 (tablet grande) · 900 (tablet, sidebar compacto)
-                700 (móvil, barra inferior) · 400 (móvil pequeño)
-   ========================================================================== */
 
-/* Los modales deben quedar por encima del sidebar */
 .modal,
 .content-overlay {
     z-index: 100;
@@ -697,10 +672,8 @@ body > .details {
     z-index: 101;
 }
 
-/* ---------- Tablet grande (≤ 1100px) ---------- */
 @media (max-width: 1100px) {
 
-    /* Detalle de vacante: columna única, "similares" debajo */
     .details__layout {
         flex-direction: column;
     }
@@ -721,13 +694,11 @@ body > .details {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    /* Detalle de postulación */
     .info {
         display: block;
     }
 }
 
-/* ---------- Tablet (≤ 900px): sidebar compacto de íconos ---------- */
 @media (max-width: 900px) {
     header.header {
         margin-left: var(--sidebar-w, 24rem);
@@ -738,10 +709,8 @@ body > .details {
     }
 }
 
-/* ---------- Móvil (≤ 700px): barra de navegación inferior ---------- */
 @media (max-width: 700px) {
 
-    /* ===== Navegación: tab bar fija abajo ===== */
     .sidebar {
         top: auto;
         bottom: 0;
@@ -839,7 +808,6 @@ body > .details {
         border-radius: 0 0 .4rem .4rem;
     }
 
-    /* ===== Contenido: sin margen lateral, espacio para la barra inferior ===== */
     body main,
     body .main,
     body main.content,
@@ -867,7 +835,6 @@ body > .details {
         font-size: 1.5rem;
     }
 
-    /* ===== Barra superior / buscador ===== */
 
 
 
@@ -884,13 +851,11 @@ body > .details {
         height: 3.8rem;
     }
 
-    /* Panel de filtros a pantalla completa */
     .filter-panel {
         width: 100vw;
         height: 100dvh;
     }
 
-    /* ===== Inicio ===== */
     .hero {
         padding: 2.8rem 2rem;
         border-radius: 2rem;
@@ -932,7 +897,6 @@ body > .details {
         padding: 2rem;
     }
 
-    /* ===== Vacantes ===== */
     .vacancies {
         grid-template-columns: minmax(0, 1fr);
         gap: 1.4rem;
@@ -965,7 +929,6 @@ body > .details {
         padding: 2.4rem;
     }
 
-    /* ===== Mis postulaciones: la tabla pasa a tarjetas ===== */
     .table-container {
         padding: 0;
         margin: 0;
@@ -1056,7 +1019,6 @@ body > .details {
         padding: 2.8rem 2rem;
     }
 
-    /* ===== Perfil ===== */
     .profile-tabs {
         width: 100%;
         flex-wrap: nowrap;
@@ -1153,7 +1115,6 @@ body > .details {
         width: 100%;
     }
 
-    /* ===== Configuración ===== */
     .settings {
         padding: 2rem 1.6rem;
         margin: 0 0 1.6rem;
@@ -1193,7 +1154,6 @@ body > .details {
         width: 100%;
     }
 
-    /* ===== Detalle de vacante ===== */
     .details__card {
         padding: 2rem 1.6rem;
     }
@@ -1222,7 +1182,6 @@ body > .details {
         padding: 1.6rem;
     }
 
-    /* ===== Detalle de postulación ===== */
     header.header {
         margin-left: 0;
         padding: 0 1.6rem;
@@ -1247,7 +1206,6 @@ body > .details {
         text-align: center;
     }
 
-    /* ===== Asistente IA: por encima de la barra inferior ===== */
     .hc-chat-root .hc-chat__toggle {
         right: 1.6rem;
         bottom: 8.4rem;
@@ -1263,7 +1221,6 @@ body > .details {
     }
 }
 
-/* ---------- Móvil pequeño (≤ 400px) ---------- */
 @media (max-width: 400px) {
 
     body main,

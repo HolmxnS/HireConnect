@@ -1,6 +1,4 @@
-/* Paletts and fonts */
 :root {
-    /* Colors (Nuevas Variables) */
     --violeta: #9c4bff;
     --morado-c: #9400D3;
     --morado-o: #29003a;
@@ -28,7 +26,6 @@
     --danger-base: var(--rojo-2);
     --danger-dark: var(--crimson);
 
-    /* Grises */
     --gray-bg: var(--white-smoke);
     --gray-border: var(--gris-c);
     --gray-text: var(--gris-o);
@@ -43,7 +40,6 @@
     --font-clash: 'ClashDisplay';
 }
 
-/*Universal Styles*/
 * {
     margin: 0;
     padding: 0;
@@ -80,7 +76,6 @@ main {
     }
 }
 
-/*Modal*/
 .content-overlay {
     position: fixed;
     top: 0;
@@ -143,7 +138,6 @@ main {
 }
 
 
-/* ===== TABS NAV ===== */
 .profile-tabs {
     display: flex;
     gap: 0;
@@ -188,7 +182,6 @@ main {
     border-bottom-color: var(--primary-light);
 }
 
-/* ===== SECTIONS ===== */
 .profile-section--hidden {
     display: none;
 }
@@ -240,7 +233,6 @@ main {
     background-color: var(--danger-dark);
 }
 
-/*Main Content*/
 .page-title {
     font-size: 2.5rem;
     font-weight: 800;
@@ -275,7 +267,6 @@ main {
     color: var(--crimson);
 }
 
-/*Perfil*/
 .profile-card {
     background-color: var(--bg-card);
     padding: 1.5rem;
@@ -409,7 +400,6 @@ main {
     font-size: 1.3rem;
 }
 
-/*Informacion Basica*/
 .form-grid {
     display: grid;
     grid-template-columns: repeat(1, minmax(0, 1fr));
@@ -502,7 +492,6 @@ textarea:focus {
 }
 
 
-/*Cv Section*/
 .cv-section {
     border-bottom: .1rem solid var(--gris-c);
     padding-bottom: 3rem;
@@ -612,7 +601,6 @@ textarea:focus {
     margin-right: 0.5rem;
 }
 
-/*Habilidades*/
 .list-form {
     margin-bottom: 1.5rem;
     border-bottom: 1px solid var(--white-smoke);

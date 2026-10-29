@@ -12,7 +12,7 @@
         '.offers .section-head, .offers__carousel, .offers__empty, .how-it-works .section-head, .how-it-works__step'
     ));
     var observer = new IntersectionObserver(function (entries) {
-        // Stagger only elements entering together, so mobile steps never wait offscreen.
+        // Escalona solo los elementos que entran juntos, para no retrasar pasos fuera de pantalla.
         var visible = entries.filter(function (entry) { return entry.isIntersecting; });
         visible.sort(function (a, b) { return elements.indexOf(a.target) - elements.indexOf(b.target); });
         var sectionDelays = new Map();

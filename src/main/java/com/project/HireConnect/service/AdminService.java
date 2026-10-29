@@ -14,17 +14,14 @@ public class AdminService {
     @Autowired
     private AdminRepository adminRepository;
     
-    //buscar por email
     public Optional<Admin> buscarPorEmail(String email) {
         return adminRepository.findByEmail(email); 
     }
 
-    //buscar por id
     public Optional<Admin> buscarPorId(String id) {
         return adminRepository.findById(id); 
     }
 
-    //guardar usuario
     public Admin guardar(Admin admin) {
         return adminRepository.save(admin);
     }

@@ -4,15 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--Styles-->
     <link rel="stylesheet" th:href="@{/styles/fragments/empresa/sidebar.css}">
     <link rel="stylesheet" th:href="@{/styles/empresa/home_empresa.css}">
     <link rel="stylesheet" th:href="@{/styles/empresa/theme.css}">
     <script th:src="@{/js/theme.js}"></script>
-    <!--Fonts-->
     <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
     <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
-    <!--Icons-->
     <link rel="icon" type="image/svg+xml" sizes="any" th:href="@{/source/img/favicon.svg}">
     <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
 
@@ -25,7 +22,6 @@
 
     <main class="main home">
 
-        <!-- Bienvenida -->
         <section class="hero">
             <div class="hero__text">
                 <span class="hero__eyebrow"><i class="fa-solid fa-wand-magic-sparkles"></i> Panel de empresa</span>
@@ -45,7 +41,6 @@
             <img class="hero__logo" th:src="@{/source/img/isotipo.png}" alt="" aria-hidden="true">
         </section>
 
-        <!-- Perfil incompleto -->
         <section class="profile-card" th:if="${!faltantes.isEmpty()}">
             <div class="profile-card__top">
                 <i class="fa-solid fa-circle-exclamation"></i>
@@ -78,7 +73,6 @@
             </div>
         </section>
 
-        <!-- Accesos rápidos -->
         <section class="quick" aria-label="Accesos rápidos">
             <a th:href="@{/empresa/vacantes/nueva}" class="quick__card">
                 <span class="quick__icon"><i class="fa-solid fa-plus-circle"></i></span>

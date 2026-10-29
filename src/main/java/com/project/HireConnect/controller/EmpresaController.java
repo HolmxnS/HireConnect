@@ -44,7 +44,6 @@ public class EmpresaController {
         this.vacanteService = vacanteService;
     }
 
-    // getEmpresa
     private Empresa obtenerEmpresaLogueada(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new AccessDeniedException("Usuario no autenticado.");
@@ -56,7 +55,6 @@ public class EmpresaController {
                 .orElseThrow(() -> new RuntimeException("Empresa no encontrada para el email: " + email));
     }
 
-    // inicio empresa
     @GetMapping("/home")
     public String homeEmpresa(Authentication auth, Model model, RedirectAttributes redirectAttributes) {
         try {
@@ -78,7 +76,6 @@ public class EmpresaController {
         }
     }
 
-    // gestion de vacantes
     @GetMapping("/vacante")
     public String vacantes(Authentication auth, Model model, RedirectAttributes redirectAttributes) {
         try {
@@ -98,7 +95,6 @@ public class EmpresaController {
         }
     }
 
-    // Mostrar vacantes
     @GetMapping("/postulaciones")
     public String mostrarMenuPostulaciones(Model model, Authentication auth) {
         Empresa empresa = obtenerEmpresaLogueada(auth);
@@ -141,7 +137,6 @@ public class EmpresaController {
         return "empresa/ver_detalle_vacante";
     }
 
-    // Mostrar postulaciones de vacante seleccionada
     @GetMapping("/postulaciones/lista/{vacanteId}")
     public String listarPostulacionesPorVacante(@PathVariable String vacanteId, Model model,
             Authentication auth) {
@@ -165,7 +160,6 @@ public class EmpresaController {
         return "empresa/listado_postulaciones";
     }
 
-    // Mostrar detalles de postulacion
     @GetMapping("/postulacion/{id}")
     public String verDetallePostulacion(@PathVariable("id") String idPostulacion,
             Authentication auth,
@@ -219,7 +213,6 @@ public class EmpresaController {
         return "redirect:/empresa/postulaciones";
     }
 
-    // Perfil
     @GetMapping("/editar")
     public String mostrarFormularioEdicionEmpresa(
             Authentication auth,
@@ -284,30 +277,25 @@ public class EmpresaController {
                 redirectAttributes.addFlashAttribute("error", "Por favor, selecciona un archivo.");
                 return "redirect:/empresa/editar";
             }
-            // Validar tipo de archivo
             String tipo = file.getContentType();
             if (tipo == null || !(tipo.equals("image/jpeg") || tipo.equals("image/png"))) {
                 redirectAttributes.addFlashAttribute("error", "Solo se permiten imágenes JPG o PNG.");
                 return "redirect:/empresa/editar";
             }
-            // Validar tamaño de archivo
             long maxSizeBytes = 2 * 1024 * 1024; // 2MB
             if (file.getSize() > maxSizeBytes) {
                 redirectAttributes.addFlashAttribute("error", "El archivo excede el tamaño máximo permitido (2MB).");
                 return "redirect:/empresa/editar";
             }
-            // Crear carpeta si no existe
             String uploadDir = "uploads/empresas/";
             Path uploadPath = Paths.get(uploadDir);
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
-            // Guardar archivo
             String extension = tipo.equals("image/png") ? ".png" : ".jpg";
             String nombreArchivo = "empresa_" + id + "_" + System.currentTimeMillis() + extension;
             Path archivoPath = uploadPath.resolve(nombreArchivo);
             Files.copy(file.getInputStream(), archivoPath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-            // Guardar ruta en la empresa
             empresa.setFoto("/" + uploadDir + nombreArchivo);
             empresaService.guardar(empresa);
             redirectAttributes.addFlashAttribute("success", "Foto subida correctamente.");
@@ -343,7 +331,6 @@ public class EmpresaController {
         return "redirect:/empresa/editar";
     }
 
-    // Configuracion
     @GetMapping("/configuracion")
     public String mostrarConfiguracion(Authentication authentication,
             Model model,
@@ -380,7 +367,6 @@ public class EmpresaController {
                 return "redirect:/empresa/configuracion";
             }
 
-            // Validar contraseña
             if (!nuevaPassword.equals(confirmarPassword)) {
                 redirectAttributes.addFlashAttribute("error",
                         "La nueva contraseña y la confirmación no coinciden.");

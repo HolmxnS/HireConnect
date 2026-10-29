@@ -7,10 +7,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
-/**
- * Aviso para el postulante, por ejemplo cuando cambia el estado de una
- * postulacion.
- */
 @Data
 @Document(collection = "notificaciones_postulante")
 public class NotificacionPostulante {
@@ -25,7 +21,6 @@ public class NotificacionPostulante {
 
     private String vacanteTitulo;
 
-    // Nombre del estado nuevo (EN_REVISION, ACEPTADA...)
     private String estado;
 
     private String mensaje;

@@ -1,4 +1,3 @@
-/* Isotipo oficial: reutiliza el archivo del sidebar sin modificar la imagen. */
 .hc-logo-mark {
     position: relative;
     display: inline-block;
@@ -18,7 +17,6 @@
     height: auto;
     max-width: none;
     display: block;
-    /* Contorno mínimo para reforzar los trazos sin un halo difuminado. */
     filter: drop-shadow(.2px 0 0 #8e22bb) drop-shadow(-.2px 0 0 #8e22bb);
 }
 
@@ -46,7 +44,6 @@
     .menu__logo .hc-logo-mark { width: 2.2rem; height: 3.2rem; }
 }
 
-/* Marca más ligera y legible en ambos temas. */
 .menu__logo,
 .type__logo,
 .footer__logo,
@@ -85,7 +82,6 @@
     color: #d19ae8;
 }
 
-/* Tamaño compacto y peso intermedio para el nombre de la marca. */
 .menu__logo { font-size: 2.2rem; }
 .type__logo { font-size: 2.4rem; }
 .footer__logo { font-size: 2.3rem; }
@@ -139,7 +135,6 @@
     transform: none;
 }
 
-/* El isotipo conserva el morado original sobre una base clara, también en dark. */
 .signup__logo.hc-logo-badge { top: 3.2rem; }
 
 .login__logo.hc-logo-badge .hc-logo-mark > img,

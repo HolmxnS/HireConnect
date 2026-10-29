@@ -1,4 +1,3 @@
-/* Layout, typography, stepper, button and theme are shared with registration. */
 .verify { width: 100%; max-width: 44rem; margin-inline: auto; text-align: center; }
 .verify__email { color: var(--fg); overflow-wrap: anywhere; }
 .code-inputs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) auto repeat(3, minmax(0, 1fr)); align-items: center; gap: 1rem; }
@@ -18,7 +17,6 @@
 .flash-alert--error { background: var(--error-bg); color: var(--error); }
 .flash-alert--success { background: var(--chip); color: var(--accent-ink); }
 @media (max-width: 380px) { .code-inputs { gap: .5rem; } .code-input { height: 5rem; font-size: 2rem; } }
-/* Modal error código */
 .modal-overlay {
     position: fixed;
     inset: 0;

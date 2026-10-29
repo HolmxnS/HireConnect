@@ -23,38 +23,31 @@ public class PostulanteService {
         return postulanteRepository.count();
     }
 
-    // Registro de Postulante
     public Postulante registrarPostulante(Postulante postulante) {
         postulante.setPassword(passwordEncoder.encode(postulante.getPassword()));
         return postulanteRepository.save(postulante);
     }
 
-    // Buscar por ID - CAMBIADO: Long a String
     public Optional<Postulante> buscarPorId(String id) {
         return postulanteRepository.findById(id);
     }
 
-    // Buscar por Email
     public Optional<Postulante> buscarPorEmail(String email) {
         return postulanteRepository.findByEmail(email);
     }
 
-    // Guardar o actualizar postulante
     public Postulante guardar(Postulante postulante) {
         return postulanteRepository.save(postulante);
     }
 
-    // Listar todos los postulantes
     public List<Postulante> listarTodos() {
         return postulanteRepository.findAll();
     }
 
-    // Eliminar postulante por ID - CAMBIADO: Long a String
     public void eliminar(String id) {
         postulanteRepository.deleteById(id);
     }
 
-    // Actualizar CV - CAMBIADO: Long a String
     public void actualizarCv(String id, String cvPath) throws RuntimeException {
         Postulante postulante = postulanteRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Postulante no encontrado con ID: " + id));
@@ -63,7 +56,6 @@ public class PostulanteService {
         postulanteRepository.save(postulante);
     }
 
-    // Actualizar Password - CAMBIADO: Long a String
     public boolean actualizarPassword(String id, String passwordActual, String nuevaPassword) {
         Optional<Postulante> postulanteOpt = postulanteRepository.findById(id);
 

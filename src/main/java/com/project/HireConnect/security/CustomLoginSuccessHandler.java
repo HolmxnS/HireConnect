@@ -21,15 +21,12 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         String redirectUrl = "/dashboard";
 
-        //admin
         if (authorities.stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN_PLATAFORMA"))) {
             redirectUrl = "/admin/dashboard";
         } 
-        //empresa
         else if (authorities.stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_EMPRESA"))) {
             redirectUrl = "/empresa/home";
         } 
-        // persona
         else if (authorities.stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_PERSONA"))) {
             redirectUrl = "/postulante/vacantes";
         } 

@@ -17,7 +17,6 @@
 
     <div class="container">
 
-        <!-- Hero Section -->
         <div class="hero">
             <h2 class="hero__title">Tu empresa, lista para conectar con el mejor talento.</h2>
             <p class="hero__info">Completa la información de tu empresa para empezar a publicar ofertas y encontrar a tus futuros colaboradores.</p>
@@ -57,14 +56,12 @@
 
                     <form class="register__form" th:action="@{/empresa/completar_perfil_empresa}" th:object="${empresa}" method="post" novalidate>
 
-                        <!-- === SECCIÓN: INFORMACIÓN LEGAL === -->
                         <div class="section-label">
                             <i class="fa-solid fa-file-contract"></i>
                             <span>Información legal</span>
                         </div>
 
                         <div class="form-row">
-                            <!-- RUT/NIT (Obligatorio) -->
                             <div class="form-group">
                                 <label for="rut">RUT / NIT *</label>
                                 <input type="text" id="rut" th:field="*{rut}" 
@@ -74,7 +71,6 @@
                                 <p class="error" th:if="${#fields.hasErrors('rut')}" th:text="${#fields.errors('rut')[0]}"></p>
                             </div>
 
-                            <!-- Teléfono (Obligatorio) -->
                             <div class="form-group">
                                 <label for="telefono">Teléfono *</label>
                                 <input type="text" id="telefono" th:field="*{telefono}" 
@@ -85,14 +81,12 @@
                             </div>
                         </div>
 
-                        <!-- === SECCIÓN: UBICACIÓN Y SECTOR === -->
                         <div class="section-label">
                             <i class="fa-solid fa-location-dot"></i>
                             <span>Ubicación y sector</span>
                         </div>
 
                         <div class="form-row">
-                            <!-- Ubicación (Obligatorio) -->
                             <div class="form-group">
                                 <label for="ubicacion">Ubicación *</label>
                                 <input type="text" id="ubicacion" th:field="*{ubicacion}" 
@@ -102,7 +96,6 @@
                                 <p class="error" th:if="${#fields.hasErrors('ubicacion')}" th:text="${#fields.errors('ubicacion')[0]}"></p>
                             </div>
 
-                            <!-- Sector (Obligatorio) -->
                             <div class="form-group">
                                 <label for="sector">Sector *</label>
                                 <div class="select-wrapper">
@@ -123,14 +116,12 @@
                             </div>
                         </div>
 
-                        <!-- === SECCIÓN: INFORMACIÓN ADICIONAL (Opcional) === -->
                         <div class="section-label">
                             <i class="fa-solid fa-circle-info"></i>
                             <span>Información adicional (opcional)</span>
                         </div>
 
                         <div class="form-row">
-                            <!-- Website -->
                             <div class="form-group">
                                 <label for="website">Sitio web</label>
                                 <input type="url" id="website" th:field="*{website}" 
@@ -139,7 +130,6 @@
                                 <p class="error" th:if="${#fields.hasErrors('website')}" th:text="${#fields.errors('website')[0]}"></p>
                             </div>
 
-                            <!-- foto-->
                             <div class="form-group" th:if="${empresa.foto}">
                                 <label>Logo</label>
                                 <div class="logo-preview">
@@ -149,7 +139,6 @@
                             </div>
                         </div>
 
-                        <!-- Descripción -->
                         <div class="form-group form-group--full">
                             <label for="descripcion">Descripción de la empresa</label>
                             <textarea id="descripcion" th:field="*{descripcion}" 
@@ -165,7 +154,6 @@
                             Guardar y continuar
                         </button>
 
-                        <!-- Mensaje si ya está completo -->
                         <div th:if="${empresa.perfilCompleto}" class="perfil-completado">
                             <i class="fa-solid fa-circle-check"></i>
                             <p>¡Tu perfil de empresa está completo y verificado!</p>
@@ -178,9 +166,7 @@
         </div>
     </div>
 
-    <!-- Script para contador de caracteres y toggle de password si se agrega -->
     <script th:inline="javascript">
-        // Contador de caracteres para descripción
         document.addEventListener('DOMContentLoaded', function() {
             const textarea = document.getElementById('descripcion');
             const counter = document.querySelector('.char-counter span');
@@ -191,7 +177,6 @@
                 });
             }
 
-            // Prevenir envío si está disabled (seguridad extra frontend)
             const form = document.querySelector('.register__form');
             if (form) {
                 form.addEventListener('submit', function(e) {

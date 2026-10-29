@@ -1,8 +1,4 @@
-/*
-    Menu lateral del postulante.
-    Todo lo del menu y la barra superior usa solo las variables --hc-*, asi las
-    variables de cada pagina (--morado-c, --negro-1...) no lo afectan.
-*/
+/* --hc-* aísla los colores del layout de las variables de cada página. */
 
 /*Variables heredadas: algunas paginas dependen de ellas, se dejan igual*/
 :root {
@@ -33,7 +29,6 @@
   color-scheme: dark;
 }
 
-/*Variables del layout (claro)*/
 :root {
   --sidebar-w: 24rem;
   --sidebar-w-collapsed: 7.6rem;
@@ -55,7 +50,6 @@
   --hc-shadow: 0 1.2rem 3.2rem rgba(18, 11, 23, 0.14);
 }
 
-/*Variables del layout (oscuro)*/
 :root[data-theme="dark"] {
   --hc-surface: #150f1b;
   --hc-line: #2b2133;
@@ -79,7 +73,6 @@
   }
 }
 
-/*En movil el menu es un panel que se desliza, no ocupa espacio*/
 @media (max-width: 900px) {
   :root {
     --sidebar-w: 0rem;
@@ -96,7 +89,6 @@ body {
   font-family: var(--font-satoshi);
 }
 
-/*Los iconos (i o svg del kit de Font Awesome) toman el tamano de su contenedor*/
 .sidebar i,
 .sidebar svg,
 .sidebar-opener i,
@@ -104,7 +96,6 @@ body {
   font-size: inherit;
 }
 
-/*Menu*/
 .sidebar {
   position: fixed;
   top: 0;
@@ -189,7 +180,6 @@ body {
   color: var(--hc-accent);
 }
 
-/*Navegacion*/
 .sidebar__nav {
   display: flex;
   flex-direction: column;
@@ -272,7 +262,6 @@ body {
   color: var(--hc-on-accent);
 }
 
-/*Barrita del item activo*/
 .sidebar .sidebar__active::before {
   content: "";
   position: absolute;
@@ -284,7 +273,6 @@ body {
   background: var(--hc-accent);
 }
 
-/*Cerrar sesion, siempre abajo*/
 .sidebar .sidebar__bottom {
   margin-top: auto;
   padding-top: 1.2rem;
@@ -304,7 +292,6 @@ body {
   outline-offset: 0.2rem;
 }
 
-/*Boton de abrir y fondo oscuro: solo se usan en movil*/
 .sidebar-opener {
   display: none;
 }
@@ -328,7 +315,6 @@ body {
     display: none;
   }
 
-  /*Las etiquetas de seccion pasan a ser una linea fina*/
   .is-sidebar-collapsed .sidebar__label {
     height: 0.1rem;
     margin: 1.2rem 1rem;
@@ -349,7 +335,6 @@ body {
     left: -1.4rem;
   }
 
-  /*Tooltip con el nombre al pasar el mouse o enfocar con teclado*/
   .is-sidebar-collapsed .sidebar__link::after {
     content: attr(data-label);
     position: absolute;
@@ -374,7 +359,6 @@ body {
   }
 }
 
-/*Movil y tablet: el menu es un panel que se desliza*/
 @media (max-width: 900px) {
   .sidebar {
     width: 26rem;
