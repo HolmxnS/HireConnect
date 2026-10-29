@@ -431,7 +431,49 @@ body {
 }
 
 .vacancie-date {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--gris-c-2);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--gris-c-2);
 }
+
+.prediction-card {
+    background: #ffffff;
+    border: 1.5px solid var(--violeta, #9c4bff);
+    border-radius: 12px;
+    padding: 1.2rem;
+    margin: 1.5rem 0;
+    box-shadow: 0 4px 12px rgba(156, 75, 255, 0.08);
+}
+
+.prediction-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--morado-c, #9400D3);
+    margin-bottom: 0.8rem;
+}
+
+.prediction-header h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.prediction-body .percentage {
+    font-size: 1.1rem;
+    margin-bottom: 0.8rem;
+    color: #333;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 1rem;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.badge-alta { background-color: #e6f4ea; color: #137333; }
+.badge-media { background-color: #fef7e0; color: #b06000; }
+.badge-baja { background-color: #fce8e6; color: #c5221f; }

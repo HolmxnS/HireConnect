@@ -1,8 +1,4 @@
-/* ==========================================================================
-   HireConnect · Tema de la empresa
-   Se carga SIEMPRE al final de cada página de empresa.
-   Paleta del home · modo claro / oscuro · responsive.
-   ========================================================================== */
+
 
 :root {
     --morado-c: #8e22bb;
@@ -169,6 +165,7 @@ body .detalle {
 .text-primary,
 .dashboard__title span {
     color: var(--morado-c);
+    font-size: 2.8rem;
 }
 
 .main__title h2 {
@@ -889,4 +886,38 @@ input:disabled,
     .hero__title { font-size: 3rem; }
 
     .sidebar__text { font-size: .9rem; }
+}
+
+/* ==========================================================================
+   Barra inferior en celulares angostos (<= 480px): solo íconos
+   Así caben las 7 opciones (incluido tema y Cerrar sesión) sin que se corten.
+   ========================================================================== */
+@media (max-width: 480px) {
+    .sidebar {
+        padding-inline: .2rem;
+    }
+
+    .sidebar .sidebar__text,
+    .sidebar .sidebar__theme .sidebar__text,
+    :root[data-theme="dark"] .sidebar .sidebar__theme .theme-label--light,
+    :root[data-theme="dark"] .sidebar .sidebar__theme .theme-label--dark {
+        display: none;
+    }
+
+    .sidebar ul li a,
+    .sidebar ul li .sidebar__theme {
+        padding: 0;
+    }
+
+    .sidebar ul li a i,
+    .sidebar ul li .sidebar__theme i {
+        width: min(100%, 4.4rem);
+        height: 3.8rem;
+        font-size: 1.9rem;
+    }
+
+    /* Cerrar sesión siempre reconocible */
+    .sidebar ul li a.sidebar__logout {
+        color: var(--crimson);
+    }
 }

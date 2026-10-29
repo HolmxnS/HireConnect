@@ -1,12 +1,15 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link rel="stylesheet" th:href="@{/styles/fragments/empresa/sidebar.css}">
+    <!--Styles-->
+    <link rel="stylesheet" th:href="@{/styles/fragments/admin/sidebar.css}">
     <link rel="stylesheet" th:href="@{/styles/admin/resumen_admin.css}">
+    <link rel="stylesheet" th:href="@{/styles/admin/theme.css}">
+    <script th:src="@{/js/theme.js}"></script>
+    <!--Fonts-->
     <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
     <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
 
@@ -25,24 +28,24 @@
 </head>
 
 <body>
+    <div th:replace="~{fragments/admin/sidebar_admin :: sidebar('resumen')}"></div>
 
-    <div th:replace="~{fragments/admin/sidebar_admin :: sidebar ('resumen')}"
-        id="sidebar"></div>
+    <main class="main">
 
-    <main class="content">
+        <header class="page-head">
+            <div>
+                <h1 class="page-head__title">Resumen</h1>
+                <p class="page-head__subtitle">Indicadores generales de la plataforma en Power BI.</p>
+            </div>
+        </header>
 
-        <h2 class="page-title">Resumen</h2>
-
-        <div class="powerbi-container">
-            <iframe
-                title="HireConnect"
+        <section class="powerbi">
+            <iframe title="HireConnect"
                 src="https://app.powerbi.com/view?r=eyJrIjoiNGFhODI3NGEtNTUzZi00NmU4LTkxMzQtMDdlMjdkYjhhZDE1IiwidCI6IjlkMTJiZjNmLWU0ZjYtNDdhYi05MTJmLTFhMmYwZmM0OGFhNCIsImMiOjR9"
                 allowfullscreen="true">
             </iframe>
-        </div>
-
+        </section>
     </main>
-
 </body>
 
 </html>

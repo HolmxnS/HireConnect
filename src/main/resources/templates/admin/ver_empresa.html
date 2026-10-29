@@ -7,142 +7,118 @@
     <!--Styles-->
     <link rel="stylesheet" th:href="@{/styles/fragments/admin/sidebar.css}">
     <link rel="stylesheet" th:href="@{/styles/admin/ver_empresa.css}">
+    <link rel="stylesheet" th:href="@{/styles/admin/theme.css}">
+    <script th:src="@{/js/theme.js}"></script>
     <!--Fonts-->
     <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
     <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
     <!-- Icons -->
     <link rel="icon" type="image/svg+xml" sizes="any" th:href="@{/source/img/favicon.svg}">
     <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
-
     <title th:text="'Detalle de Empresa - ' + ${empresa.nombreLegal}"></title>
     <link rel="stylesheet" th:href="@{/styles/brand.css}" />
 </head>
 
 <body>
-    <div id="sidebar" th:replace="~{fragments/admin/sidebar_admin :: sidebar('empresas')}"></div>
+    <div th:replace="~{fragments/admin/sidebar_admin :: sidebar('empresas')}"></div>
 
-    <main class="content">
-        <!-- Volver -->
-        <a th:href="@{/admin/empresas}" class="back-btn">
-            <i class="fa-solid fa-arrow-left"></i> Volver a la Lista de Empresas
-        </a>
+    <main class="main">
 
-        <div class="company card">
-            <div class="company__header">
-                <h2 class="company__title" th:text="${empresa.nombreLegal}">Nombre de la Empresa</h2>
+        <div>
+            <a th:href="@{/admin/empresas}" class="back-btn">
+                <i class="fa-solid fa-arrow-left"></i> Volver a la lista de empresas
+            </a>
+        </div>
 
-                <div class="company__actions">
-                    <span th:classappend="${empresa.estado.name() == 'APROBADA'} ? 'badge-success' : 'badge-danger'"
-                        class="badge">
-                        <span th:text="${empresa.estado}">ACTIVO</span>
-                    </span>
+        <!-- Datos de la empresa -->
+        <section class="panel">
+            <div class="detail-top">
+                <div class="detail-top__avatar">
+                    <img th:if="${empresa.foto != null}" th:src="@{${empresa.foto}}" alt="Foto de perfil">
+                    <i th:if="${empresa.foto == null}" class="fa-solid fa-building"></i>
+                </div>
 
-                    <a th:href="@{/admin/empresas/aprobar/{id}(id=${empresa.id})}" class="btn btn-success">
+                <div class="detail-top__heading">
+                    <h2 th:text="${empresa.nombreLegal}">Nombre de la empresa</h2>
+                    <span class="badge" th:classappend="${empresa.estado.name() == 'APROBADA'} ? 'badge--ok' : 'badge--bad'"
+                        th:text="${empresa.estado}">APROBADA</span>
+                </div>
+
+                <div class="detail-top__actions">
+                    <a th:href="@{/admin/empresas/aprobar/{id}(id=${empresa.id})}" class="btn btn--ok">
                         <i class="fa-solid fa-check"></i> Aprobar
                     </a>
-
                     <a th:href="@{/admin/empresas/suspender/{id}(id=${empresa.id})}"
-                        onclick="return confirm('¿Estás seguro de suspender esta empresa?')" class="btn btn-danger">
+                        onclick="return confirm('¿Estás seguro de suspender esta empresa?')" class="btn btn--danger">
                         <i class="fa-solid fa-ban"></i> Suspender
                     </a>
                 </div>
             </div>
 
-            <div class="company__group">
-
-                <div class="company__info">
-                    <h3 class="section__title">Información General</h3>
-                    <div class="company__info-list">
-                        <p><i class="fa-solid fa-envelope"></i>Email: <span th:text="${empresa.email}"></span></p>
-                        <p><i class="fa-solid fa-phone"></i>Teléfono: <span th:text="${empresa.telefono}"></span>
-                        </p>
-                        <p><i class="fa-solid fa-location-dot"></i>Dirección: <span
-                                th:text="${empresa.ubicacion}"></span></p>
-                        <p><i class="fa-solid fa-calendar-alt"></i>Registro:
-                            <span th:text="${#temporals.format(empresa.fechaRegistro, 'dd/MMM/yyyy')}"></span>
-                        </p>
-                        <p class="ruc-line"><i class="fa-solid fa-id-card"></i> RUT/NIT:
-                            <span th:text="${empresa.rut}"></span>
-                        </p>
-                    </div>
+            <div class="detail-grid">
+                <div>
+                    <h3>Información general</h3>
+                    <ul class="info-list">
+                        <li><i class="fa-solid fa-envelope"></i> Email: <span th:text="${empresa.email}"></span></li>
+                        <li><i class="fa-solid fa-phone"></i> Teléfono: <span th:text="${empresa.telefono}"></span></li>
+                        <li><i class="fa-solid fa-location-dot"></i> Dirección: <span th:text="${empresa.ubicacion}"></span></li>
+                        <li><i class="fa-solid fa-calendar-days"></i> Registro:
+                            <span th:text="${#temporals.format(empresa.fechaRegistro, 'dd/MMM/yyyy')}"></span></li>
+                        <li><i class="fa-solid fa-id-card"></i> RUT/NIT: <span th:text="${empresa.rut}"></span></li>
+                    </ul>
                 </div>
 
-                <div class="company__img">
-                    <img th:if="${empresa.foto != null}" th:src="@{${empresa.foto}}" alt="Foto de Perfil"
-                        id="profileImage">
-
-                    <div th:if="${empresa.foto == null}" class="company__photo-placeholder">
-                        <i class="fa-solid fa-user"></i>
-                    </div>
-                </div>
-
-                <div class="company__description">
-                    <h3 class="section__title">Descripción</h3>
-
-                    <div class="company__description-box">
-                        <p th:text="${empresa.descripcion}">
-                            Descripción detallada de la empresa...
-                        </p>
+                <div>
+                    <h3>Descripción</h3>
+                    <div class="text-box">
+                        <p th:text="${empresa.descripcion}">Descripción detallada de la empresa...</p>
                     </div>
                 </div>
             </div>
+        </section>
 
-        </div>
+        <!-- Vacantes -->
+        <section class="panel table-panel">
+            <div class="panel__head" style="padding: 2.4rem 2.4rem 0;">
+                <h2 class="panel__title">
+                    <i class="fa-solid fa-briefcase"></i> Vacantes publicadas
+                    <span class="panel__count" th:text="'(' + ${#lists.size(vacantes)} + ' en total)'">(0 en total)</span>
+                </h2>
+            </div>
 
-        <div class="vacancies card">
-
-            <h2 class="vacancies__title">
-                <i class="fa-solid fa-briefcase"></i> Vacantes Publicadas
-                <span class="vacancies__count" th:text="'(' + ${#lists.size(vacantes)} + ' Total)'"> (0
-                    Total)</span>
-            </h2>
-
-            <div class="vacancies__table">
-
+            <div class="table-scroll">
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Título</th>
-                            <th>Estado</th>
-                            <th>Fecha</th>
-                            <th>Acciones</th>
+                            <th scope="col">Título</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Publicada</th>
+                            <th scope="col">Acciones</th>
                         </tr>
                     </thead>
-
                     <tbody>
                         <tr th:each="vacante : ${vacantes}">
-                            <td th:text="${vacante.titulo}">Vacante</td>
-
+                            <td class="table__strong" th:text="${vacante.titulo}">Vacante</td>
                             <td>
-                                <span class="badge" th:classappend="
-                                            ${vacante.estado == 'ACTIVA'} ? 'badge-success' :
-                                            (${vacante.estado == 'CERRADA'} ? 'badge-danger' : 'badge-warning')
-                                        " th:text="${vacante.estado}">
-                                </span>
+                                <span class="badge"
+                                    th:classappend="${vacante.estado.name() == 'ACTIVA'} ? 'badge--ok' : (${vacante.estado.name() == 'CERRADA'} ? 'badge--bad' : 'badge--warn')"
+                                    th:text="${vacante.estado}">ACTIVA</span>
                             </td>
-
-                            <td th:text="${#temporals.format(empresa.fechaRegistro, 'dd/MMM/yyyy')}">01/01/2024
-                            </td>
-
+                            <td class="table__muted" th:text="${#temporals.format(vacante.fechaPublicacion, 'dd/MMM/yyyy')}">01/01/2026</td>
                             <td>
-                                <a th:href="@{/admin/vacantes/ver/{id}(id=${vacante.id})}" class="table__link">Ver
-                                    Detalle</a>
+                                <a th:href="@{/admin/vacantes/ver/{id}(id=${vacante.id})}" class="btn btn--soft btn--sm">
+                                    <i class="fa-solid fa-eye"></i> Ver detalle
+                                </a>
                             </td>
                         </tr>
-
                         <tr th:if="${#lists.isEmpty(vacantes)}">
-                            <td colspan="4" class="table__no-data">Esta empresa no ha publicado vacantes.</td>
+                            <td colspan="4" class="table__empty">Esta empresa no ha publicado vacantes.</td>
                         </tr>
-
                     </tbody>
-
                 </table>
             </div>
-
-        </div>
-
+        </section>
     </main>
-
 </body>
 
 </html>

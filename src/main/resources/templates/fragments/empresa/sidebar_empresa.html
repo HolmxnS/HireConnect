@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" th:href="@{/styles/fragments/empresa/sidebar_empresa.css}">
+    <link rel="stylesheet" th:href="@{/styles/fragments/empresa/sidebar.css}">
     <link rel="stylesheet" th:href="@{/styles/satoshi.css}">
     <link rel="stylesheet" th:href="@{/styles/clash-display.css}">
     <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
@@ -20,39 +20,51 @@
             <h1 class="hc-logo-wordmark"><span class="hc-logo-mark" aria-hidden="true"><img th:src="@{/source/img/isotipo.png}" alt="" /></span><span>Hire<span class="sidebar__highlight">Connect</span></span></h1>
         </div>
 
-        <nav class="sidebar__nav">
+        <nav class="sidebar__nav" aria-label="Navegación de la empresa">
             <ul>
+                <li class="sidebar__label">Gestión</li>
+
                 <li>
-                    <a th:href="@{/empresa/home}" class="sidebar__link"
+                    <a th:href="@{/empresa/home}" class="sidebar__link" title="Inicio" aria-label="Inicio"
                         th:classappend="${activeMenu == 'home'} ? 'sidebar__active' : ''">
-                        <i class="fa-solid fa-house"></i> Inicio
+                        <i class="fa-solid fa-house"></i> <span class="sidebar__text">Inicio</span>
                     </a>
                 </li>
 
                 <li>
-                    <a th:href="@{/empresa/vacante}"
+                    <a th:href="@{/empresa/vacante}" title="Vacantes" aria-label="Vacantes"
                         th:classappend="${activeMenu == 'vacantes'} ? 'sidebar__active' : ''">
-                        <i class="fa-solid fa-briefcase"></i> Vacantes
+                        <i class="fa-solid fa-briefcase"></i> <span class="sidebar__text">Vacantes</span>
                     </a>
                 </li>
 
+                <li class="sidebar__label">Mi cuenta</li>
+
                 <li>
-                    <a th:href="@{/empresa/editar(empresaId=${empresa.id})}"
+                    <a th:href="@{/empresa/editar(empresaId=${empresa.id})}" title="Mi Perfil" aria-label="Mi Perfil"
                         th:classappend="${activeMenu == 'perfil'} ? 'sidebar__active' : ''">
-                        <i class="fa-solid fa-user-gear"></i> Mi Perfil
+                        <i class="fa-solid fa-user-gear"></i> <span class="sidebar__text">Mi Perfil</span>
                     </a>
                 </li>
 
                 <li>
-                    <a th:href="@{/empresa/configuracion}"
+                    <a th:href="@{/empresa/configuracion}" title="Configuración" aria-label="Configuración"
                         th:classappend="${activeMenu == 'configuracion'} ? 'sidebar__active' : ''">
-                        <i class="fa-solid fa-gear"></i> Configuración
+                        <i class="fa-solid fa-gear"></i> <span class="sidebar__text">Configuración</span>
                     </a>
                 </li>
 
+                <li class="sidebar__theme-item">
+                    <button type="button" class="sidebar__theme" data-theme-toggle aria-label="Cambiar a modo oscuro">
+                        <i class="fa-solid fa-moon"></i><i class="fa-solid fa-sun"></i>
+                        <span class="sidebar__text theme-label--dark">Modo oscuro</span>
+                        <span class="sidebar__text theme-label--light">Modo claro</span>
+                    </button>
+                </li>
+
                 <li>
-                    <a th:href="@{/logout}" class="sidebar__logout">
-                        <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+                    <a th:href="@{/logout}" class="sidebar__logout" title="Cerrar Sesión" aria-label="Cerrar Sesión">
+                        <i class="fa-solid fa-right-from-bracket"></i> <span class="sidebar__text">Cerrar Sesión</span>
                     </a>
                 </li>
             </ul>
