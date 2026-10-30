@@ -170,14 +170,18 @@ a {
 }
 
 .roles {
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: min(100%, 42.4rem);
+    align-items: stretch;
     gap: 2.4rem;
     border: none;
 }
 
 .roles__option {
-    display: block;
+    display: flex;
+    width: 100%;
+    min-width: 0;
     padding: 0;
     border: 0;
     background: none;
@@ -188,17 +192,17 @@ a {
     cursor: pointer;
 }
 
-.roles__form { margin: 0; }
+.roles__form { display: flex; min-width: 0; margin: 0; }
 
 .roles__card {
-    width: min(20rem, 42vw);
-    aspect-ratio: 1;
+    width: 100%;
+    min-height: 22rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 1rem;
-    padding: 2rem 1.6rem;
+    padding: 2rem 1.2rem;
     text-align: center;
     background-color: var(--surface);
     color: var(--fg);
@@ -215,6 +219,7 @@ a {
 }
 
 .roles__icon {
+    flex-shrink: 0;
     width: 5.2rem;
     height: 5.2rem;
     display: grid;
@@ -235,6 +240,7 @@ a {
 
 .roles__desc {
     max-width: 20ch;
+    min-height: 6.24rem;
     line-height: 1.6;
     text-align: center;
     text-wrap: balance;
