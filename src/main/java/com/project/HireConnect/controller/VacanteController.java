@@ -298,27 +298,15 @@ public class VacanteController {
             Authentication authentication,
             Model model) {
 
-        String email = authentication.getName();
-        Optional<Postulante> postulanteOpt = postulanteService.buscarPorEmail(email);
-
-        if (postulanteOpt.isEmpty()) {
-            return "redirect:/logout";
-        }
-
-        model.addAttribute("postulante", postulanteOpt.get());
-        model.addAttribute("vacantes", vacanteService.buscarPorFiltros(filtro, modalidad, salarioMin, salarioMax)
-                .stream()
-                .filter(v -> v.getEstado() == VacanteEstado.ACTIVA)
-                .toList());
-
-        model.addAttribute("filtro", filtro);
-        model.addAttribute("modalidad", modalidad);
-        model.addAttribute("salarioMin", salarioMin);
-        model.addAttribute("salarioMax", salarioMax);
-        model.addAttribute("tipoContrato", tipoContrato);
-        model.addAttribute("fechaFiltro", fechaFiltro);
-
-        return "postulante/vacantePostulante";
+        // Los enlaces antiguos también usan el listado paginado de postulantes.
+        var destino = org.springframework.web.util.UriComponentsBuilder.fromPath("/postulante/vacantes/listar")
+                .queryParamIfPresent("filtro", Optional.ofNullable(filtro))
+                .queryParamIfPresent("modalidad", Optional.ofNullable(modalidad))
+                .queryParamIfPresent("tipoContrato", Optional.ofNullable(tipoContrato))
+                .queryParamIfPresent("fechaFiltro", Optional.ofNullable(fechaFiltro))
+                .queryParamIfPresent("salarioMin", Optional.ofNullable(salarioMin))
+                .queryParamIfPresent("salarioMax", Optional.ofNullable(salarioMax));
+        return "redirect:" + destino.build().encode().toUriString();
     }
 
     @GetMapping("/{id}")

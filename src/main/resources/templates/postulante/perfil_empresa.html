@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${empresa.nombre + ' | HireConnect'}">Empresa | HireConnect</title>
+    <link rel="stylesheet" th:href="@{/styles/fragments/postulante/sidebar.css}" />
+    <link rel="stylesheet" th:href="@{/styles/fragments/postulante/header.css}" />
+    <link rel="stylesheet" th:href="@{/styles/postulante/theme.css}" />
+    <script th:src="@{/js/theme.js}"></script>
+    <link rel="stylesheet" th:href="@{/styles/satoshi.css}" />
+    <link rel="stylesheet" th:href="@{/styles/clash-display.css}" />
+    <link rel="stylesheet" th:href="@{/styles/brand.css}" />
+    <link rel="stylesheet" th:href="@{/styles/postulante/perfil_empresa.css}" />
+    <link rel="icon" type="image/svg+xml" th:href="@{/source/img/favicon.svg}" />
+    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous" defer></script>
+</head>
+<body>
+    <div th:replace="~{fragments/postulante/sidebar_postulante :: sidebar('vacantes')}"></div>
+    <div th:replace="~{fragments/postulante/header_postulante :: menu-fragment(false)}"></div>
+    <main class="content company-visitor">
+        <a class="company-visitor__back" th:href="@{/postulante/vacantes}">← Volver a vacantes</a>
+        <article class="company-visitor__profile">
+            <div class="company-visitor__cover"><img th:if="${not #strings.isEmpty(empresa.portada)}" th:src="${empresa.portada}" alt="Portada de la empresa" /></div>
+            <div class="company-visitor__body">
+                <div class="company-visitor__identity">
+                    <div class="company-visitor__logo"><img th:if="${not #strings.isEmpty(empresa.foto)}" th:src="${empresa.foto}" th:alt="${'Logo de ' + empresa.nombre}" /><span th:if="${#strings.isEmpty(empresa.foto)}" aria-hidden="true">↗</span></div>
+                    <a class="company-visitor__website" th:if="${empresa.website != null}" th:href="${empresa.website}" target="_blank" rel="noopener noreferrer">Visitar sitio web ↗</a>
+                </div>
+                <h1 th:text="${empresa.nombre}"></h1>
+                <p class="company-visitor__sector" th:if="${not #strings.isEmpty(empresa.sector)}" th:text="${empresa.sector}"></p>
+                <div class="company-visitor__meta"><span th:if="${not #strings.isEmpty(empresa.ubicacion)}" th:text="${empresa.ubicacion}"></span><a href="#empleos" th:text="${#lists.size(empleos) + (#lists.size(empleos) == 1 ? ' empleo disponible' : ' empleos disponibles')}"></a></div>
+                <section class="company-visitor__about" aria-label="Información de la empresa"><p th:text="${#strings.isEmpty(empresa.descripcion) ? 'La empresa aún no ha añadido una descripción.' : empresa.descripcion}"></p></section>
+                <nav class="company-visitor__social" th:if="${not #maps.isEmpty(redes)}" aria-label="Perfiles sociales"><a th:each="red : ${redes}" th:href="${red.value}" th:text="${red.key + ' ↗'}" target="_blank" rel="noopener noreferrer"></a></nav>
+                <section class="company-visitor__jobs" id="empleos" aria-labelledby="company-jobs-heading">
+                    <div class="company-visitor__jobs-heading"><h2 id="company-jobs-heading">Empleos</h2><span th:text="${#lists.size(empleos) + ' disponibles'}"></span></div>
+                    <p th:if="${#lists.isEmpty(empleos)}" class="company-visitor__empty">No hay vacantes abiertas por ahora.</p>
+                    <div data-company-jobs>
+                        <a class="company-visitor__job" th:each="vacante : ${empleos}" th:href="@{/postulante/vacante/{id}(id=${vacante.id})}">
+                            <div><h3 th:text="${vacante.titulo}"></h3><p><span th:text="${vacante.modalidad?.descripcion ?: 'Modalidad por definir'}"></span><span th:text="${vacante.tipoContrato?.descripcion ?: 'Contrato por definir'}"></span></p><small th:if="${vacante.fechaPublicacion != null}" th:text="${'Publicada el ' + #temporals.format(vacante.fechaPublicacion, 'dd/MM/yyyy')}"></small></div>
+                            <div class="company-visitor__job-action"><strong th:text="${vacante.salario != null and vacante.salario > 0 ? '$' + #numbers.formatDecimal(vacante.salario, 0, 'POINT', 0, 'COMMA') + ' COP' : 'A convenir'}"></strong><span>Ver vacante ↗</span></div>
+                        </a>
+                    </div>
+                    <button type="button" class="company-visitor__more" data-company-more hidden>Ver más empleos</button>
+                    <p class="company-visitor__progress" data-company-progress role="status"></p>
+                </section>
+            </div>
+        </article>
+    </main>
+    <script th:src="@{/js/perfil_empresa_publico.js}" defer></script>
+    <div th:replace="~{fragments/postulante/chatbot :: chatbot}"></div>
+</body>
+</html>

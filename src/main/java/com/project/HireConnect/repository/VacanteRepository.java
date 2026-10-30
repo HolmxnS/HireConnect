@@ -12,6 +12,9 @@ import java.util.List;
 public interface VacanteRepository extends MongoRepository<Vacante, String> {
        List<Vacante> findByEstado(VacanteEstado estado);
 
+       @Query("{ 'estado': 'ACTIVA', '$or': [ { 'titulo': { '$regex': ?0, '$options': 'i' } }, { 'habilidadesRequeridas': { '$regex': ?0, '$options': 'i' } } ] }")
+       List<Vacante> buscarParaAsistente(String patron, org.springframework.data.domain.Pageable pagina);
+
     
     @Query("{ $and: [ " +
            "{ $or: [ { ?0 : null }, { 'titulo': { $regex: ?0, $options: 'i' } } ] }, " +

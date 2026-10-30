@@ -181,6 +181,8 @@ body {
 }
 
 .sidebar__nav {
+  overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   flex: 1;

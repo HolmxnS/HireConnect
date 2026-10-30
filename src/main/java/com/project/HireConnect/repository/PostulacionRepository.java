@@ -6,14 +6,20 @@ import com.project.HireConnect.model.Postulacion;
 import com.project.HireConnect.model.Postulante;
 import com.project.HireConnect.model.Vacante;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.data.annotation.Id;
+import org.bson.types.ObjectId;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface PostulacionRepository extends MongoRepository<Postulacion, String> {
+
+    record ConteoVacante(@Id ObjectId id, long total) {
+    }
 
     @Query(value = "{ $expr: { $eq: [ " +
             "{ $dateToString: { format: '%Y-%m-%d', date: '$fecha_postulacion' } }, " +
@@ -24,6 +30,12 @@ public interface PostulacionRepository extends MongoRepository<Postulacion, Stri
     List<Postulacion> findByVacante(Vacante vacante);
 
     List<Postulacion> findByVacanteIn(List<Vacante> vacantes);
+
+    @Aggregation(pipeline = {
+            "{ '$match': { 'vacanteId.$id': { '$in': ?0 } } }",
+            "{ '$group': { '_id': '$vacanteId.$id', 'total': { '$sum': 1 } } }"
+    })
+    List<ConteoVacante> contarAgrupadoPorVacanteIds(List<ObjectId> ids);
 
     List<Postulacion> findByPostulante(Postulante postulante);
 

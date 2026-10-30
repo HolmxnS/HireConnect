@@ -10,13 +10,14 @@
         </span>
         <div><h2 th:text="${vacante?.titulo ?: 'Vacante no disponible'}"></h2><p th:text="${empresa?.nombre ?: 'Empresa no disponible'}"></p></div>
     </div>
+    <a th:href="@{/postulante/entrevistas}">Ver mis entrevistas →</a>
     <section class="application-detail__section">
         <h3>Estado de tu candidatura</h3>
         <span class="applications__badge" th:attr="data-state=${estado}"><span th:text="${estado == 'EN_REVISION' ? 'En revisión' : (postulacion.estado?.descripcion ?: 'Pendiente')}"></span></span>
         <p class="application-detail__status-copy" th:switch="${estado}">
             <span th:case="'PENDIENTE'">Tu candidatura está registrada y pendiente de revisión.</span>
             <span th:case="'EN_REVISION'">Tu candidatura está en revisión. Te avisaremos cuando cambie su estado.</span>
-            <span th:case="'ENTREVISTA_PENDIENTE'">Tu candidatura avanzó a la etapa de entrevista. Revisa tus canales de contacto para conocer los siguientes pasos.</span>
+            <span th:case="'ENTREVISTA_PENDIENTE'">Tu candidatura avanzó a la etapa de entrevista. Consulta tus invitaciones para conocer el horario y confirmar tu asistencia.</span>
             <span th:case="'ACEPTADA'">La empresa aceptó tu postulación. Consulta sus indicaciones para continuar.</span>
             <span th:case="'RECHAZADA'">Tu candidatura no continúa en este proceso. Puedes seguir explorando otras oportunidades.</span>
         </p>

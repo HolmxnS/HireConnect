@@ -192,6 +192,7 @@
 
                     <h2 class="card__title">Cambiar Estado</h2>
 
+                    <a class="btn" th:href="@{/empresa/entrevistas(postulacion=${postulacion.id})}">Programar entrevista →</a>
                     <form th:action="@{/empresa/actualizar-postulacion}" method="post">
 
                         <input type="hidden" name="id" th:value="${postulacion.id}">

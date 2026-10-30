@@ -33,7 +33,7 @@ body.vacancy-compose main.main.compose-page { padding: 3.2rem 4rem 5rem; max-wid
 .compose-live { color: var(--hc-accent-ink); letter-spacing: 0; }
 .compose-company { display: flex; align-items: center; gap: 1rem; color: var(--hc-muted); font-size: 1.2rem; margin-bottom: 1.8rem; }
 .compose-company__logo { display: grid; place-items: center; width: 4.4rem; height: 4.4rem; flex-shrink: 0; border: 1px solid var(--hc-line); border-radius: 1rem; color: var(--hc-accent-ink); font-size: 2rem; overflow: hidden; }
-.compose-company__logo img { width: 100%; height: 100%; object-fit: contain; }
+.compose-company__logo img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
 .compose-preview h2 { font-size: 2.2rem; color: var(--hc-text); letter-spacing: -.03em; line-height: 1.3; margin-bottom: 1.6rem; }
 .compose-preview__tags, .compose-preview__skills { display: flex; flex-wrap: wrap; gap: .7rem; }
 .compose-preview__tags span, .compose-preview__skills span { color: var(--hc-accent-ink); background: var(--hc-soft); padding: .6rem .9rem; border-radius: .6rem; font-size: 1.1rem; }

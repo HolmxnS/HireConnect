@@ -9,7 +9,10 @@ import com.project.HireConnect.repository.PostulacionRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
+import org.bson.types.ObjectId;
 
 @Service
 public class PostulacionService {
@@ -61,6 +64,30 @@ public class PostulacionService {
 
     public List<Postulacion> buscarPorVacantes(List<Vacante> vacantes) {
         return vacantes.isEmpty() ? List.of() : postulacionRepository.findByVacanteIn(vacantes);
+    }
+
+    public Map<String, Long> contarPorVacantes(List<Vacante> vacantes) {
+        if (vacantes == null || vacantes.isEmpty()) {
+            return Map.of();
+        }
+
+        List<ObjectId> ids = vacantes.stream()
+                .filter(java.util.Objects::nonNull)
+                .map(Vacante::getId)
+                .filter(ObjectId::isValid)
+                .map(ObjectId::new)
+                .distinct()
+                .toList();
+        if (ids.isEmpty()) {
+            return Map.of();
+        }
+
+        Map<String, Long> totales = new LinkedHashMap<>();
+        postulacionRepository.contarAgrupadoPorVacanteIds(ids).stream()
+                .filter(java.util.Objects::nonNull)
+                .filter(conteo -> conteo.id() != null)
+                .forEach(conteo -> totales.merge(conteo.id().toHexString(), conteo.total(), Long::sum));
+        return Map.copyOf(totales);
     }
 
     public List<Postulacion> buscarPorEmpresa(Empresa empresa) {

@@ -484,22 +484,9 @@ body > .details {
     .table-container { overflow-x: auto; }
 }
 
-/* ==========================================================================
-   ASISTENTE IA a la derecha
-   (el CSS del chat se carga después del tema: por eso el selector más específico)
-   ========================================================================== */
-.hc-chat-root .hc-chat__toggle {
-    left: auto;
-    right: 2.4rem;
-    bottom: 2.4rem;
-}
 
-.hc-chat-root .hc-chat__panel {
-    left: auto;
-    right: 2.4rem;
-    bottom: 8.4rem;
-    max-width: calc(100vw - 4.8rem);
-}
+
+
 
 :root[data-theme="dark"] {
     --morado-c: #b04ad6;
@@ -595,36 +582,6 @@ body > .details {
 :root[data-theme="dark"] .hero__btn--solid {
     background: #fff;
     color: #8e22bb;
-}
-
-:root[data-theme="dark"] .hc-chat-root {
-    --hc-humo: #120b17;
-    --hc-gris: #3a2d45;
-    --hc-negro: #f4eff8;
-}
-
-:root[data-theme="dark"] .hc-chat-root .hc-chat__panel,
-:root[data-theme="dark"] .hc-chat-root .hc-msg--bot,
-:root[data-theme="dark"] .hc-chat-root .hc-chat__chips,
-:root[data-theme="dark"] .hc-chat-root .hc-chat__form {
-    background: var(--pc-surface);
-    color: var(--negro-1);
-}
-
-:root[data-theme="dark"] .hc-chat-root .hc-chat__chips button {
-    background: transparent;
-    color: var(--violeta);
-}
-
-:root[data-theme="dark"] .hc-chat-root .hc-chat__chips button:hover {
-    background: var(--morado-c);
-    color: #fff;
-}
-
-:root[data-theme="dark"] .hc-chat-root .hc-chat__form input {
-    background: var(--lila);
-    color: var(--negro-1);
-    border-color: var(--pc-line);
 }
 
 
@@ -1075,19 +1032,7 @@ body > .details {
         text-align: center;
     }
 
-    .hc-chat-root .hc-chat__toggle {
-        right: 1.6rem;
-        bottom: 8.4rem;
-    }
 
-    .hc-chat-root .hc-chat__panel {
-        right: 1.6rem;
-        left: auto;
-        bottom: 14.4rem;
-        width: calc(100vw - 3.2rem);
-        max-width: none;
-        max-height: calc(100dvh - 17rem);
-    }
 }
 
 @media (max-width: 400px) {

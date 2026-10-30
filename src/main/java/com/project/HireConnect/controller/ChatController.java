@@ -1,65 +1,47 @@
 package com.project.HireConnect.controller;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.project.HireConnect.model.Postulante;
+import com.project.HireConnect.dto.RespuestaChat;
 import com.project.HireConnect.service.ChatbotService;
 import com.project.HireConnect.service.PostulanteService;
+import java.util.*;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.http.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/postulante/chat")
 public class ChatController {
-
-    private static final int MAX_CARACTERES = 1000;
-
-    private final ChatbotService chatbotService;
-    private final PostulanteService postulanteService;
-
-    public ChatController(ChatbotService chatbotService, PostulanteService postulanteService) {
-        this.chatbotService = chatbotService;
-        this.postulanteService = postulanteService;
-    }
-
+    private final ChatbotService chatbot;
+    private final PostulanteService postulantes;
+    public ChatController(ChatbotService chatbot, PostulanteService postulantes) { this.chatbot=chatbot;this.postulantes=postulantes; }
     @PostMapping
-    @SuppressWarnings("unchecked")
-    public ResponseEntity<Map<String, String>> procesarMensaje(@RequestBody Map<String, Object> request,
-            Authentication authentication) {
-
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("respuesta", "Inicia sesión para usar el asistente."));
+    public ResponseEntity<?> procesarMensaje(@RequestBody Map<String,Object> request, Authentication auth, HttpSession session) {
+        if(auth==null||!auth.isAuthenticated()) return error(HttpStatus.UNAUTHORIZED,"Inicia sesión para usar el asistente.");
+        if(!(request.get("mensaje") instanceof String raw)||raw.isBlank()) return error(HttpStatus.BAD_REQUEST,"Escribe una pregunta.");
+        String mensaje=raw.trim();
+        if(mensaje.length()>1000) return error(HttpStatus.BAD_REQUEST,"Tu mensaje puede tener hasta 1.000 caracteres.");
+        var p=postulantes.buscarPorEmail(auth.getName());
+        if(p.isEmpty()) return error(HttpStatus.FORBIDDEN,"No encontré tu perfil de postulante.");
+        synchronized(session) {
+            String key="hc-chat-limit-"+p.get().getId();Object saved=session.getAttribute(key);
+            var tiempos=new ArrayList<Long>();long now=System.currentTimeMillis();
+            if(saved instanceof List<?> l) for(Object t:l) if(t instanceof Long n&&now-n<60000) tiempos.add(n);
+            if(tiempos.size()>=12) return ResponseEntity.status(429).header("Retry-After","60").body(Map.of("respuesta","Has enviado varios mensajes seguidos. Espera un minuto y vuelve a intentarlo."));
+            tiempos.add(now);session.setAttribute(key,tiempos);
         }
-
-        Object rawMensaje = request.get("mensaje");
-        String mensaje = rawMensaje == null ? "" : rawMensaje.toString().trim();
-        if (mensaje.isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("respuesta", "Escribe un mensaje."));
+        var historial=new ArrayList<Map<String,String>>();
+        if(request.get("historial") instanceof List<?> turnos) for(Object turno:turnos.subList(Math.max(0,turnos.size()-12),turnos.size())) {
+            if(!(turno instanceof Map<?,?> t)||!(t.get("rol") instanceof String rol)||!Set.of("user","model").contains(rol)||!(t.get("texto") instanceof String texto)||texto.isBlank()) continue;
+            historial.add(Map.of("rol",rol,"texto",texto.substring(0,Math.min(texto.length(),3000))));
         }
-        if (mensaje.length() > MAX_CARACTERES) {
-            mensaje = mensaje.substring(0, MAX_CARACTERES);
-        }
-
-        Optional<Postulante> postulante = postulanteService.buscarPorEmail(authentication.getName());
-        if (postulante.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(Map.of("respuesta", "No encontré tu perfil de postulante."));
-        }
-
-        List<Map<String, String>> historial = request.get("historial") instanceof List<?> h
-                ? (List<Map<String, String>>) h
-                : List.of();
-
-        String respuesta = chatbotService.responder(postulante.get(), mensaje, historial);
-        return ResponseEntity.ok(Map.of("respuesta", respuesta));
+        String id=request.get("vacanteId") instanceof String x&&x.matches("[a-fA-F0-9]{24}")?x:null;
+        RespuestaChat respuesta=chatbot.conversar(p.get(),mensaje,historial,id);
+        return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(respuesta);
     }
+    @ExceptionHandler(org.springframework.dao.DataAccessException.class)
+    public ResponseEntity<?> datosNoDisponibles() {
+        return error(HttpStatus.SERVICE_UNAVAILABLE, "No pude consultar tus datos ahora. Inténtalo de nuevo en unos momentos.");
+    }
+    private ResponseEntity<?> error(HttpStatus status,String mensaje) { return ResponseEntity.status(status).body(Map.of("respuesta",mensaje)); }
 }

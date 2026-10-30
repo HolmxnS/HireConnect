@@ -4,11 +4,13 @@ Revisado el 29 de octubre de 2026 contra los modelos Java, el flujo de registro 
 
 ## Estado actual
 
-Se generaron y verificaron 400 empresas, 596 postulantes y 1.000 vacantes. Junto con los 4 administradores conservados, suman 2.000 registros principales. No se generaron postulaciones.
+La carga inicial contiene 400 empresas, 596 postulantes, 1.000 vacantes y 4 administradores conservados. Posteriormente se añadieron 40 proyectos freelance con 120 propuestas, 24 entrevistas y 1.788 postulaciones: tres vacantes distintas por cada uno de los 596 postulantes. Se conservaron las 24 postulaciones vinculadas a entrevistas al completar las restantes.
 
 Las 996 cuentas nuevas tienen correos únicos terminados en `@gmail.com` y hashes BCrypt independientes, comprobados con `matches`. Sus fechas de registro varían entre el 1 de enero y el 29 de octubre de 2026.
 
 Las imágenes suministradas se almacenaron en GridFS con una copia independiente para cada perfil, incluidos los cuatro administradores por solicitud posterior. Las credenciales y demás campos de los administradores permanecieron intactos durante esta asignación. Los archivos de imagen y sus chunks son datos auxiliares y no forman parte del total de 2.000 registros principales.
+
+Los correos generados se simplificaron quitando `hc.` y el número final. Las empresas con marca repetida usan su nombre legal completo normalizado para evitar colisiones. Se conservaron los seis correos personalizados previamente, así como las contraseñas y demás datos de las cuentas.
 
 Los datos están en MongoDB: un clone o un pull del repositorio no los importa a otra base. Los informes privados y el listado de cuentas permanecen excluidos de Git.
 
@@ -127,7 +129,7 @@ Campos de texto: `nombre`, `apellido`, `email`, `password`, `telefono`, `identif
 1. Esperar la instrucción con cantidades, sectores y contraseñas de prueba deseadas.
 2. Conservar administradores; crear empresas y postulantes válidos, sin imágenes por defecto.
 3. Crear vacantes con resúmenes de empresas que usen sus identificadores reales.
-4. Crear postulaciones con DBRef a las entidades anteriores únicamente si se solicitan; este conjunto no incluye postulaciones.
+4. Crear postulaciones con DBRef a las entidades anteriores únicamente si se solicitan; el conjunto actual incluye tres por postulante.
 5. Verificar unicidad de correos, hashes BCrypt, tipos BSON, fechas, estados y lectura desde la app.
 
 No persistir `confirmPassword`, `edad` ni `totalPostulaciones`: son campos transitorios. Tampoco activar un generador automático al iniciar el proyecto.
