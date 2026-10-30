@@ -1,10 +1,9 @@
 function fechaRelativa(fechaStr) {
     if (!fechaStr) return '';
-    
-    const fecha = fechaStr.includes('T') ? new Date(fechaStr) : new Date(fechaStr + 'T00:00:00');
-    
-    const ahora = new Date();
-    const diffMs = ahora - fecha;
+    const fecha = fechaStr.includes('T') ? new Date(fechaStr) : new Date(`${fechaStr}T00:00:00`);
+    if (Number.isNaN(fecha.getTime())) return '';
+
+    const diffMs = Math.max(0, Date.now() - fecha.getTime());
     const diffMin = Math.floor(diffMs / 60000);
     const diffH = Math.floor(diffMs / 3600000);
     const diffD = Math.floor(diffMs / 86400000);
@@ -20,8 +19,16 @@ function fechaRelativa(fechaStr) {
     return diffAnios === 1 ? 'Hace 1 año' : `Hace ${diffAnios} años`;
 }
 
-document.querySelectorAll('.vacancies__date').forEach(el => {
-    const card = el.closest('.vacancies__card');
-    const fecha = card ? card.dataset.fecha : el.dataset.fecha;
-    el.textContent = fechaRelativa(fecha);
+function actualizarFechasVacantes(root = document) {
+    root.querySelectorAll('.vacancies__date').forEach(element => {
+        const card = element.closest('.vacancies__card');
+        const fecha = card?.dataset.fecha || element.dataset.fecha;
+        const relativa = fechaRelativa(fecha);
+        if (relativa) element.textContent = relativa;
+    });
+}
+
+actualizarFechasVacantes();
+document.addEventListener('vacantes:actualizadas', event => {
+    actualizarFechasVacantes(event.detail?.root || document);
 });

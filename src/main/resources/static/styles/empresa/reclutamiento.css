@@ -16,7 +16,7 @@ body.company-recruit main.main.recruit-page { display: flex; flex-direction: col
 .recruit-job:hover, .recruit-job.is-selected { border-color: var(--hc-accent); }
 .recruit-job.is-selected { box-shadow: 0 0 0 1px var(--hc-accent); }
 .recruit-job__logo { display: grid; place-items: center; width: 6.4rem; height: 7.2rem; background: var(--hc-soft); color: var(--hc-accent-ink); border-radius: 1rem; overflow: hidden; font-size: 1.6rem; }
-.recruit-job__logo img { width: 100%; height: 100%; object-fit: contain; }
+.recruit-job__logo img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
 .recruit-job__body { display: grid; gap: .7rem; min-width: 0; }
 .recruit-job__body > strong { font-size: 1.4rem; font-weight: 600; line-height: 1.5; overflow-wrap: anywhere; }
 .recruit-job__meta { display: flex; flex-wrap: wrap; gap: .5rem 1rem; font-size: 1.1rem; color: var(--hc-muted); }

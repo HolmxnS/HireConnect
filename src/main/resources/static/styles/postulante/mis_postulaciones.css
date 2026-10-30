@@ -34,7 +34,7 @@
 .applications__list .applications__job h2 { margin: 0; font-family: var(--font-satoshi); font-size: 1.4rem; font-weight: 600; }
 .applications__identity { display: flex; align-items: flex-start; gap: 1.4rem; min-width: 0; }
 .applications__logo { display: grid; place-items: center; width: 5rem; height: 5rem; flex-shrink: 0; border: 1px solid var(--hc-line); border-radius: 1.2rem; overflow: hidden; background: var(--hc-soft); color: var(--hc-accent-ink); font-size: 2rem; }
-.applications__logo img { width: 100%; height: 100%; object-fit: contain; }
+.applications__logo img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
 .applications__job { min-width: 0; }
 .applications__job h2 { margin: 0 0 .5rem; font-size: 1.7rem; line-height: 1.4; font-weight: 600; color: var(--hc-text); overflow-wrap: anywhere; }
 .applications__job p { font-size: 1.3rem; color: var(--hc-muted); overflow-wrap: anywhere; }

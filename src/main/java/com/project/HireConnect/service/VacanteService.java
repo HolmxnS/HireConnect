@@ -1,6 +1,7 @@
 package com.project.HireConnect.service;
 
 import com.project.HireConnect.enums.VacanteEstado;
+import com.project.HireConnect.dto.FiltrosVacantes;
 import com.project.HireConnect.model.Empresa;
 import com.project.HireConnect.model.Vacante;
 import com.project.HireConnect.repository.VacanteRepository;
@@ -35,6 +36,93 @@ public class VacanteService {
 
     public List<Vacante> listarTodas() {
         return vacanteRepository.findAll();
+    }
+
+    public org.springframework.data.domain.Page<Vacante> paginaPostulante(FiltrosVacantes filtro) {
+        var filtros = new ArrayList<Criteria>();
+        filtros.add(Criteria.where("estado").is(VacanteEstado.ACTIVA));
+        if (!filtro.texto().isEmpty()) {
+            String patron = patronLiteral(filtro.texto());
+            filtros.add(new Criteria().orOperator(Criteria.where("titulo").regex(patron, "i"),
+                    Criteria.where("empresa.nombre").regex(patron, "i")));
+        }
+        if (tieneTexto(filtro.getModalidad()))
+            filtros.add(Criteria.where("modalidad").regex("^" + patronLiteral(filtro.getModalidad()) + "$", "i"));
+        if (tieneTexto(filtro.getTipoContrato()))
+            filtros.add(Criteria.where("tipoContrato").regex("^" + patronLiteral(filtro.getTipoContrato()) + "$", "i"));
+        if (tieneTexto(filtro.getSector())) {
+            var empresas = Query.query(Criteria.where("sector").regex("^" + patronLiteral(filtro.getSector()) + "$", "i"));
+            empresas.fields().include("_id");
+            var ids = mongoTemplate.find(empresas, org.bson.Document.class, "empresas").stream()
+                    .map(e -> e.get("_id")).toList();
+            filtros.add(Criteria.where("empresa._id").in(ids));
+        }
+        var hoy = java.time.LocalDate.now(java.time.ZoneId.of("America/Bogota"));
+        int dias = switch (filtro.getFechaFiltro() == null ? "" : filtro.getFechaFiltro()) {
+            case "hoy" -> 1;
+            case "3dias" -> 3;
+            case "semana" -> 7;
+            case "mes" -> 30;
+            default -> 0;
+        };
+        if (dias > 0) filtros.add(Criteria.where("fechaPublicacion").gte(hoy.minusDays(dias - 1)).lte(hoy));
+        Double minimo = filtro.getSalarioMin(), maximo = filtro.getSalarioMax();
+        if ((minimo != null && (!Double.isFinite(minimo) || minimo < 0))
+                || (maximo != null && (!Double.isFinite(maximo) || maximo < 0))
+                || (minimo != null && maximo != null && minimo > maximo)) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.BAD_REQUEST, "Revisa el rango de salario.");
+        }
+        if (minimo != null) filtros.add(Criteria.where("salario").gte(minimo));
+        if (maximo != null) filtros.add(Criteria.where("salario").lte(maximo));
+        if (filtro.isPocosCandidatos()) {
+            // El filtro se aplica antes de paginar, sin resolver las referencias de cada postulación.
+            var conteos = org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation(
+                    (org.springframework.data.mongodb.core.aggregation.AggregationOperation) context -> new org.bson.Document("$group",
+                            new org.bson.Document("_id", "$vacanteId.$id").append("cantidad", new org.bson.Document("$sum", 1))),
+                    org.springframework.data.mongodb.core.aggregation.Aggregation.match(Criteria.where("cantidad").gte(10)));
+            var conMuchos = mongoTemplate.aggregate(conteos, "postulaciones", org.bson.Document.class).getMappedResults()
+                    .stream().map(c -> c.get("_id")).filter(java.util.Objects::nonNull).toList();
+            if (!conMuchos.isEmpty()) filtros.add(Criteria.where("_id").nin(conMuchos));
+        }
+        var criteria = new Criteria().andOperator(filtros.toArray(Criteria[]::new));
+        long total = mongoTemplate.count(Query.query(criteria), Vacante.class);
+        int ultima = (int) Math.max(0, (total - 1) / 20);
+        var pagina = org.springframework.data.domain.PageRequest.of(Math.max(0, Math.min(filtro.getPagina(), ultima)), 20,
+                org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "fechaPublicacion", "id"));
+        var query = Query.query(criteria).with(pagina);
+        query.fields().exclude("postulaciones");
+        var vacantes = total == 0 ? List.<Vacante>of() : mongoTemplate.find(query, Vacante.class);
+        return new org.springframework.data.domain.PageImpl<>(vacantes, pagina, total);
+    }
+
+    public List<String> sectoresDisponibles() {
+        var empresas = mongoTemplate.findDistinct(Query.query(Criteria.where("estado").is(VacanteEstado.ACTIVA)),
+                "empresa._id", "vacantes", org.bson.types.ObjectId.class);
+        if (empresas.isEmpty()) return List.of();
+        return mongoTemplate.findDistinct(Query.query(Criteria.where("_id").in(empresas)), "sector", "empresas", String.class)
+                .stream().filter(VacanteService::tieneTexto).map(String::trim).distinct().sorted(String.CASE_INSENSITIVE_ORDER).toList();
+    }
+
+    private static boolean tieneTexto(String texto) {
+        return texto != null && !texto.isBlank();
+    }
+
+    private static String patronLiteral(String texto) {
+        String normal = java.text.Normalizer.normalize(texto.trim(), java.text.Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "").toLowerCase(java.util.Locale.ROOT);
+        normal = normal.substring(0, Math.min(normal.length(), 100));
+        var patron = new StringBuilder();
+        for (char letra : normal.toCharArray()) patron.append(switch (letra) {
+            case 'a' -> "[aáàäâ]";
+            case 'e' -> "[eéèëê]";
+            case 'i' -> "[iíìïî]";
+            case 'o' -> "[oóòöô]";
+            case 'u' -> "[uúùüû]";
+            case 'n' -> "[nñ]";
+            default -> java.util.regex.Pattern.quote(String.valueOf(letra));
+        });
+        return patron.toString();
     }
 
     public org.springframework.data.domain.Page<Vacante> paginaAdmin(String texto, String estado, String orden, int numero) {

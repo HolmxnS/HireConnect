@@ -1,6 +1,7 @@
 package com.project.HireConnect.controller;
 
 import com.project.HireConnect.model.Postulante;
+import com.project.HireConnect.dto.FiltrosVacantes;
 import com.project.HireConnect.enums.PostulacionEstado;
 import com.project.HireConnect.enums.VacanteEstado;
 import com.project.HireConnect.model.Educacion_postulante;
@@ -99,10 +100,9 @@ public class PostulanteController {
         historialService.limpiar(auth.getName());
     }
 
-    @GetMapping("/vacantes")
+    @GetMapping({"/vacantes", "/vacantes/listar"})
     public String vacantesPostulantes(
-            @RequestParam(value = "query", required = false) String query,
-            @RequestParam(value = "modalidad", required = false) String modalidad,
+            @ModelAttribute FiltrosVacantes filtros,
             Authentication authentication,
             Model model,
             RedirectAttributes redirectAttributes) {
@@ -114,53 +114,30 @@ public class PostulanteController {
         }
         Postulante postulante = optPostulante.get();
 
-        List<Vacante> vacantes = vacanteService.listarTodas();
-        model.addAttribute("filtro", query);
-        model.addAttribute("modalidad", modalidad);
-
         model.addAttribute("postulante", postulante);
-        model.addAttribute("vacantes", vacantes.stream()
-                .filter(v -> v.getEstado() == VacanteEstado.ACTIVA).toList());
         model.addAttribute("activeMenu", "vacantes");
-        agregarConteosVacantes(model);
+        prepararPaginaVacantes(filtros, model);
+        model.addAttribute("sectoresDisponibles", vacanteService.sectoresDisponibles());
         return "postulante/vacantePostulante";
     }
 
-    @GetMapping("/vacantes/listar")
-    public String listarVacantesPublicas(
-            @RequestParam(value = "filtro", required = false) String filtro,
-            @RequestParam(value = "modalidad", required = false) String modalidad,
-            @RequestParam(value = "salarioMin", required = false) Double salarioMin,
-            @RequestParam(value = "fechaFiltro", required = false) String fechaFiltro,
-            @RequestParam(value = "tipoContrato", required = false) String tipoContrato,
-            @RequestParam(value = "salarioMax", required = false) Double salarioMax,
+    @GetMapping("/vacantes/resultados")
+    public String resultadosVacantes(
+            @ModelAttribute FiltrosVacantes filtros,
             Authentication authentication,
             Model model) {
+        if (getAuthenticatedPostulante(authentication).isEmpty())
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.UNAUTHORIZED);
+        prepararPaginaVacantes(filtros, model);
+        return "postulante/fragments/vacantes_resultados :: resultados";
+    }
 
-        String email = authentication.getName();
-
-        Optional<Postulante> postulanteOpt = postulanteService.buscarPorEmail(email);
-
-        if (postulanteOpt.isEmpty()) {
-            return "redirect:/logout";
-        }
-
-        model.addAttribute("postulante", postulanteOpt.get());
-
-        model.addAttribute("vacantes",
-                vacanteService.listarTodas().stream()
-                        .filter(v -> v.getEstado() == VacanteEstado.ACTIVA)
-                        .toList());
-
-        model.addAttribute("filtro", filtro);
-        model.addAttribute("modalidad", modalidad);
-        model.addAttribute("tipoContrato", tipoContrato);
-        model.addAttribute("fechaFiltro", fechaFiltro);
-        model.addAttribute("salarioMin", salarioMin);
-        model.addAttribute("salarioMax", salarioMax);
-
+    private void prepararPaginaVacantes(FiltrosVacantes filtros, Model model) {
+        var pagina = vacanteService.paginaPostulante(filtros);
+        model.addAttribute("paginaVacantes", pagina);
+        model.addAttribute("vacantes", pagina.getContent());
+        model.addAttribute("filtro", filtros.texto());
         agregarConteosVacantes(model);
-        return "postulante/vacantePostulante";
     }
 
     private void agregarConteosVacantes(Model model) {
@@ -171,10 +148,57 @@ public class PostulanteController {
                 .map(v -> v.getEmpresa().getId()).filter(java.util.Objects::nonNull)
                 .collect(java.util.stream.Collectors.toSet());
         model.addAttribute("sectoresEmpresa", empresaService.sectoresPorIds(empresas));
-        java.util.Map<String, Long> cantidades = postulacionService.buscarPorVacantes(vacantes).stream()
-                .filter(p -> p != null && p.getVacante() != null)
-                .collect(java.util.stream.Collectors.groupingBy(p -> p.getVacante().getId(), java.util.stream.Collectors.counting()));
+        java.util.Map<String, Long> cantidades = postulacionService.contarPorVacantes(vacantes);
         vacantes.forEach(v -> v.setTotalPostulaciones(cantidades.getOrDefault(v.getId(), 0L)));
+    }
+
+    @GetMapping("/empresas/{id}")
+    public String verPerfilEmpresa(@PathVariable String id, Authentication authentication, Model model) {
+        var postulante = getAuthenticatedPostulante(authentication);
+        if (postulante.isEmpty()) return "redirect:/login";
+        if (!org.bson.types.ObjectId.isValid(id)) {
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND);
+        }
+        var empresa = empresaService.obtenerPorId(id)
+                .filter(e -> e.getEstado() == com.project.HireConnect.enums.EmpresaEstado.APROBADA)
+                .orElseThrow(() -> new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND));
+        // La vista de visitante recibe solo información pública, sin credenciales ni datos legales.
+        var perfil = new java.util.LinkedHashMap<String, String>();
+        perfil.put("nombre", empresa.getNombreLegal());
+        perfil.put("sector", empresa.getSector());
+        perfil.put("ubicacion", empresa.getUbicacion());
+        perfil.put("descripcion", empresa.getDescripcion());
+        perfil.put("foto", empresa.getFoto());
+        perfil.put("portada", empresa.getPortada());
+        perfil.put("website", enlacePublico(empresa.getWebsite()));
+        var redes = new java.util.LinkedHashMap<String, String>();
+        redes.put("Threads", enlacePublico(empresa.getThreads()));
+        redes.put("Instagram", enlacePublico(empresa.getInstagram()));
+        redes.put("Facebook", enlacePublico(empresa.getFacebook()));
+        redes.put("X", enlacePublico(empresa.getX()));
+        redes.values().removeIf(java.util.Objects::isNull);
+        var empleos = vacanteService.buscarPorEmpresa(empresa).stream()
+                .filter(v -> v.getEstado() == VacanteEstado.ACTIVA)
+                .sorted(java.util.Comparator.comparing(Vacante::getFechaPublicacion,
+                        java.util.Comparator.nullsLast(java.util.Comparator.reverseOrder())))
+                .toList();
+        model.addAttribute("empresa", perfil);
+        model.addAttribute("redes", redes);
+        model.addAttribute("empleos", empleos);
+        model.addAttribute("postulante", postulante.get());
+        model.addAttribute("activeMenu", "vacantes");
+        return "postulante/perfil_empresa";
+    }
+
+    private static String enlacePublico(String enlace) {
+        if (enlace == null || enlace.isBlank()) return null;
+        try {
+            var uri = java.net.URI.create(enlace.trim());
+            return ("https".equalsIgnoreCase(uri.getScheme()) || "http".equalsIgnoreCase(uri.getScheme()))
+                    && uri.getHost() != null && uri.getUserInfo() == null ? uri.toString() : null;
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
     }
 
     @GetMapping("/vacante/{id}")

@@ -67,6 +67,8 @@
                         </a>
                     </li>
 
+                    <li><a th:href="@{/empresa/entrevistas}" class="sidebar__link" data-label="Entrevistas" th:classappend="${activeMenu == 'entrevistas'} ? 'sidebar__active'" th:attr="aria-current=${activeMenu == 'entrevistas'} ? 'page'"><span class="sidebar__icon"><i class="fa-solid fa-calendar-check"></i></span><span class="sidebar__text">Entrevistas</span></a></li>
+                    <li><a th:href="@{/empresa/proyectos}" class="sidebar__link" data-label="Proyectos" th:classappend="${activeMenu == 'proyectos'} ? 'sidebar__active'" th:attr="aria-current=${activeMenu == 'proyectos'} ? 'page'"><span class="sidebar__icon"><i class="fa-solid fa-laptop-file"></i></span><span class="sidebar__text">Proyectos</span></a></li>
                     <li>
                         <a th:href="@{/empresa/editar}" class="sidebar__link" data-label="Mi Perfil"
                             th:classappend="${activeMenu == 'perfil'} ? 'sidebar__active'"

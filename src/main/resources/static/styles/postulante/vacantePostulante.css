@@ -21,6 +21,12 @@ body.vacancy-browser main.main.vacancy-page {
 .vacancy-list__heading h2 { font: 600 1.3rem var(--font-satoshi); color: var(--hc-text); }
 .vacancy-list__heading > span { font-size: 1.1rem; color: var(--hc-muted); }
 .vacancy-page .vacancies { display: grid; grid-template-columns: 1fr; align-content: start; gap: 1rem; padding: 0; margin: 0; width: 100%; }
+.vacancies > [data-vacancy-results] { display: contents; }
+.vacancy-load-more { display: grid; justify-items: center; gap: 1rem; padding: 1.8rem 1rem; color: var(--hc-muted); font-size: 1.2rem; }
+.vacancy-load-more button { padding: .9rem 1.4rem; border: 1px solid var(--hc-line); border-radius: 99rem; background: var(--hc-surface); color: var(--hc-accent-ink); font: 600 1.2rem var(--font-satoshi); cursor: pointer; }
+.vacancy-load-more button:hover { border-color: var(--hc-accent); background: var(--hc-soft); }
+.vacancy-load-more button:disabled { cursor: wait; opacity: .6; }
+.vacancy-list[aria-busy="true"] .vacancies { opacity: .65; }
 .vacancy-page .vacancies__card { display: block; min-width: 0; padding: 0; margin: 0; border: 1px solid var(--hc-line); border-radius: 1.4rem; box-shadow: none; background: var(--hc-surface); transition: border-color .15s ease, background-color .15s ease; }
 .vacancy-page .vacancies__card:hover { transform: none; box-shadow: none; border-color: var(--hc-accent); }
 .vacancy-page .vacancies__card.is-selected { border-color: var(--hc-accent); background: var(--hc-soft); }
@@ -28,7 +34,7 @@ body.vacancy-browser main.main.vacancy-page {
 .vacancy-item:focus-visible { outline: .2rem solid var(--hc-accent); outline-offset: -.2rem; }
 .vacancy-item__top { display: flex; align-items: center; gap: 1rem; }
 .vacancy-company-logo { display: grid; place-items: center; width: 3.8rem; height: 3.8rem; flex-shrink: 0; border: 1px solid var(--hc-line); border-radius: 1rem; background: var(--hc-surface); color: var(--hc-accent-ink); overflow: hidden; font-size: 1.6rem; }
-.vacancy-company-logo img { width: 100%; height: 100%; object-fit: contain; }
+.vacancy-company-logo img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
 .vacancy-item__company { min-width: 0; font-size: 1.2rem; color: var(--hc-muted); overflow-wrap: anywhere; }
 .vacancy-item__arrow { margin-left: auto; color: var(--hc-accent-ink); font-size: 1.6rem; }
 .vacancy-item h3 { margin: 1.3rem 0 1rem; font-family: var(--font-satoshi); font-size: 1.6rem; font-weight: 600; line-height: 1.4; overflow-wrap: anywhere; }
@@ -119,3 +125,6 @@ body.vacancy-browser main.main.vacancy-page {
 .applicant-sector-menu #quickSectorOptions button:hover, .applicant-sector-menu #quickSectorOptions button[aria-pressed=true], .applicant-sector-menu [data-sector-all]:hover { color: var(--hc-accent-ink); background: var(--hc-soft); }
 .applicant-sector-menu small, .applicant-sector-menu [data-sector-empty] { color: var(--hc-muted); font-size: 1.1rem; line-height: 1.6; }
 .applicant-sector-menu { max-height: min(48rem,calc(100dvh - 4rem)); overflow-y: auto; }
+
+.vacancy-detail__company .company-profile-link { display: inline-block; color: var(--primary-color); font-size: 1.5rem; font-weight: 700; text-decoration: underline; text-underline-offset: .3rem; }
+.vacancy-detail__company .company-profile-link:hover { color: var(--primary-color-hover); }

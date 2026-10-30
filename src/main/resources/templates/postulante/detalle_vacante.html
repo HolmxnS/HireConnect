@@ -36,7 +36,7 @@
                         <div class="info__company">
                             <span th:if="${vacante.empresa != null}">
                                 <i class="fa-solid fa-building"></i>
-                                <span th:text="${vacante.empresa.nombre}"></span>
+                                <a th:href="@{/postulante/empresas/{id}(id=${vacante.empresa.id})}" th:text="${vacante.empresa.nombre}"></a>
                             </span>
 
                             <span class="info__separator"></span>

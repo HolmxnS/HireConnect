@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Proyectos freelance | HireConnect</title>
+    <link rel="stylesheet" th:href="@{'/styles/fragments/' + (${esEmpresa} ? 'empresa' : 'postulante') + '/sidebar.css'}"/>
+    <link rel="stylesheet" th:if="${not esEmpresa}" th:href="@{/styles/fragments/postulante/header.css}"/>
+    <link rel="stylesheet" th:href="@{'/styles/' + (${esEmpresa} ? 'empresa' : 'postulante') + '/theme.css'}"/>
+    <link rel="stylesheet" th:if="${esEmpresa}" th:href="@{/styles/empresa/layout.css}"/>
+    <script th:src="@{/js/theme.js}"></script>
+    <link rel="stylesheet" th:href="@{/styles/satoshi.css}"/>
+    <link rel="stylesheet" th:href="@{/styles/clash-display.css}"/>
+    <link rel="stylesheet" th:href="@{/styles/brand.css}"/>
+    <link rel="stylesheet" th:href="@{/styles/oportunidades.css}"/>
+    <link rel="stylesheet" th:href="@{/styles/toasts.css}"/>
+    <link rel="icon" type="image/svg+xml" th:href="@{/source/img/favicon.svg}"/>
+    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous" defer></script>
+</head>
+<body>
+<th:block th:if="${esEmpresa}">
+    <div th:replace="~{fragments/empresa/sidebar_empresa :: sidebar(${activeMenu})}"></div>
+    <div th:replace="~{fragments/empresa/header_empresa :: header}"></div>
+</th:block>
+<th:block th:unless="${esEmpresa}">
+    <div th:replace="~{fragments/postulante/sidebar_postulante :: sidebar(${activeMenu})}"></div>
+    <div th:replace="~{fragments/postulante/header_postulante :: menu-fragment(false)}"></div>
+</th:block>
+
+<main class="content opportunity-page projects-page">
+    <p th:if="${exito}" th:text="${exito}" data-toast-message hidden role="status"></p>
+    <p th:if="${error}" th:text="${error}" data-toast-message hidden role="alert"></p>
+
+    <div class="projects-layout">
+        <aside class="projects-rail" aria-labelledby="projects-rail-title">
+            <div class="projects-rail__intro">
+                <span class="projects-rail__eyebrow" th:text="${esEmpresa ? 'Talento por proyecto' : 'Trabajo independiente'}"></span>
+                <h1 id="projects-rail-title" th:text="${esEmpresa ? 'El talento que tu proyecto necesita.' : 'Tu próximo proyecto empieza aquí.'}"></h1>
+                <p th:text="${esEmpresa ? 'Publica lo que necesitas y recibe propuestas de profesionales.' : 'Explora oportunidades y elige dónde aportar tus habilidades.'}"></p>
+                <button th:if="${esEmpresa}" class="opportunity-primary projects-rail__cta" type="button" data-open-project-dialog>
+                    <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                    Publicar proyecto
+                </button>
+            </div>
+
+            <dl class="projects-rail__summary">
+                <div>
+                    <dt th:text="${propios and not esEmpresa ? 'Con propuesta' : 'Resultados'}"></dt>
+                    <dd th:text="${pagina.totalElements}"></dd>
+                </div>
+                <div>
+                    <dt>Categorías</dt>
+                    <dd th:text="${#lists.size(categorias)}"></dd>
+                </div>
+            </dl>
+
+            <section class="projects-rail__guide" aria-labelledby="projects-guide-title">
+                <h2 id="projects-guide-title" th:text="${esEmpresa ? 'Publica con claridad' : 'Antes de proponer'}"></h2>
+                <ol>
+                    <li><span>01</span><p th:text="${esEmpresa ? 'Describe el resultado y los entregables.' : 'Revisa alcance, modalidad y plazo.'}"></p></li>
+                    <li><span>02</span><p th:text="${esEmpresa ? 'Indica un presupuesto y un plazo realistas.' : 'Explica cómo resolverías el proyecto.'}"></p></li>
+                    <li><span>03</span><p th:text="${esEmpresa ? 'Compara propuestas y elige un profesional.' : 'Define tu precio y tiempo de entrega.'}"></p></li>
+                </ol>
+            </section>
+        </aside>
+
+        <section class="projects-feed" aria-labelledby="projects-title">
+            <header class="projects-feed__header">
+                <div>
+                    <span class="projects-feed__eyebrow" th:text="${esEmpresa ? 'Tus publicaciones' : 'Nuevas oportunidades'}"></span>
+                    <h2 id="projects-title">Proyectos freelance</h2>
+                </div>
+                <button th:if="${esEmpresa}" class="opportunity-primary projects-feed__publish" type="button" data-open-project-dialog>
+                    <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                    Nuevo proyecto
+                </button>
+            </header>
+
+            <form class="projects-search" method="get" th:action="@{${base + '/proyectos'}}">
+                <label class="projects-search__field">
+                    <span class="projects-visually-hidden">Buscar proyecto</span>
+                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                    <input type="search" name="q" th:value="${q}" maxlength="100" placeholder="Buscar por nombre del proyecto"/>
+                </label>
+                <input type="hidden" name="categoria" th:value="${categoria}"/>
+                <label th:unless="${esEmpresa}" class="projects-own-filter">
+                    <input type="checkbox" name="propios" value="true" th:checked="${propios}"/>
+                    <span aria-hidden="true"></span>
+                    Mis propuestas
+                </label>
+                <button type="submit" class="opportunity-secondary projects-search__button">Buscar</button>
+            </form>
+
+            <nav class="projects-categories" aria-label="Filtrar por categoría">
+                <a th:href="@{${base + '/proyectos'}(q=${q},propios=${propios})}"
+                   th:classappend="${#strings.isEmpty(categoria)} ? ' projects-categories__active'">Todos</a>
+                <a th:each="c : ${categorias}"
+                   th:href="@{${base + '/proyectos'}(q=${q},categoria=${c},propios=${propios})}"
+                   th:text="${c}"
+                   th:classappend="${c == categoria} ? ' projects-categories__active'"></a>
+            </nav>
+
+            <div class="projects-results-bar">
+                <p><strong th:text="${pagina.totalElements}"></strong> <span th:text="${pagina.totalElements == 1 ? 'proyecto encontrado' : 'proyectos encontrados'}"></span></p>
+                <span><i class="fa-solid fa-arrow-down-wide-short" aria-hidden="true"></i> Más recientes</span>
+            </div>
+
+            <div class="projects-empty" th:if="${pagina.empty}">
+                <span class="projects-empty__icon" aria-hidden="true"><i class="fa-regular fa-folder-open"></i></span>
+                <h3>No hay proyectos para mostrar</h3>
+                <p th:text="${esEmpresa ? 'Publica tu primer proyecto y empieza a recibir propuestas.' : 'Prueba con otra búsqueda o cambia la categoría seleccionada.'}"></p>
+                <button th:if="${esEmpresa}" class="opportunity-primary" type="button" data-open-project-dialog>Publicar proyecto</button>
+                <a th:unless="${esEmpresa}" class="opportunity-secondary" th:href="@{${base + '/proyectos'}}">Limpiar filtros</a>
+            </div>
+
+            <div class="projects-list" th:unless="${pagina.empty}">
+                <article class="project-list-card" th:each="p : ${pagina.content}">
+                    <div class="project-list-card__top">
+                        <span class="project-list-card__mark" aria-hidden="true"><i class="fa-solid fa-shapes"></i></span>
+                        <div class="project-list-card__identity">
+                            <div class="project-list-card__heading">
+                                <h3 th:text="${p.titulo}"></h3>
+                                <span class="opportunity-pill" th:attr="data-project-state=${p.estado.name()}" th:text="${p.estado.descripcion}"></span>
+                            </div>
+                            <p class="project-list-card__company" th:text="${p.empresaNombre}"></p>
+                        </div>
+                        <time class="project-list-card__date" th:if="${p.fechaLocal != null}"
+                              th:datetime="${p.fechaLocal}"
+                              th:text="${#temporals.format(p.fechaLocal, 'dd MMM yyyy', new java.util.Locale('es', 'CO'))}"></time>
+                    </div>
+
+                    <p class="project-list-card__description" th:text="${p.descripcion}"></p>
+
+                    <div class="project-list-card__footer">
+                        <dl class="project-list-card__facts">
+                            <div><dt>Presupuesto</dt><dd th:text="${'$' + #numbers.formatInteger(p.presupuesto, 1, 'POINT') + ' COP'}"></dd></div>
+                            <div><dt>Entrega</dt><dd th:text="${p.dias + (p.dias == 1 ? ' día' : ' días')}"></dd></div>
+                            <div><dt>Modalidad</dt><dd th:text="${p.modalidad}"></dd></div>
+                        </dl>
+                        <a class="project-list-card__action" th:href="@{${base + '/proyectos/' + p.id}}">
+                            <span th:text="${esEmpresa ? 'Gestionar' : 'Ver proyecto'}"></span>
+                            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </article>
+            </div>
+
+            <nav class="opportunity-pagination" aria-label="Páginas" th:if="${pagina.totalPages > 1}">
+                <a th:if="${pagina.hasPrevious()}" th:href="@{${base + '/' + activeMenu}(pagina=${pagina.number - 1},q=${q},categoria=${categoria},propios=${propios})}">← Anterior</a>
+                <span th:text="${'Página ' + (pagina.number + 1) + ' de ' + pagina.totalPages}"></span>
+                <a th:if="${pagina.hasNext()}" th:href="@{${base + '/' + activeMenu}(pagina=${pagina.number + 1},q=${q},categoria=${categoria},propios=${propios})}">Siguiente →</a>
+            </nav>
+        </section>
+    </div>
+
+    <dialog class="project-publish-dialog" id="nuevo-proyecto" th:if="${esEmpresa}" aria-labelledby="project-dialog-title">
+        <div class="project-publish-dialog__header">
+            <div>
+                <span class="projects-feed__eyebrow">Nueva oportunidad</span>
+                <h2 id="project-dialog-title">Publicar un proyecto</h2>
+                <p>Define el trabajo que necesitas y recibe propuestas de profesionales.</p>
+            </div>
+            <button type="button" class="project-publish-dialog__close" data-close-project-dialog aria-label="Cerrar formulario">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+        </div>
+        <form th:action="@{/empresa/proyectos}" method="post" class="opportunity-form project-publish-form">
+            <label class="opportunity-wide">Título<input name="titulo" maxlength="100" required placeholder="Ej.: Diseñar el logo de una cafetería"/></label>
+            <label class="opportunity-wide">Descripción y entregables<textarea name="descripcion" maxlength="3000" required rows="5" placeholder="Explica el trabajo, los entregables y los requisitos."></textarea></label>
+            <label>Categoría<select name="categoria" required><option th:each="c : ${categorias}" th:value="${c}" th:text="${c}"></option></select></label>
+            <label>Modalidad<select name="modalidad"><option>Remoto</option><option>Presencial</option><option>Híbrido</option></select></label>
+            <label>Presupuesto total · COP<input type="number" name="presupuesto" min="1000" max="1000000000" step="1" required placeholder="Ej.: 800000"/></label>
+            <label>Plazo de entrega · días<input type="number" name="dias" min="1" max="365" required placeholder="Ej.: 15"/></label>
+            <div class="project-publish-form__actions opportunity-wide">
+                <button type="button" class="opportunity-secondary" data-close-project-dialog>Cancelar</button>
+                <button type="submit" class="opportunity-primary">Publicar proyecto</button>
+            </div>
+        </form>
+    </dialog>
+</main>
+
+<script th:src="@{/js/oportunidades.js}" defer></script>
+<script th:src="@{/js/toasts.js}" defer></script>
+<th:block th:unless="${esEmpresa}"><div th:replace="~{fragments/postulante/chatbot :: chatbot}"></div></th:block>
+</body>
+</html>
