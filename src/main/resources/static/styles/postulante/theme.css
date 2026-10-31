@@ -1074,3 +1074,95 @@ html[data-reduce-motion] *, html[data-reduce-motion] *::before, html[data-reduce
         scroll-behavior: auto !important;
     }
 }
+
+/* ===== Estimación de selección: fila título + tarjeta ===== */
+.vacancy-detail__title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.vacancy-detail__title-row h2 {
+  flex: 1;
+  min-width: 0;
+}
+
+.prediction-card {
+  flex-shrink: 0;
+  width: 26rem;
+  padding: 1.4rem 1.6rem;
+  border: 1px solid var(--hc-line);
+  border-radius: 1.2rem;
+  background: var(--hc-surface);
+}
+
+.prediction-card[hidden],
+.badge[hidden] {
+  display: none;
+}
+
+.prediction-header {
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+  margin-bottom: 1rem;
+  color: var(--hc-accent-ink);
+}
+
+.prediction-header h3 {
+  margin: 0;
+  font: 600 1.3rem var(--font-satoshi);
+  color: var(--hc-text);
+}
+
+.prediction-body .percentage {
+  margin: 0 0 1rem;
+  font-size: 1.2rem;
+  line-height: 1.5;
+  color: var(--hc-muted);
+}
+
+.prediction-body .percentage strong {
+  display: block;
+  margin-top: .2rem;
+  font-size: 2.4rem;
+  font-weight: 600;
+  letter-spacing: -.02em;
+  color: var(--hc-text);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .6rem;
+  padding: .4rem .9rem;
+  border-radius: 99rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.badge-alta {
+  background: var(--pc-ok-bg);
+  color: var(--pc-ok);
+}
+
+.badge-media {
+  background: rgba(245, 158, 11, .15);
+  color: #f59e0b;
+}
+
+.badge-baja {background: var(--pc-bad-bg);
+  color: var(--pc-bad);
+}
+
+/* Panel estrecho: la tarjeta pasa debajo del título */
+@media (max-width: 1400px) {
+  .vacancy-detail__title-row {
+    flex-direction: column;
+  }
+
+  .prediction-card {
+    width: 100%;
+  }
+}
