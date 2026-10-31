@@ -1,43 +1,121 @@
 <!doctype html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
+
 <body>
-<div th:fragment="resultados" data-vacancy-results
-     th:attr="data-page=${paginaVacantes.number},data-has-next=${paginaVacantes.hasNext()},data-total=${paginaVacantes.totalElements}">
-    <article th:each="vacante : ${vacantes}" class="vacancies__card" th:with="empresa=${vacante.empresa}"
-        th:attr="data-candidatos=${vacante.totalPostulaciones},data-sector=${sectoresEmpresa != null and empresa != null ? sectoresEmpresa[empresa.id] : ''},data-titulo=${vacante.titulo},data-modalidad=${vacante.modalidad?.descripcion},data-experiencia=${vacante.experienciaRequerida?.descripcion},data-salario=${vacante.salario},data-empresa=${empresa?.nombre},data-fecha=${vacante.fechaPublicacion},data-tipo-contrato=${vacante.tipoContrato?.descripcion}">
-        <a class="vacancy-item" data-vacancy-open th:href="@{/postulante/vacante/{id}(id=${vacante.id})}" th:attr="data-vacancy-id=${vacante.id}">
-            <div class="vacancy-item__top"><span class="vacancy-company-logo" aria-hidden="true"><img th:if="${not #strings.isEmpty(empresa?.foto)}" th:src="${empresa.foto}" alt="" loading="lazy" /><i th:unless="${not #strings.isEmpty(empresa?.foto)}" class="fa-regular fa-building"></i></span><span class="vacancy-item__company" th:text="${empresa?.nombre ?: 'Empresa'}"></span><span class="vacancy-item__arrow" aria-hidden="true">↗</span></div>
-            <h3 th:text="${vacante.titulo}"></h3>
-            <div class="vacancy-item__tags"><span th:if="${vacante.modalidad != null}" th:text="${vacante.modalidad.descripcion}"></span><span th:if="${vacante.tipoContrato != null}" th:text="${vacante.tipoContrato.descripcion}"></span></div>
-            <div class="vacancy-item__bottom"><strong th:text="${vacante.salario != null and vacante.salario > 0} ? ${'$' + #numbers.formatDecimal(vacante.salario, 0, 'POINT', 0, 'COMMA') + ' COP'} : 'Salario a convenir'"></strong><time class="vacancies__date" th:if="${vacante.fechaPublicacion != null}" th:attr="data-fecha=${vacante.fechaPublicacion}" th:datetime="${vacante.fechaPublicacion}" th:text="${#temporals.format(vacante.fechaPublicacion, 'dd/MM/yyyy')}"></time></div>
-        </a>
-        <!-- Cada lote incluye el detalle de sus 20 vacantes para abrirlo al instante. -->
-        <template data-vacancy-template>
-            <article class="vacancy-detail" th:attr="aria-labelledby=${'vacancy-title-' + vacante.id}">
-                <header class="vacancy-detail__hero">
-                    <div class="vacancy-detail__company">
-                        <span class="vacancy-company-logo" aria-hidden="true"><img th:if="${not #strings.isEmpty(empresa?.foto)}" th:src="${empresa.foto}" alt="" /><i th:unless="${not #strings.isEmpty(empresa?.foto)}" class="fa-regular fa-building"></i></span>
-                        <div><a class="company-profile-link" th:if="${empresa != null}" th:href="@{/postulante/empresas/{id}(id=${empresa.id})}" th:text="${empresa.nombre}"></a><p th:unless="${empresa != null}">Empresa</p><span th:if="${vacante.fechaPublicacion != null}" th:text="${'Publicada el ' + #temporals.format(vacante.fechaPublicacion, 'dd/MM/yyyy')}"></span></div>
+    <div th:fragment="resultados" data-vacancy-results
+        th:attr="data-page=${paginaVacantes.number},data-has-next=${paginaVacantes.hasNext()},data-total=${paginaVacantes.totalElements}">
+        <article th:each="vacante : ${vacantes}" class="vacancies__card" th:with="empresa=${vacante.empresa}"
+            th:attr="data-candidatos=${vacante.totalPostulaciones},data-sector=${sectoresEmpresa != null and empresa != null ? sectoresEmpresa[empresa.id] : ''},data-titulo=${vacante.titulo},data-modalidad=${vacante.modalidad?.descripcion},data-experiencia=${vacante.experienciaRequerida?.descripcion},data-salario=${vacante.salario},data-empresa=${empresa?.nombre},data-fecha=${vacante.fechaPublicacion},data-tipo-contrato=${vacante.tipoContrato?.descripcion}">
+            <a class="vacancy-item" data-vacancy-open th:href="@{/postulante/vacante/{id}(id=${vacante.id})}"
+                th:attr="data-vacancy-id=${vacante.id}">
+                <div class="vacancy-item__top"><span class="vacancy-company-logo" aria-hidden="true"><img
+                            th:if="${not #strings.isEmpty(empresa?.foto)}" th:src="${empresa.foto}" alt=""
+                            loading="lazy" /><i th:unless="${not #strings.isEmpty(empresa?.foto)}"
+                            class="fa-regular fa-building"></i></span><span class="vacancy-item__company"
+                        th:text="${empresa?.nombre ?: 'Empresa'}"></span><span class="vacancy-item__arrow"
+                        aria-hidden="true">↗</span></div>
+                <h3 th:text="${vacante.titulo}"></h3>
+                <div class="vacancy-item__tags"><span th:if="${vacante.modalidad != null}"
+                        th:text="${vacante.modalidad.descripcion}"></span><span th:if="${vacante.tipoContrato != null}"
+                        th:text="${vacante.tipoContrato.descripcion}"></span></div>
+                <div class="vacancy-item__bottom"><strong
+                        th:text="${vacante.salario != null and vacante.salario > 0} ? ${'$' + #numbers.formatDecimal(vacante.salario, 0, 'POINT', 0, 'COMMA') + ' COP'} : 'Salario a convenir'"></strong><time
+                        class="vacancies__date" th:if="${vacante.fechaPublicacion != null}"
+                        th:attr="data-fecha=${vacante.fechaPublicacion}" th:datetime="${vacante.fechaPublicacion}"
+                        th:text="${#temporals.format(vacante.fechaPublicacion, 'dd/MM/yyyy')}"></time></div>
+            </a>
+            <!-- Cada lote incluye el detalle de sus 20 vacantes para abrirlo al instante. -->
+            <template data-vacancy-template>
+                <article class="vacancy-detail" th:attr="aria-labelledby=${'vacancy-title-' + vacante.id}">
+                    <header class="vacancy-detail__hero">
+                        <div class="vacancy-detail__company">
+                            <span class="vacancy-company-logo" aria-hidden="true"><img
+                                    th:if="${not #strings.isEmpty(empresa?.foto)}" th:src="${empresa.foto}" alt="" /><i
+                                    th:unless="${not #strings.isEmpty(empresa?.foto)}"
+                                    class="fa-regular fa-building"></i></span>
+                            <div><a class="company-profile-link" th:if="${empresa != null}"
+                                    th:href="@{/postulante/empresas/{id}(id=${empresa.id})}"
+                                    th:text="${empresa.nombre}"></a>
+                                <p th:unless="${empresa != null}">Empresa</p><span
+                                    th:if="${vacante.fechaPublicacion != null}"
+                                    th:text="${'Publicada el ' + #temporals.format(vacante.fechaPublicacion, 'dd/MM/yyyy')}"></span>
+                            </div>
+                        </div>
+                        <span class="vacancy-detail__availability"
+                            th:if="${vacante.estado != null and vacante.estado.name() == 'ACTIVA'}">Convocatoria
+                            abierta</span>
+                        <div class="vacancy-detail__title-row">
+                            <h2 tabindex="-1" data-vacancy-title th:id="${'vacancy-title-' + vacante.id}"
+                                th:text="${vacante.titulo}"></h2>
+
+                            <div class="prediction-card" data-prediction hidden
+                                th:attr="data-url=@{/postulante/vacante/{id}/prediccion(id=${vacante.id})}">
+                                <div class="prediction-header">
+                                    <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+                                    <h3>Estimación de Selección</h3>
+                                </div>
+                                <div class="prediction-body">
+                                    <p class="percentage">
+                                        Probabilidad estimada de contratación:
+                                        <strong data-prediction-value>Calculando…</strong>
+                                    </p>
+                                    <span class="badge" data-prediction-badge hidden></span>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+                    <div class="vacancy-detail__intro">
+                        <div class="vacancy-detail__pay"><span>Salario ofrecido</span><strong
+                                class="vacancy-detail__salary"
+                                th:text="${vacante.salario != null and vacante.salario > 0} ? ${'$' + #numbers.formatDecimal(vacante.salario, 0, 'POINT', 0, 'COMMA') + ' COP'} : 'A convenir'"></strong>
+                        </div>
+                        <a class="vacancy-detail__apply"
+                            th:if="${vacante.estado != null and vacante.estado.name() == 'ACTIVA'}"
+                            th:href="@{/postulante/postular(vacanteId=${vacante.id})}">Postularme <i
+                                class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                        <span class="vacancy-detail__closed"
+                            th:unless="${vacante.estado != null and vacante.estado.name() == 'ACTIVA'}">Vacante no
+                            disponible</span>
                     </div>
-                    <span class="vacancy-detail__availability" th:if="${vacante.estado != null and vacante.estado.name() == 'ACTIVA'}">Convocatoria abierta</span>
-                    <h2 tabindex="-1" data-vacancy-title th:id="${'vacancy-title-' + vacante.id}" th:text="${vacante.titulo}"></h2>
-                </header>
-                <div class="vacancy-detail__intro">
-                    <div class="vacancy-detail__pay"><span>Salario ofrecido</span><strong class="vacancy-detail__salary" th:text="${vacante.salario != null and vacante.salario > 0} ? ${'$' + #numbers.formatDecimal(vacante.salario, 0, 'POINT', 0, 'COMMA') + ' COP'} : 'A convenir'"></strong></div>
-                    <a class="vacancy-detail__apply" th:if="${vacante.estado != null and vacante.estado.name() == 'ACTIVA'}" th:href="@{/postulante/postular(vacanteId=${vacante.id})}">Postularme <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
-                    <span class="vacancy-detail__closed" th:unless="${vacante.estado != null and vacante.estado.name() == 'ACTIVA'}">Vacante no disponible</span>
-                </div>
-                <dl class="vacancy-detail__facts">
-                    <div><dt><i class="fa-solid fa-laptop" aria-hidden="true"></i> Modalidad</dt><dd th:text="${vacante.modalidad?.descripcion ?: 'No especificada'}"></dd></div>
-                    <div><dt><i class="fa-regular fa-file-lines" aria-hidden="true"></i> Contrato</dt><dd th:text="${vacante.tipoContrato?.descripcion ?: 'No especificado'}"></dd></div>
-                    <div><dt><i class="fa-solid fa-briefcase" aria-hidden="true"></i> Experiencia</dt><dd th:text="${vacante.experienciaRequerida?.descripcion ?: 'No especificada'}"></dd></div>
-                </dl>
-                <section class="vacancy-detail__section"><h3>La oportunidad</h3><p class="vacancy-detail__description" th:text="${#strings.isEmpty(vacante.descripcion) ? 'La empresa no ha añadido una descripción.' : vacante.descripcion}"></p></section>
-                <section class="vacancy-detail__section" th:if="${not #strings.isEmpty(vacante.habilidadesRequeridas)}"><h3>Lo que buscamos en ti</h3><ul class="vacancy-detail__skills"><li th:each="habilidad : ${#strings.arraySplit(vacante.habilidadesRequeridas, ',')}" th:text="${#strings.trim(habilidad)}"></li></ul></section>
-                <div class="vacancy-detail__deadline" th:if="${vacante.fechaFin != null}"><span class="vacancy-detail__deadline-icon" aria-hidden="true"><i class="fa-regular fa-calendar"></i></span><div><strong>Cierre de la convocatoria</strong><p th:text="${#temporals.format(vacante.fechaFin, 'dd/MM/yyyy')}"></p></div></div>
-            </article>
-        </template>
-    </article>
-</div>
+                    <dl class="vacancy-detail__facts">
+                        <div>
+                            <dt><i class="fa-solid fa-laptop" aria-hidden="true"></i> Modalidad</dt>
+                            <dd th:text="${vacante.modalidad?.descripcion ?: 'No especificada'}"></dd>
+                        </div>
+                        <div>
+                            <dt><i class="fa-regular fa-file-lines" aria-hidden="true"></i> Contrato</dt>
+                            <dd th:text="${vacante.tipoContrato?.descripcion ?: 'No especificado'}"></dd>
+                        </div>
+                        <div>
+                            <dt><i class="fa-solid fa-briefcase" aria-hidden="true"></i> Experiencia</dt>
+                            <dd th:text="${vacante.experienciaRequerida?.descripcion ?: 'No especificada'}"></dd>
+                        </div>
+                    </dl>
+                    <section class="vacancy-detail__section">
+                        <h3>La oportunidad</h3>
+                        <p class="vacancy-detail__description"
+                            th:text="${#strings.isEmpty(vacante.descripcion) ? 'La empresa no ha añadido una descripción.' : vacante.descripcion}">
+                        </p>
+                    </section>
+                    <section class="vacancy-detail__section"
+                        th:if="${not #strings.isEmpty(vacante.habilidadesRequeridas)}">
+                        <h3>Lo que buscamos en ti</h3>
+                        <ul class="vacancy-detail__skills">
+                            <li th:each="habilidad : ${#strings.arraySplit(vacante.habilidadesRequeridas, ',')}"
+                                th:text="${#strings.trim(habilidad)}"></li>
+                        </ul>
+                    </section>
+                    <div class="vacancy-detail__deadline" th:if="${vacante.fechaFin != null}"><span
+                            class="vacancy-detail__deadline-icon" aria-hidden="true"><i
+                                class="fa-regular fa-calendar"></i></span>
+                        <div><strong>Cierre de la convocatoria</strong>
+                            <p th:text="${#temporals.format(vacante.fechaFin, 'dd/MM/yyyy')}"></p>
+                        </div>
+                    </div>
+                </article>
+            </template>
+        </article>
+    </div>
 </body>
+
 </html>
