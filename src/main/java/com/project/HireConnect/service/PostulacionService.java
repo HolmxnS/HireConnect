@@ -94,6 +94,13 @@ public class PostulacionService {
         return postulacionRepository.findByVacante_Empresa(empresa);
     }
 
+    public boolean puedeConsultarCv(String postulanteId, List<Vacante> vacantes) {
+        if (!ObjectId.isValid(postulanteId) || vacantes == null) return false;
+        var ids = vacantes.stream().filter(java.util.Objects::nonNull).map(Vacante::getId)
+                .filter(ObjectId::isValid).map(ObjectId::new).distinct().toList();
+        return !ids.isEmpty() && postulacionRepository.existeCandidaturaEnVacantes(new ObjectId(postulanteId), ids);
+    }
+
     public Postulacion guardar(Postulacion postulacion) {
         return postulacionRepository.save(postulacion);
     }

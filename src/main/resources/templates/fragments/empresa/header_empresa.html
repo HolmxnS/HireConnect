@@ -4,7 +4,11 @@
   <div class="header-content">
     <span class="company-header__title">Espacio de empresa</span>
     <div class="company-header__actions">
-      <button type="button" class="topbar__btn topbar__theme" data-theme-toggle aria-label="Cambiar tema"><span class="topbar__theme-icon topbar__theme-icon--moon"><i class="fa-solid fa-moon" aria-hidden="true"></i></span><span class="topbar__theme-icon topbar__theme-icon--sun"><i class="fa-solid fa-sun" aria-hidden="true"></i></span></button>
+      <button type="button" class="topbar__btn topbar__theme" data-theme-toggle aria-label="Cambiar tema">
+        <span class="topbar__theme-icon topbar__theme-icon--moon"><i class="fa-solid fa-moon" aria-hidden="true"></i></span>
+        <span class="topbar__theme-icon topbar__theme-icon--sun"><i class="fa-solid fa-sun" aria-hidden="true"></i></span>
+      </button>
+
       <div class="profile-box"><a th:href="@{/empresa/editar}" aria-label="Mi perfil" title="Mi perfil">
         <img th:if="${empresa != null and not #strings.isEmpty(empresa.foto)}" th:src="${empresa.foto}" alt="Foto de la empresa" />
         <span th:unless="${empresa != null and not #strings.isEmpty(empresa.foto)}" class="profile-box__placeholder"><i class="fa-solid fa-building" aria-hidden="true"></i></span>

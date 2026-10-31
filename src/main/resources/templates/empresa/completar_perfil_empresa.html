@@ -1,192 +1,130 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" th:href="@{/styles/empresa/completar_perfil_empresa.css}" />
+    <title>Completa tu empresa | HireConnect</title>
+    <script th:src="@{/js/theme.js}"></script>
+    <link rel="icon" type="image/svg+xml" th:href="@{/source/img/favicon.svg}" />
     <link rel="stylesheet" th:href="@{/styles/satoshi.css}" />
-    <link rel="stylesheet" th:href="@{/styles/clash-display.css}" />
-    <link rel="icon" type="image/svg+xml" sizes="any" th:href="@{/source/img/favicon.svg}">
-    <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous"></script>
-    <title>Completar Perfil - Empresa | HireConnect</title>
     <link rel="stylesheet" th:href="@{/styles/brand.css}" />
+    <link rel="stylesheet" th:href="@{/styles/completar_perfil.css}" />
+    <script th:src="@{/js/completar_perfil.js}" defer></script>
 </head>
+<body class="onboarding">
+    <main class="complete complete--empresa">
+        <aside class="complete__story" aria-labelledby="story-title">
+            <a class="complete__story-top" th:href="@{/}" aria-label="HireConnect, ir al inicio">
+                <span class="hc-logo-mark" aria-hidden="true"><img th:src="@{/source/img/isotipo.png}" alt="" /></span>
+                <span>Hire<strong>Connect</strong></span>
+            </a>
+            <div class="complete__story-content">
+                <span class="complete__eyebrow">EL TALENTO TE ESPERA</span>
+                <h2 id="story-title">Tu próximo equipo empieza con una conexión.</h2>
+                <p>Haz que más personas conozcan tu empresa y lo que pueden construir contigo.</p>
+                <ol class="complete__journey" aria-label="Progreso de tu cuenta">
+                    <li class="is-done"><span aria-hidden="true">✓</span><div><strong>Conecta tu cuenta</strong><small>Google ya está vinculado</small></div></li>
+                    <li class="is-current" aria-current="step"><span aria-hidden="true">2</span><div><strong>Presenta tu empresa</strong><small>Completa los datos esenciales</small></div></li>
+                    <li><span aria-hidden="true">3</span><div><strong>Encuentra talento</strong><small>Publica tu primera oportunidad</small></div></li>
+                </ol>
+            </div>
+            <p class="complete__story-footer">Buenas conexiones. Mejores equipos.</p>
+        </aside>
 
-<body>
-
-    <div class="container">
-
-        <div class="hero">
-            <h2 class="hero__title">Tu empresa, lista para conectar con el mejor talento.</h2>
-            <p class="hero__info">Completa la información de tu empresa para empezar a publicar ofertas y encontrar a tus futuros colaboradores.</p>
-        </div>
-
-        <div class="form-panel">
-
-            <header class="header">
-                <div class="header__logo">
-                    <a th:href="@{/}">
-                        <h1 class="hc-logo-wordmark"><span class="hc-logo-mark" aria-hidden="true"><img th:src="@{/source/img/isotipo.png}" alt="" /></span><span>Hire<span class="header__logo-higlight">Connect</span></span></h1>
-                    </a>
-                </div>
-                <span class="header__step">Perfil pendiente</span>
+        <section class="complete__panel" aria-labelledby="complete-title">
+            <header class="complete__topbar">
+                <span class="complete__account-kind">Cuenta de empresa</span>
+                <button class="complete__theme" type="button" data-theme-toggle aria-label="Cambiar tema">
+                    <svg class="complete__sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+                    <svg class="complete__moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M20.8 13.1A9 9 0 0 1 10.9 3.2a9 9 0 1 0 9.9 9.9Z"/></svg>
+                </button>
             </header>
 
-            <main class="main">
-
-                <div class="register">
-                    <h2 class="register__title">Completa tu perfil de empresa</h2>
-                    <div class="register__underline"></div>
-                    <p class="register__subtitle">Estos datos son necesarios para verificar tu empresa y publicar ofertas</p>
-
-
-                    <div th:if="${exito}" class="flash-alert flash-alert--success">
-                        <i class="fa-solid fa-circle-check"></i>
-                        <span th:text="${exito}"></span>
-                    </div>
-                    <div th:if="${error}" class="flash-alert flash-alert--error">
-                        <i class="fa-solid fa-circle-exclamation"></i>
-                        <span th:text="${error}"></span>
-                    </div>
-                    <div th:if="${aviso}" class="flash-alert flash-alert--info">
-                        <i class="fa-solid fa-circle-info"></i>
-                        <span th:text="${aviso}"></span>
-                    </div>
-
-                    <form class="register__form" th:action="@{/empresa/completar_perfil_empresa}" th:object="${empresa}" method="post" novalidate>
-
-                        <div class="section-label">
-                            <i class="fa-solid fa-file-contract"></i>
-                            <span>Información legal</span>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="rut">RUT / NIT *</label>
-                                <input type="text" id="rut" th:field="*{rut}" 
-                                       placeholder="Ej: 900123456-1" 
-                                       required 
-                                       th:disabled="${empresa.perfilCompleto}" />
-                                <p class="error" th:if="${#fields.hasErrors('rut')}" th:text="${#fields.errors('rut')[0]}"></p>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="telefono">Teléfono *</label>
-                                <input type="text" id="telefono" th:field="*{telefono}" 
-                                       placeholder="Ej: 6011234567" 
-                                       required 
-                                       th:disabled="${empresa.perfilCompleto}" />
-                                <p class="error" th:if="${#fields.hasErrors('telefono')}" th:text="${#fields.errors('telefono')[0]}"></p>
-                            </div>
-                        </div>
-
-                        <div class="section-label">
-                            <i class="fa-solid fa-location-dot"></i>
-                            <span>Ubicación y sector</span>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="ubicacion">Ubicación *</label>
-                                <input type="text" id="ubicacion" th:field="*{ubicacion}" 
-                                       placeholder="Ciudad, País" 
-                                       required 
-                                       th:disabled="${empresa.perfilCompleto}" />
-                                <p class="error" th:if="${#fields.hasErrors('ubicacion')}" th:text="${#fields.errors('ubicacion')[0]}"></p>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="sector">Sector *</label>
-                                <div class="select-wrapper">
-                                    <select id="sector" th:field="*{sector}" required th:disabled="${empresa.perfilCompleto}">
-                                        <option value="">— Selecciona sector —</option>
-                                        <option value="TECNOLOGIA">Tecnología y Software</option>
-                                        <option value="SALUD">Salud y Bienestar</option>
-                                        <option value="EDUCACION">Educación y Formación</option>
-                                        <option value="COMERCIO">Comercio y Retail</option>
-                                        <option value="FINANZAS">Finanzas y Banca</option>
-                                        <option value="INDUSTRIA">Industria y Manufactura</option>
-                                        <option value="SERVICIOS">Servicios Profesionales</option>
-                                        <option value="OTRO">Otro</option>
-                                    </select>
-                                    <i class="fa-solid fa-chevron-down select-icon"></i>
-                                </div>
-                                <p class="error" th:if="${#fields.hasErrors('sector')}" th:text="${#fields.errors('sector')[0]}"></p>
-                            </div>
-                        </div>
-
-                        <div class="section-label">
-                            <i class="fa-solid fa-circle-info"></i>
-                            <span>Información adicional (opcional)</span>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="website">Sitio web</label>
-                                <input type="url" id="website" th:field="*{website}" 
-                                       placeholder="https://miempresa.com" 
-                                       th:disabled="${empresa.perfilCompleto}" />
-                                <p class="error" th:if="${#fields.hasErrors('website')}" th:text="${#fields.errors('website')[0]}"></p>
-                            </div>
-
-                            <div class="form-group" th:if="${empresa.foto}">
-                                <label>Logo</label>
-                                <div class="logo-preview">
-                                    <img th:src="${empresa.foto}" alt="Logo desde Google" class="logo-img" />
-                                    <span class="logo-note">Importado desde tu cuenta de Google</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group form-group--full">
-                            <label for="descripcion">Descripción de la empresa</label>
-                            <textarea id="descripcion" th:field="*{descripcion}" 
-                                      rows="4" 
-                                      maxlength="300" 
-                                      placeholder="Cuéntanos brevemente sobre tu empresa, su misión y cultura..." 
-                                      th:disabled="${empresa.perfilCompleto}"></textarea>
-                            <small class="char-counter"><span th:text="${empresa.descripcion != null ? empresa.descripcion.length() : 0}">0</span>/300 caracteres</small>
-                            <p class="error" th:if="${#fields.hasErrors('descripcion')}" th:text="${#fields.errors('descripcion')[0]}"></p>
-                        </div>
-                        <button type="submit" class="btn-submit" th:if="${!empresa.perfilCompleto}">
-                            <i class="fa-solid fa-check"></i>
-                            Guardar y continuar
-                        </button>
-
-                        <div th:if="${empresa.perfilCompleto}" class="perfil-completado">
-                            <i class="fa-solid fa-circle-check"></i>
-                            <p>¡Tu perfil de empresa está completo y verificado!</p>
-                            <a th:href="@{/empresa/home}" class="btn-secondary">Ir al dashboard</a>
-                        </div>
-
-                    </form>
+            <div class="complete__content">
+                <div class="complete__intro">
+                    <span class="complete__kicker">YA CASI ESTÁS</span>
+                    <h1 class="complete__title" id="complete-title">Dale forma a tu empresa.</h1>
+                    <p class="complete__subtitle">Añade los datos esenciales para empezar a publicar vacantes.</p>
                 </div>
-            </main>
-        </div>
-    </div>
 
-    <script th:inline="javascript">
-        document.addEventListener('DOMContentLoaded', function() {
-            const textarea = document.getElementById('descripcion');
-            const counter = document.querySelector('.char-counter span');
-            
-            if (textarea && counter) {
-                textarea.addEventListener('input', function() {
-                    counter.textContent = this.value.length;
-                });
-            }
+                <div class="complete__identity">
+                    <img th:src="@{/source/img/google.png}" width="22" height="22" alt="Google" />
+                    <div><strong>Cuenta conectada con Google</strong><span th:if="${correoCuenta != null}" th:text="${correoCuenta}"></span></div>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg>
+                </div>
 
-            const form = document.querySelector('.register__form');
-            if (form) {
-                form.addEventListener('submit', function(e) {
-                    const isDisabled = /*[[${empresa.perfilCompleto}]]*/ false;
-                    if (isDisabled) {
-                        e.preventDefault();
-                    }
-                });
-            }
-        });
-    </script>
+                <p th:if="${exito}" class="complete__alert complete__alert--success" role="status" th:text="${exito}"></p>
+                <p th:if="${error}" class="complete__alert complete__alert--error" role="alert" th:text="${error}"></p>
+                <p th:if="${aviso}" class="complete__alert complete__alert--info" role="status" th:text="${aviso}"></p>
+
+                <form class="complete__form" th:action="@{/empresa/completar_perfil_empresa}" th:object="${empresa}" method="post" data-complete-form>
+                    <p class="complete__alert complete__alert--error" role="alert" data-form-error hidden>Revisa los campos indicados para continuar.</p>
+                    <div class="complete__fields">
+                        <div class="complete__field">
+                            <label for="rut">RUT / NIT</label>
+                            <input type="text" th:field="*{rut}" placeholder="Ej. 900123456-1" pattern="[0-9]{7,12}-?[0-9]?" maxlength="14" required
+                                   th:disabled="${empresa.perfilCompleto}" th:errorclass="is-invalid" data-pattern-message="Escribe un RUT/NIT de 7 a 12 números y, si corresponde, el dígito de verificación."
+                                   aria-describedby="rut-error" th:attr="aria-invalid=${#fields.hasErrors('rut')}" />
+                            <p class="complete__error" id="rut-error" th:hidden="${!#fields.hasErrors('rut')}" th:text="${#fields.hasErrors('rut') ? #fields.errors('rut')[0] : ''}" aria-live="polite"></p>
+                        </div>
+                        <div class="complete__field">
+                            <label for="telefono">Teléfono</label>
+                            <input type="tel" th:field="*{telefono}" placeholder="Ej. 6011234567" autocomplete="tel-national" inputmode="tel" pattern="[0-9]{7,10}" minlength="7" maxlength="10" required
+                                   th:disabled="${empresa.perfilCompleto}" th:errorclass="is-invalid" data-pattern-message="Escribe un teléfono de 7 a 10 números, sin indicativo."
+                                   aria-describedby="telefono-error" th:attr="aria-invalid=${#fields.hasErrors('telefono')}" />
+                            <p class="complete__error" id="telefono-error" th:hidden="${!#fields.hasErrors('telefono')}" th:text="${#fields.hasErrors('telefono') ? #fields.errors('telefono')[0] : ''}" aria-live="polite"></p>
+                        </div>
+                        <div class="complete__field">
+                            <label for="ubicacion">Ubicación</label>
+                            <input type="text" th:field="*{ubicacion}" placeholder="Ciudad, país" autocomplete="address-level2" required
+                                   th:disabled="${empresa.perfilCompleto}" th:errorclass="is-invalid" aria-describedby="ubicacion-error" th:attr="aria-invalid=${#fields.hasErrors('ubicacion')}" />
+                            <p class="complete__error" id="ubicacion-error" th:hidden="${!#fields.hasErrors('ubicacion')}" th:text="${#fields.hasErrors('ubicacion') ? #fields.errors('ubicacion')[0] : ''}" aria-live="polite"></p>
+                        </div>
+                        <div class="complete__field">
+                            <label for="sector">Sector</label>
+                            <select th:field="*{sector}" required th:disabled="${empresa.perfilCompleto}" th:errorclass="is-invalid"
+                                    aria-describedby="sector-error" th:attr="aria-invalid=${#fields.hasErrors('sector')}">
+                                <option value="">Selecciona una opción</option>
+                                <option value="TECNOLOGIA">Tecnología y software</option>
+                                <option value="SALUD">Salud y bienestar</option>
+                                <option value="EDUCACION">Educación y formación</option>
+                                <option value="COMERCIO">Comercio y retail</option>
+                                <option value="FINANZAS">Finanzas y banca</option>
+                                <option value="INDUSTRIA">Industria y manufactura</option>
+                                <option value="SERVICIOS">Servicios profesionales</option>
+                                <option value="OTRO">Otro</option>
+                            </select>
+                            <p class="complete__error" id="sector-error" th:hidden="${!#fields.hasErrors('sector')}" th:text="${#fields.hasErrors('sector') ? #fields.errors('sector')[0] : ''}" aria-live="polite"></p>
+                        </div>
+                    </div>
+
+                    <div class="complete__optional">
+                        <div class="complete__optional-title"><h2>Un poco más sobre tu empresa</h2><span>Opcional</span></div>
+                        <div class="complete__fields">
+                            <div class="complete__field complete__field--wide">
+                                <label for="website">Sitio web</label>
+                                <input type="url" th:field="*{website}" placeholder="https://tuempresa.com" autocomplete="url"
+                                       th:disabled="${empresa.perfilCompleto}" th:errorclass="is-invalid" aria-describedby="website-error" th:attr="aria-invalid=${#fields.hasErrors('website')}" />
+                                <p class="complete__error" id="website-error" th:hidden="${!#fields.hasErrors('website')}" th:text="${#fields.hasErrors('website') ? #fields.errors('website')[0] : ''}" aria-live="polite"></p>
+                            </div>
+                            <div class="complete__field complete__field--wide">
+                                <label for="descripcion">Descripción</label>
+                                <textarea th:field="*{descripcion}" rows="3" maxlength="300" placeholder="Cuéntanos qué hace tu empresa y qué la distingue."
+                                          th:disabled="${empresa.perfilCompleto}" th:errorclass="is-invalid" aria-describedby="descripcion-counter descripcion-error" th:attr="aria-invalid=${#fields.hasErrors('descripcion')}" data-counted></textarea>
+                                <small class="complete__counter" id="descripcion-counter" th:text="${(empresa.descripcion != null ? empresa.descripcion.length() : 0) + ' / 300'}">0 / 300</small>
+                                <p class="complete__error" id="descripcion-error" th:hidden="${!#fields.hasErrors('descripcion')}" th:text="${#fields.hasErrors('descripcion') ? #fields.errors('descripcion')[0] : ''}" aria-live="polite"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="complete__actions" th:if="${!empresa.perfilCompleto}">
+                        <button type="submit" class="complete__submit"><span>Guardar y entrar a mi empresa</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></button>
+                        <p class="complete__note">Podrás añadir el logo y la portada desde tu perfil.</p>
+                    </div>
+                    <div class="complete__done" th:if="${empresa.perfilCompleto}" role="status">Tu perfil está completo. <a th:href="@{/empresa/home}">Ir a mi empresa →</a></div>
+                </form>
+            </div>
+            <footer class="complete__footer">© HireConnect</footer>
+        </section>
+    </main>
 </body>
 </html>

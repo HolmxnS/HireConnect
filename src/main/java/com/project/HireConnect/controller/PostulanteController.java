@@ -268,7 +268,12 @@ public class PostulanteController {
         nuevaPostulacion.setFechaPostulacion(LocalDate.now());
         nuevaPostulacion.setEstado(PostulacionEstado.EN_REVISION);
 
-        postulacionService.guardar(nuevaPostulacion);
+        try {
+            postulacionService.guardar(nuevaPostulacion);
+        } catch (org.springframework.dao.DuplicateKeyException ex) {
+            redirectAttributes.addFlashAttribute("error", "Ya te has postulado a esta vacante.");
+            return "redirect:/postulante/vacantes";
+        }
 
         redirectAttributes.addFlashAttribute("exito",
                 "¡Postulación exitosa! Ahora puedes ver el estado en 'Mis Postulaciones'.");
@@ -631,6 +636,7 @@ public class PostulanteController {
 
     @GetMapping("/descargarCV/{id}")
     public ResponseEntity<Resource> descargarCV(@PathVariable String id, Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) return ResponseEntity.status(401).build();
         Optional<Postulante> optPostulanteAuth = getAuthenticatedPostulante(authentication);
         if (optPostulanteAuth.isEmpty() || !optPostulanteAuth.get().getId().equals(id)) {
             boolean esAdmin = authentication.getAuthorities().stream()
@@ -639,6 +645,13 @@ public class PostulanteController {
                     .anyMatch(a -> a.getAuthority().equals("ROLE_EMPRESA"));
             if (!esAdmin && !esEmpresa) {
                 return ResponseEntity.status(403).build();
+            }
+            if (!esAdmin) {
+                var empresa = empresaService.buscarPorEmailEmpresa(authentication.getName());
+                if (empresa.isEmpty() || empresa.get().getEstado() != com.project.HireConnect.enums.EmpresaEstado.APROBADA
+                        || !postulacionService.puedeConsultarCv(id, vacanteService.buscarPorEmpresa(empresa.get()))) {
+                    return ResponseEntity.status(403).build();
+                }
             }
         }
 

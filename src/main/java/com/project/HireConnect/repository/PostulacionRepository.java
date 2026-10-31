@@ -37,6 +37,9 @@ public interface PostulacionRepository extends MongoRepository<Postulacion, Stri
     })
     List<ConteoVacante> contarAgrupadoPorVacanteIds(List<ObjectId> ids);
 
+    @Query(value = "{ 'postulanteId.$id': ?0, 'vacanteId.$id': { '$in': ?1 } }", exists = true)
+    boolean existeCandidaturaEnVacantes(ObjectId postulanteId, List<ObjectId> vacantes);
+
     List<Postulacion> findByPostulante(Postulante postulante);
 
     List<Postulacion> findByVacante_Empresa(Empresa empresa);

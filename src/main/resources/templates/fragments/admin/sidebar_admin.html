@@ -71,10 +71,12 @@
                     </li>
 
                     <li class="sidebar__bottom">
-                        <a th:href="@{/logout}" class="sidebar__link sidebar__logout" data-label="Cerrar Sesión">
-                            <span class="sidebar__icon"><i class="fa-solid fa-right-from-bracket"></i></span>
-                            <span class="sidebar__text">Cerrar Sesión</span>
-                        </a>
+                        <form th:action="@{/logout}" method="post" class="sidebar__logout-form">
+                            <button type="submit" class="sidebar__link sidebar__logout" data-label="Cerrar Sesión" aria-label="Cerrar sesión">
+                                <span class="sidebar__icon"><i class="fa-solid fa-right-from-bracket"></i></span>
+                                <span class="sidebar__text">Cerrar Sesión</span>
+                            </button>
+                        </form>
                     </li>
                 </ul>
             </nav>
