@@ -7,6 +7,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
 
 import com.project.HireConnect.repository.PasswordResetTokenRepository;
 import com.project.HireConnect.security.CustomLoginSuccessHandler;
@@ -30,7 +32,14 @@ public class SecurityConfig {
         }
 
         @Bean
-        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                        ClientRegistrationRepository clientRegistrationRepository) throws Exception {
+                DefaultOAuth2AuthorizationRequestResolver authorizationRequestResolver =
+                                new DefaultOAuth2AuthorizationRequestResolver(clientRegistrationRepository,
+                                                "/oauth2/authorization");
+                authorizationRequestResolver.setAuthorizationRequestCustomizer(builder -> builder
+                                .additionalParameters(parameters -> parameters.put("prompt", "select_account")));
+
                 http
                                 .userDetailsService(userDetailsService)
                                 .authorizeHttpRequests(auth -> auth
@@ -88,6 +97,8 @@ public class SecurityConfig {
 
                                 .oauth2Login(oauth2 -> oauth2
                                                 .loginPage("/login")
+                                                .authorizationEndpoint(endpoint -> endpoint
+                                                                .authorizationRequestResolver(authorizationRequestResolver))
                                                 .successHandler(oauth2SuccessHandler))
 
                                 .logout(logout -> logout

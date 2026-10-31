@@ -17,6 +17,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.context.annotation.Bean;
@@ -42,6 +43,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.util.UriComponentsBuilder;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
@@ -102,6 +104,20 @@ class LogoutSecurityTest {
         var value = Pattern.compile("value=\"([^\"]+)\"").matcher(input.group());
         assertTrue(value.find(), "El token CSRF no puede estar vacío");
         return value.group(1);
+    }
+
+    @Test
+    void googleSolicitaElegirCuentaYConservaParametrosOAuth() throws Exception {
+        var response = mvc.perform(get("/oauth2/authorization/google"))
+                .andExpect(status().isFound()).andReturn().getResponse();
+        var redirect = UriComponentsBuilder.fromUriString(response.getRedirectedUrl()).build();
+        var parameters = redirect.getQueryParams();
+        assertEquals("accounts.example.invalid", redirect.getHost());
+        assertEquals("select_account", parameters.getFirst("prompt"));
+        assertEquals("cliente-prueba", parameters.getFirst("client_id"));
+        assertEquals("code", parameters.getFirst("response_type"));
+        assertNotNull(parameters.getFirst("state"));
+        assertNotNull(parameters.getFirst("redirect_uri"));
     }
 
     @ParameterizedTest
