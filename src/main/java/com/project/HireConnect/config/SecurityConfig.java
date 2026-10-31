@@ -95,7 +95,11 @@ public class SecurityConfig {
                                                 .logoutSuccessUrl("/")
                                                 .deleteCookies("JSESSIONID", "remember-me")
                                                 .permitAll())
-                                .csrf(csrf -> csrf.disable())
+                                .csrf(csrf -> csrf.requireCsrfProtectionMatcher(request -> {
+                                        String ruta = request.getRequestURI().substring(request.getContextPath().length());
+                                        boolean modifica = !java.util.Set.of("GET", "HEAD", "OPTIONS", "TRACE").contains(request.getMethod());
+                                        return modifica && ruta.equals("/logout");
+                                }))
                                 .headers(headers -> headers.frameOptions(frame -> frame.disable()));
 
                 return http.build();

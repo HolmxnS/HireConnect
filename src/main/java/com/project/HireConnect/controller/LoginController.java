@@ -494,6 +494,7 @@ public class LoginController {
         }
 
         model.addAttribute("postulante", postulante);
+        model.addAttribute("correoCuenta", email);
         return "postulante/completar_perfil_postulante";
     }
 
@@ -540,6 +541,7 @@ public class LoginController {
 
         if (result.hasErrors()) {
             model.addAttribute("postulante", postulanteActualizado);
+            model.addAttribute("correoCuenta", email);
             return "postulante/completar_perfil_postulante";
         }
         existente.setTipoDocumento(postulanteActualizado.getTipoDocumento());
@@ -572,6 +574,7 @@ public class LoginController {
         }
 
         model.addAttribute("empresa", empresa);
+        model.addAttribute("correoCuenta", email);
         return "empresa/completar_perfil_empresa";
     }
 
@@ -611,6 +614,7 @@ public class LoginController {
 
         if (result.hasErrors()) {
             model.addAttribute("empresa", empresaActualizada);
+            model.addAttribute("correoCuenta", email);
             return "empresa/completar_perfil_empresa";
         }
 

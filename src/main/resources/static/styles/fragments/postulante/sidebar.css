@@ -244,6 +244,19 @@ body {
   white-space: nowrap;
 }
 
+.sidebar__logout-form {
+  width: 100%;
+  margin: 0;
+}
+
+button.sidebar__logout {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
 .sidebar__link:hover {
   background: var(--hc-soft);
   color: var(--hc-accent-ink);

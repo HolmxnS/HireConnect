@@ -1,21 +1,17 @@
 package com.project.HireConnect.controller;
 
 import com.project.HireConnect.model.Vacante;
-import com.project.HireConnect.dto.PrediccionRequestDTO;
 import com.project.HireConnect.enums.VacanteEstado;
 import com.project.HireConnect.enums.VacanteExperienciaRequerida;
 import com.project.HireConnect.enums.VacanteModalidad;
 import com.project.HireConnect.enums.VacanteTipocontrato;
 import com.project.HireConnect.model.Empresa;
 import com.project.HireConnect.model.EmpresaResumen;
-import com.project.HireConnect.model.Postulante;
 import com.project.HireConnect.service.VacanteService;
 
 import jakarta.validation.Valid;
 
 import com.project.HireConnect.service.EmpresaService;
-import com.project.HireConnect.service.PostulanteService;
-import com.project.HireConnect.service.PredictionService;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -26,7 +22,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Controller
@@ -35,15 +30,10 @@ public class VacanteController {
 
     private final VacanteService vacanteService;
     private final EmpresaService empresaService;
-    private final PostulanteService postulanteService;
-    private final PredictionService predictionService;
 
-    public VacanteController(VacanteService vacanteService, EmpresaService empresaService,
-            PostulanteService postulanteService, PredictionService predictionService) {
+    public VacanteController(VacanteService vacanteService, EmpresaService empresaService) {
         this.vacanteService = vacanteService;
         this.empresaService = empresaService;
-        this.postulanteService = postulanteService;
-        this.predictionService = predictionService;
     }
 
     private Optional<Empresa> getAuthenticatedEmpresa(Authentication auth) {
@@ -310,40 +300,9 @@ public class VacanteController {
     }
 
     @GetMapping("/{id}")
-    public String verDetalleVacante(@PathVariable String id,
-            Authentication authentication,
-            Model model,
-            RedirectAttributes redirectAttributes) {
-
-        Vacante vacante = vacanteService.buscarPorId(id).orElse(null);
-
-        if (vacante == null) {
-            redirectAttributes.addFlashAttribute("error", "La vacante no existe o fue eliminada.");
-            return "redirect:/vacantes/listar";
-        }
-
-        String email = authentication.getName();
-        Optional<Postulante> postulanteOpt = postulanteService.buscarPorEmail(email);
-
-        if (postulanteOpt.isEmpty()) {
-            return "redirect:/logout";
-        }
-
-        PrediccionRequestDTO dto = new PrediccionRequestDTO();
-        // Esta integración todavía envía valores de prueba, no datos del perfil real.
-        dto.setEdad(22);
-        dto.setExperienciaAnos(2);
-        dto.setCoincidenciaHabilidades(80);
-        dto.setModalidad(vacante.getModalidad() != null ? vacante.getModalidad().name() : "");
-        dto.setTipoContrato(vacante.getTipoContrato() != null ? vacante.getTipoContrato().name() : "");
-
-        Map<String, Object> prediccion = predictionService.obtenerPrediccion(dto);
-
-        model.addAttribute("vacante", vacante);
-        model.addAttribute("postulante", postulanteOpt.get());
-        model.addAttribute("probabilidad", prediccion.get("probabilidad"));
-        model.addAttribute("compatibilidad", prediccion.get("compatibilidad"));
-
-        return "postulante/detalle_vacante";
+    public String verDetalleVacante(@PathVariable String id) {
+        // Conserva los enlaces antiguos usando el detalle actual, que comprueba la empresa propietaria.
+        return "redirect:" + org.springframework.web.util.UriComponentsBuilder.fromPath("/empresa/vacante")
+                .pathSegment(id).build().encode().toUriString();
     }
 }
