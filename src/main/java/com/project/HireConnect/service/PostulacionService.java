@@ -18,12 +18,14 @@ import org.bson.types.ObjectId;
 public class PostulacionService {
 
     private final PostulacionRepository postulacionRepository;
+    private final PrediccionPerfilService perfilService;
     private final NotificacionPostulanteService notificacionService;
 
     public PostulacionService(PostulacionRepository postulacionRepository,
-            NotificacionPostulanteService notificacionService) {
+            NotificacionPostulanteService notificacionService, PrediccionPerfilService perfilService) {
         this.postulacionRepository = postulacionRepository;
         this.notificacionService = notificacionService;
+        this.perfilService = perfilService;
     }
 
     public long contarPostulacionesDeHoy() {
@@ -102,6 +104,10 @@ public class PostulacionService {
     }
 
     public Postulacion guardar(Postulacion postulacion) {
+        if (postulacion.getId() == null && postulacion.getPrediccionPerfil() == null
+                && postulacion.getPostulante() != null && postulacion.getVacante() != null) {
+            postulacion.setPrediccionPerfil(perfilService.preparar(postulacion.getPostulante(), postulacion.getVacante()));
+        }
         return postulacionRepository.save(postulacion);
     }
 

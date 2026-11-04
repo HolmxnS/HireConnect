@@ -18,6 +18,8 @@ import java.util.Set;
 @Service
 public class VacanteService {
 
+    private static final int VACANTES_POR_PAGINA_POSTULANTE = 15;
+
     private final VacanteRepository vacanteRepository;
     private final MongoTemplate mongoTemplate;
 
@@ -87,8 +89,8 @@ public class VacanteService {
         }
         var criteria = new Criteria().andOperator(filtros.toArray(Criteria[]::new));
         long total = mongoTemplate.count(Query.query(criteria), Vacante.class);
-        int ultima = (int) Math.max(0, (total - 1) / 20);
-        var pagina = org.springframework.data.domain.PageRequest.of(Math.max(0, Math.min(filtro.getPagina(), ultima)), 20,
+        int ultima = (int) Math.max(0, (total - 1) / VACANTES_POR_PAGINA_POSTULANTE);
+        var pagina = org.springframework.data.domain.PageRequest.of(Math.max(0, Math.min(filtro.getPagina(), ultima)), VACANTES_POR_PAGINA_POSTULANTE,
                 org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "fechaPublicacion", "id"));
         var query = Query.query(criteria).with(pagina);
         query.fields().exclude("postulaciones");
