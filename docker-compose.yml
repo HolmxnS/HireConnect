@@ -26,6 +26,8 @@ services:
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/hireconnect
       SPRING_DATA_MONGODB_DATABASE: hireconnect
+      # Una base local vacia debe permitir crear cuentas y recopilar postulaciones.
+      ML_REQUIRED: "false"
       SPRING_MAIL_HOST: smtp.gmail.com
       SPRING_MAIL_PORT: 587
       SPRING_MAIL_USERNAME: ${MAIL_USERNAME}

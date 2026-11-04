@@ -164,3 +164,10 @@ observadas. Las categorías nuevas también activan la nota de cobertura limitad
 La selección automática no garantiza que todas las métricas mejoren. Revisar el
 informe antes de interpretar cambios como una mejora; los datos actuales siguen
 siendo de demostración y con variables sin variación.
+
+## Despliegue Docker / Render
+
+El Dockerfile de la raíz incluye ahora el predictor. El supervisor de
+`deploy/start.py` prepara el artefacto al arrancar si falta y espera al modelo
+antes de iniciar Java. Ver `deploy/README.md`. En Render no es necesario ejecutar
+`run.sh` aparte ni mantener otro servicio para Python.
