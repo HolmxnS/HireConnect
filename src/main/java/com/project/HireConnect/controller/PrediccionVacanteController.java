@@ -5,6 +5,7 @@ import com.project.HireConnect.model.Postulante;
 import com.project.HireConnect.model.Vacante;
 import com.project.HireConnect.service.PostulanteService;
 import com.project.HireConnect.service.PredictionService;
+import com.project.HireConnect.service.PrediccionPerfilService;
 import com.project.HireConnect.service.VacanteService;
 
 import org.springframework.http.ResponseEntity;
@@ -20,18 +21,21 @@ public class PrediccionVacanteController {
     private final VacanteService vacanteService;
     private final PostulanteService postulanteService;
     private final PredictionService predictionService;
+    private final PrediccionPerfilService perfilService;
 
     public PrediccionVacanteController(VacanteService vacanteService,
                                        PostulanteService postulanteService,
-                                       PredictionService predictionService) {
+                                       PredictionService predictionService, PrediccionPerfilService perfilService) {
         this.vacanteService = vacanteService;
         this.postulanteService = postulanteService;
         this.predictionService = predictionService;
+        this.perfilService = perfilService;
     }
 
     @GetMapping("/postulante/vacante/{id}/prediccion")
     public ResponseEntity<Map<String, Object>> prediccion(@PathVariable String id,
                                                           Authentication authentication) {
+        if (authentication == null) return ResponseEntity.status(401).build();
         Vacante vacante = vacanteService.buscarPorId(id).orElse(null);
         if (vacante == null) {
             return ResponseEntity.notFound().build();
@@ -42,12 +46,7 @@ public class PrediccionVacanteController {
             return ResponseEntity.status(401).build();
         }
 
-        PrediccionRequestDTO dto = new PrediccionRequestDTO();
-        dto.setEdad(22);                    
-        dto.setExperienciaAnos(2);
-        dto.setCoincidenciaHabilidades(80);
-        dto.setModalidad(vacante.getModalidad() != null ? vacante.getModalidad().name() : "");
-        dto.setTipoContrato(vacante.getTipoContrato() != null ? vacante.getTipoContrato().name() : "");
+        PrediccionRequestDTO dto = perfilService.preparar(postulante.get(), vacante);
 
         return ResponseEntity.ok(predictionService.obtenerPrediccion(dto));
     }

@@ -35,3 +35,9 @@ build/
 /uploads/
 
 /.local-backups/
+
+# Modelo predictivo: dependencias, artefactos y datos locales
+/ml/.venv/
+/ml/artifacts/
+/ml/__pycache__/
+/ml/.env

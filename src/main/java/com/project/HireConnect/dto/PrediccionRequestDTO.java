@@ -1,18 +1,18 @@
 package com.project.HireConnect.dto;
 
-
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.util.List;
+import java.util.Map;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class PrediccionRequestDTO {
-    private int edad;
-    private int experienciaAnos;
-    private int coincidenciaHabilidades;
-    private String nivelEducacion;
+    private int schemaVersion = 2;
+    private String fechaReferencia;
+    private List<String> habilidades;
+    private String habilidadesRequeridas;
+    private List<Map<String, String>> experiencia;
+    private boolean educacionRegistrada;
+    private String experienciaRequerida;
     private String modalidad;
     private String tipoContrato;
 }

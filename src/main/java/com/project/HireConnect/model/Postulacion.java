@@ -30,4 +30,7 @@ public class Postulacion {
     private PostulacionEstado estado = PostulacionEstado.PENDIENTE;
 
     private String mensaje;
+
+    // Datos disponibles antes de conocer el resultado, sin identificadores personales.
+    private com.project.HireConnect.dto.PrediccionRequestDTO prediccionPerfil;
 }
