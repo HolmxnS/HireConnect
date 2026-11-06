@@ -107,6 +107,10 @@ public class PostulacionService {
         if (postulacion.getId() == null && postulacion.getPrediccionPerfil() == null
                 && postulacion.getPostulante() != null && postulacion.getVacante() != null) {
             postulacion.setPrediccionPerfil(perfilService.preparar(postulacion.getPostulante(), postulacion.getVacante()));
+            if (postulacion.getPrediccionPerfil() != null) {
+                postulacion.setPrediccionCapturadaEn(java.time.Instant.now());
+                postulacion.setPrediccionOrigen("FLUJO_APLICACION");
+            }
         }
         return postulacionRepository.save(postulacion);
     }
@@ -137,6 +141,10 @@ public class PostulacionService {
         boolean cambio = postulacion.getEstado() != estadoEnum;
 
         postulacion.setEstado(estadoEnum);
+        if (cambio) {
+            boolean resuelta = estadoEnum == PostulacionEstado.ACEPTADA || estadoEnum == PostulacionEstado.RECHAZADA;
+            postulacion.setResultadoActualizadoEn(resuelta ? java.time.Instant.now() : null);
+        }
         postulacionRepository.save(postulacion);
 
         // Avisa al postulante solo si el estado realmente cambio

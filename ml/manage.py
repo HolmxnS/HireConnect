@@ -26,15 +26,22 @@ def load_environment():
 def main():
     load_environment()
     parser = argparse.ArgumentParser()
-    parser.add_argument('command', choices=['serve', 'train'])
+    parser.add_argument('command', choices=['serve', 'train', 'audit'])
     parser.add_argument('--port', type=int, default=int(os.environ.get('PORT', '5050')))
+    parser.add_argument('--captured-only', action='store_true',
+                        help='Entrenar solamente con perfiles capturados y decisiones fechadas')
     args = parser.parse_args()
+    if args.command == 'audit':
+        subprocess.run([sys.executable, str(BASE / 'train.py'), '--audit-only'], check=True)
+        return
     artifact = Path(os.environ.get('MODEL_PATH', str(BASE / 'artifacts/model.joblib'))).resolve()
     os.environ['MODEL_PATH'] = str(artifact)
     if args.command == 'train' or not artifact.is_file():
         # Current DB is explicitly authorized for the functional experimental model.
-        subprocess.run([sys.executable, str(BASE / 'train.py'), '--allow-current-profiles',
-                        '--output', str(artifact.parent)], check=True)
+        command = [sys.executable, str(BASE / 'train.py'), '--output', str(artifact.parent)]
+        if not args.captured_only:
+            command.append('--allow-current-profiles')
+        subprocess.run(command, check=True)
         if artifact.name != 'model.joblib':
             (artifact.parent / 'model.joblib').replace(artifact)
     if args.command == 'serve':
@@ -43,4 +50,7 @@ def main():
         run_simple('127.0.0.1', args.port, create_app(), threaded=True, use_reloader=False)
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except subprocess.CalledProcessError as error:
+        raise SystemExit(error.returncode)

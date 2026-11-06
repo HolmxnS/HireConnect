@@ -33,4 +33,8 @@ public class Postulacion {
 
     // Datos disponibles antes de conocer el resultado, sin identificadores personales.
     private com.project.HireConnect.dto.PrediccionRequestDTO prediccionPerfil;
+    private java.time.Instant prediccionCapturadaEn;
+    // Describe el flujo de captura; no certifica que un registro sea un proceso real.
+    private String prediccionOrigen;
+    private java.time.Instant resultadoActualizadoEn;
 }

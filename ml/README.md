@@ -53,8 +53,9 @@ python train.py --audit-only
 python train.py
 ```
 
-El entrenamiento normal usa solamente `prediccionPerfil`, capturado por Java
-al crear una postulación. No reconstruye silenciosamente el pasado con el
+El entrenamiento normal usa `prediccionPerfil` con `prediccionOrigen=FLUJO_APLICACION`,
+`prediccionCapturadaEn` y `resultadoActualizadoEn`, guardados por Java. El perfil
+debe haberse capturado antes de la decisión. No reconstruye silenciosamente el pasado con el
 perfil actual. Las postulaciones antiguas no contienen esa captura.
 
 Para una primera exploración, explícitamente:
@@ -171,3 +172,25 @@ El Dockerfile de la raíz incluye ahora el predictor. El supervisor de
 `deploy/start.py` prepara el artefacto al arrancar si falta y espera al modelo
 antes de iniciar Java. Ver `deploy/README.md`. En Render no es necesario ejecutar
 `run.sh` aparte ni mantener otro servicio para Python.
+
+## Recolección y auditoría de nuevos ejemplos
+
+```sh
+sh ml/run.sh audit
+sh ml/run.sh train --captured-only
+```
+
+La auditoría es de solo lectura y no reemplaza el modelo. Informa capturas,
+resultados utilizables, distribución de habilidades, variación de educación y
+posibilidad de separar entrenamiento y evaluación. Ver `DATA_COLLECTION.md`.
+El segundo comando excluye los históricos sin trazabilidad. Si faltan ejemplos,
+termina con una explicación antes de escribir un nuevo artefacto; la API mantiene
+el modelo existente. El entrenamiento experimental de arranque sigue disponible
+para que la app pueda funcionar con la base actual.
+
+Cuando una postulación vuelve a revisión se borra la fecha del resultado vigente;
+al decidir de nuevo se registra una fecha nueva. Repetir el mismo estado no
+reescribe fechas ni fabrica una decisión para un registro histórico. Las
+particiones temporales excluyen de entrenamiento las decisiones posteriores a
+su fecha de corte. El origen describe el flujo de la app y no certifica que una
+postulación corresponda a un proceso real.

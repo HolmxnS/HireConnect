@@ -34,13 +34,42 @@ def reference_id(value):
     return value
 
 
+def instant(value):
+    if isinstance(value, datetime):
+        return value.replace(tzinfo=timezone.utc) if value.tzinfo is None else value.astimezone(timezone.utc)
+    if isinstance(value, str) and 'T' in value:
+        try:
+            parsed = datetime.fromisoformat(value.replace('Z', '+00:00'))
+            return parsed.replace(tzinfo=timezone.utc) if parsed.tzinfo is None else parsed.astimezone(timezone.utc)
+        except ValueError:
+            pass
+    return None
+
+
+def capture_status(application):
+    if application.get('prediccionOrigen') != 'FLUJO_APLICACION':
+        return 'sin_origen_captura'
+    captured = instant(application.get('prediccionCapturadaEn'))
+    decided = instant(application.get('resultadoActualizadoEn'))
+    if captured is None or decided is None:
+        return 'sin_fechas_captura_decision'
+    if captured > decided:
+        return 'decision_anterior_al_perfil'
+    reference = parse_date((application.get('prediccionPerfil') or {}).get('fechaReferencia'))
+    capture_day = captured.astimezone(ZoneInfo('America/Bogota')).date()
+    if reference is None or not 0 <= (capture_day - reference).days <= 1:
+        return 'fecha_perfil_inconsistente'
+    return None
+
+
 def load_rows(db, allow_current=False):
     counts = Counter()
     rows = []
     seen = set()
     applications = list(db.postulaciones.find({'estado': {'$in': ['ACEPTADA', 'RECHAZADA']}},
                                     {'postulanteId': 1, 'vacanteId': 1, 'prediccionPerfil': 1,
-                                     'estado': 1, 'fechaPostulacion': 1}))
+                                     'estado': 1, 'fechaPostulacion': 1, 'prediccionOrigen': 1,
+                                     'prediccionCapturadaEn': 1, 'resultadoActualizadoEn': 1}))
     people, vacancies = {}, {}
     if allow_current:
         person_ids = list({reference_id(a.get('postulanteId')) for a in applications} - {None})
@@ -58,9 +87,17 @@ def load_rows(db, allow_current=False):
         if pair in seen:
             counts['duplicadas'] += 1
             continue
-        seen.add(pair)
         payload = app.get('prediccionPerfil')
+        if payload is not None and not isinstance(payload, dict):
+            counts['datos_invalidos'] += 1
+            continue
         source = 'snapshot'
+        capture = capture_status(app) if payload else None
+        if payload and capture:
+            if not allow_current or capture in {'decision_anterior_al_perfil', 'fecha_perfil_inconsistente'}:
+                counts[capture] += 1
+                continue
+            source = 'snapshot_sin_trazabilidad'
         if not payload:
             if not allow_current:
                 counts['sin_snapshot'] += 1
@@ -71,7 +108,10 @@ def load_rows(db, allow_current=False):
                 continue
             payload = from_documents(person, vacancy, datetime.now(ZoneInfo("America/Bogota")).date())
             source = 'perfil_actual'
-        when = parse_date(app.get('fechaPostulacion'))
+        when = (instant(app.get('prediccionCapturadaEn')).astimezone(ZoneInfo('America/Bogota')).date()
+                if source == 'snapshot' else parse_date(app.get('fechaPostulacion')))
+        decision = (instant(app.get('resultadoActualizadoEn')).astimezone(ZoneInfo('America/Bogota')).date()
+                    if source == 'snapshot' else None)
         try:
             features = extract(payload)
         except (ValueError, TypeError, AttributeError):
@@ -80,8 +120,9 @@ def load_rows(db, allow_current=False):
         if not when:
             counts['sin_fecha'] += 1
             continue
+        seen.add(pair)
         rows.append({'features': features, 'y': int(app['estado'] == 'ACEPTADA'),
-                     'group': str(person_id), 'date': when, 'source': source})
+                     'group': str(person_id), 'date': when, 'resolved_date': decision, 'source': source})
         counts[source] += 1
     return sorted(rows, key=lambda r: r['date']), dict(counts)
 
@@ -92,7 +133,8 @@ def temporal_split(rows):
     cutoff = rows[int(len(rows) * .8)]['date']
     test = [r for r in rows if r['date'] >= cutoff]
     test_people = {r['group'] for r in test}
-    train = [r for r in rows if r['date'] < cutoff and r['group'] not in test_people]
+    train = [r for r in rows if r['date'] < cutoff and r['group'] not in test_people
+             and (r.get('resolved_date') is None or r['resolved_date'] < cutoff)]
     for name, part in [('entrenamiento', train), ('evaluacion', test)]:
         counts = Counter(r['y'] for r in part)
         if min(counts.get(0, 0), counts.get(1, 0)) < 5:
@@ -110,7 +152,8 @@ def validation_folds(rows):
         validation = [r for r in rows if start <= r['date'] and
                       (fraction == .75 or r['date'] < end)]
         people = {r['group'] for r in validation}
-        training = [r for r in rows if r['date'] < start and r['group'] not in people]
+        training = [r for r in rows if r['date'] < start and r['group'] not in people
+                    and (r.get('resolved_date') is None or r['resolved_date'] < start)]
         if all(min(Counter(r['y'] for r in part).get(0, 0),
                    Counter(r['y'] for r in part).get(1, 0)) >= 3 for part in (training, validation)):
             folds.append((training, validation))
@@ -187,6 +230,32 @@ def fit(rows):
     return model, report
 
 
+def audit_database(db, allow_current=False):
+    rows, counts = load_rows(db, allow_current)
+    labels = Counter(r['y'] for r in rows)
+    skills = Counter(str(round(r['features']['coincidenciaHabilidades'], 2)) for r in rows)
+    education = Counter(str(r['features']['educacionRegistrada']) for r in rows)
+    try:
+        train, test = temporal_split(rows)
+        can_split, reason = True, None
+        sizes = {'entrenamiento': len(train), 'evaluacion': len(test)}
+    except ValueError as error:
+        can_split, reason, sizes = False, str(error), None
+    return {
+        'modo': 'experimental_con_historicos' if allow_current else 'capturas_con_trazabilidad',
+        'capturas_totales': db.postulaciones.count_documents({'prediccionPerfil': {'$exists': True, '$ne': None}}),
+        'resueltas_con_captura': db.postulaciones.count_documents({'prediccionPerfil': {'$exists': True, '$ne': None},
+                                                     'estado': {'$in': ['ACEPTADA', 'RECHAZADA']}}),
+        'capturas_pendientes': db.postulaciones.count_documents({'prediccionPerfil': {'$exists': True, '$ne': None},
+                                                     'estado': {'$nin': ['ACEPTADA', 'RECHAZADA']}}),
+        'utilizables': len(rows), 'aceptadas': labels.get(1, 0), 'rechazadas': labels.get(0, 0),
+        'conteos': counts, 'coincidencia_habilidades': dict(skills), 'educacion_registrada': dict(education),
+        'habilidades_con_variacion': len(skills) > 1,
+        'educacion_con_variacion': len(education) > 1,
+        'permite_evaluacion_separada': can_split, 'motivo': reason, 'particiones': sizes,
+        'nota': 'La trazabilidad del flujo no certifica la autenticidad de las decisiones ni su representatividad.'}
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--allow-current-profiles', action='store_true',
@@ -200,12 +269,15 @@ def main():
     use_tls = (uri.startswith('mongodb+srv://') and not re.search(r'[?&](?:tls|ssl)=false', uri, re.I)) or re.search(r'[?&](?:tls|ssl)=true', uri, re.I)
     tls_options = {'tlsCAFile': os.environ.get('MONGODB_TLS_CA_FILE', certifi.where())} if use_tls else {}
     with MongoClient(uri, serverSelectionTimeoutMS=10000, **tls_options) as client:
-        rows, counts = load_rows(client[os.environ.get('MONGODB_DATABASE', 'hireconnect')], args.allow_current_profiles)
+        db = client[os.environ.get('MONGODB_DATABASE', 'hireconnect')]
+        if args.audit_only:
+            print(json.dumps(audit_database(db, args.allow_current_profiles), indent=2, ensure_ascii=False))
+            return
+        rows, counts = load_rows(db, args.allow_current_profiles)
     print(json.dumps({'utilizables': len(rows), 'conteos': counts}, ensure_ascii=False))
-    if args.audit_only:
-        return
     model, metrics = fit(rows)
     metadata = {'schemaVersion': SCHEMA_VERSION, 'algorithm': 'logistic_regression',
+                'trainingMode': 'experimental_con_historicos' if args.allow_current_profiles else 'capturas_con_trazabilidad',
                 'experimental': True, 'featureVersion': 2, 'trainedAt': datetime.now(timezone.utc).isoformat(),
                 'fuentes': counts, 'metrics': metrics,
                 'limitations': ['Resultados historicos no implican causalidad ni garantizan aceptacion.',
