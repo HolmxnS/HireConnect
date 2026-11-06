@@ -149,7 +149,7 @@ guardan en caché y se ofrece reintentar; cada solicitud tiene tiempo límite.
 
 ## Selección del modelo
 
-Se comparan ocho configuraciones de regresión logística: cuatro valores de
+Se comparan dieciséis configuraciones de regresión logística: cuatro valores de
 regularización (`C=0.01, 0.1, 1, 10`) con las variables originales o incorporando
 experiencia faltante/excedente frente a los requisitos. Estas últimas son
 variables de entrada calculadas; no bonificaciones ni penalizaciones manuales
@@ -159,7 +159,7 @@ Se elige el menor Brier medio en dos particiones temporales internas del
 entrenamiento, excluyendo candidatos compartidos. La evaluación final se
 mantiene separada de esa selección. Si faltan ejemplos para validación interna,
 se conserva la configuración base sin elegir usando los resultados de prueba.
-El informe contiene los ocho resultados, variables constantes y categorías
+El informe contiene los dieciséis resultados, variables constantes y categorías
 observadas. Las categorías nuevas también activan la nota de cobertura limitada.
 
 La selección automática no garantiza que todas las métricas mejoren. Revisar el
@@ -194,3 +194,26 @@ reescribe fechas ni fabrica una decisión para un registro histórico. Las
 particiones temporales excluyen de entrenamiento las decisiones posteriores a
 su fecha de corte. El origen describe el flujo de la app y no certifica que una
 postulación corresponda a un proceso real.
+
+## Verificación de una versión y calibración
+
+```sh
+sh ml/run.sh verify
+```
+
+Genera 512 solicitudes simuladas sin etiquetas de aceptación y comprueba que el
+modelo responde con porcentajes válidos, incluyendo perfiles nuevos, habilidades
+parciales, ausencia de estudios y categorías no vistas. También prueba entradas
+inválidas. Esos datos no se escriben en MongoDB, no se usan para entrenar y no
+sirven para demostrar precisión. El informe queda en `artifacts/robustness-report.json`.
+
+La selección compara además calibración sigmoide frente al predictor original.
+La calibración usa una partición posterior, separada por fecha y candidato, con
+el clasificador congelado. Si faltan ejemplos para calibrar, la configuración se
+excluye de la comparación. La selección sigue usando únicamente las particiones
+internas; el conjunto final de evaluación no elige el modelo.
+
+Cada entrenamiento genera `modelVersion`, huella del conjunto de datos y las
+versiones de Python/scikit-learn. `manifest.json` incluye SHA-256 del artefacto.
+`/health` y `/predict` identifican la versión activa. La salida experimental
+continúa siendo explícita mientras falte validación de resultados reales.

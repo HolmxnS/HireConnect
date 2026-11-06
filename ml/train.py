@@ -6,6 +6,10 @@ from collections import Counter
 from datetime import date, datetime, timezone
 import json
 import os
+import uuid
+import hashlib
+import platform
+from importlib.metadata import version as package_version
 from zoneinfo import ZoneInfo
 from pathlib import Path
 
@@ -17,6 +21,8 @@ from bson import DBRef, ObjectId
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
+from sklearn.calibration import CalibratedClassifierCV
+from sklearn.frozen import FrozenEstimator
 from sklearn.metrics import brier_score_loss, log_loss, roc_auc_score, precision_score, recall_score
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
@@ -168,20 +174,42 @@ def estimator(numeric, regularization):
     return Pipeline([('features', prep), ('classifier', LogisticRegression(max_iter=2000, C=regularization))])
 
 
+def fit_estimator(rows, numeric, strength, calibrated=False):
+    learning, calibration = temporal_split(rows) if calibrated else (rows, [])
+    model = estimator(numeric, strength)
+    model.fit(pd.DataFrame([r['features'] for r in learning]), [r['y'] for r in learning])
+    if calibrated:
+        # Frozen base estimator: all calibration examples are later and disjoint.
+        model = CalibratedClassifierCV(FrozenEstimator(model), method='sigmoid')
+        model.fit(pd.DataFrame([r['features'] for r in calibration]), [r['y'] for r in calibration])
+    return model, learning, calibration
+
+
 def select_configuration(training):
     folds = validation_folds(training)
     candidates = []
     for name, numeric in [('base', NUMERIC), ('ajuste_experiencia', NUMERIC + EXPERIENCE_FIT)]:
         for strength in (1.0, .1, .01, 10.0):
-            scores = []
-            for learn, validate in folds:
-                model = estimator(numeric, strength)
-                model.fit(pd.DataFrame([r['features'] for r in learn]), [r['y'] for r in learn])
-                probabilities = model.predict_proba(pd.DataFrame([r['features'] for r in validate]))[:, 1]
-                scores.append(float(brier_score_loss([r['y'] for r in validate], probabilities)))
-            candidates.append({'variables': name, 'C': strength, 'folds': len(scores),
-                               'brier_cv': sum(scores) / len(scores) if scores else None})
-    # With insufficient forward folds retain the existing baseline, without tuning on test.
+            for calibrated in (False, True):
+                scores, reason = [], None
+                for learn, validate in folds:
+                    try:
+                        model, _, _ = fit_estimator(learn, numeric, strength, calibrated)
+                    except ValueError as error:
+                        reason = str(error)
+                        break
+                    probabilities = model.predict_proba(pd.DataFrame([r['features'] for r in validate]))[:, 1]
+                    scores.append(float(brier_score_loss([r['y'] for r in validate], probabilities)))
+                if calibrated and scores and reason is None:
+                    try:
+                        fit_estimator(training, numeric, strength, calibrated)
+                    except ValueError as error:
+                        reason = str(error)
+                candidates.append({'variables': name, 'C': strength,
+                                   'calibracion': 'sigmoid' if calibrated else 'sin_calibracion_adicional',
+                                   'folds': len(scores), 'exclusion': reason,
+                                   'brier_cv': sum(scores) / len(scores) if scores and reason is None
+                                               and len(scores) == len(folds) else None})
     usable = [c for c in candidates if c['brier_cv'] is not None]
     selected = min(usable, key=lambda c: c['brier_cv']) if usable else candidates[0]
     numeric = NUMERIC + EXPERIENCE_FIT if selected['variables'] == 'ajuste_experiencia' else NUMERIC
@@ -196,8 +224,8 @@ def fit(rows):
     if all(x_train[c].nunique() <= 1 for c in x_train):
         raise ValueError('Las variables son constantes; no hay informacion suficiente para aprender.')
     numeric, selected, comparison = select_configuration(train)
-    model = estimator(numeric, selected['C'])
-    model.fit(x_train, y_train)
+    model, learned, calibration_rows = fit_estimator(train, numeric, selected['C'], selected['calibracion'] == 'sigmoid')
+    support = pd.DataFrame([r['features'] for r in learned])
     p = model.predict_proba(x_test)[:, list(model.classes_).index(1)]
     baseline = [sum(y_train) / len(y_train)] * len(y_test)
     previous = estimator(NUMERIC, 1.0)
@@ -210,15 +238,16 @@ def fit(rows):
             bins.append({'intervalo': [low, round(low+.2, 1)], 'cantidad': int(mask.sum()),
                          'prediccion_media': float(p[mask].mean()),
                          'aceptacion_observada': float(pd.Series(y_test)[mask].mean())})
-    report = {'rangos_train': {c: [float(x_train[c].min()), float(x_train[c].max())] for c in numeric},
-              'categorias_train': {c: sorted(x_train[c].unique().tolist()) for c in CATEGORICAL},
+    report = {'rangos_train': {c: [float(support[c].min()), float(support[c].max())] for c in numeric},
+              'categorias_train': {c: sorted(support[c].unique().tolist()) for c in CATEGORICAL},
               'seleccion': selected, 'comparacion_cv': comparison,
               'brier_modelo_anterior': float(brier_score_loss(y_test, previous_p)),
               'log_loss_modelo_anterior': float(log_loss(y_test, previous_p)),
               'variables_constantes': [c for c in numeric + CATEGORICAL if x_train[c].nunique() <= 1],
               'variables_distintas_train': {c: int(x_train[c].nunique()) for c in x_train},
               'fecha_corte': min(r['date'] for r in test).isoformat(),
-              'train': len(train), 'test': len(test), 'train_aceptadas': sum(y_train),
+              'train': len(train), 'test': len(test),
+              'entrenamiento_clasificador': len(learned), 'calibracion_muestras': len(calibration_rows), 'train_aceptadas': sum(y_train),
               'test_aceptadas': sum(y_test), 'roc_auc': float(roc_auc_score(y_test, p)),
               'brier': float(brier_score_loss(y_test, p)),
               'baseline_brier': float(brier_score_loss(y_test, baseline)),
@@ -277,19 +306,29 @@ def main():
     print(json.dumps({'utilizables': len(rows), 'conteos': counts}, ensure_ascii=False))
     model, metrics = fit(rows)
     metadata = {'schemaVersion': SCHEMA_VERSION, 'algorithm': 'logistic_regression',
+                'modelVersion': uuid.uuid4().hex[:12],
                 'trainingMode': 'experimental_con_historicos' if args.allow_current_profiles else 'capturas_con_trazabilidad',
                 'experimental': True, 'featureVersion': 2, 'trainedAt': datetime.now(timezone.utc).isoformat(),
                 'fuentes': counts, 'metrics': metrics,
+                'dataFingerprint': hashlib.sha256(json.dumps(rows, sort_keys=True, default=str).encode()).hexdigest(),
+                'runtime': {'python': platform.python_version(), 'scikit-learn': package_version('scikit-learn')},
                 'limitations': ['Resultados historicos no implican causalidad ni garantizan aceptacion.',
                                 'Verificar procedencia de los datos y calibracion antes de publicar.',
                                 'Perfiles actuales pueden diferir del momento de postulacion.']}
     output = Path(args.output)
     output.mkdir(parents=True, exist_ok=True)
     # Only load locally generated, trusted joblib files.
-    temporary = output / 'model.joblib.tmp'
+    temporary = output / ('model.' + metadata['modelVersion'] + '.tmp')
     joblib.dump({'model': model, 'metadata': metadata}, temporary)
     temporary.replace(output / 'model.joblib')
-    (output / 'report.json').write_text(json.dumps(metadata, indent=2, ensure_ascii=False))
+    for filename, document in [
+        ('report.json', metadata),
+        ('manifest.json', {'modelVersion': metadata['modelVersion'], 'experimental': metadata['experimental'],
+                           'sha256': hashlib.sha256((output / 'model.joblib').read_bytes()).hexdigest(),
+                           'schemaVersion': SCHEMA_VERSION, 'runtime': metadata['runtime']})]:
+        staged = output / (filename + '.' + metadata['modelVersion'] + '.tmp')
+        staged.write_text(json.dumps(document, indent=2, ensure_ascii=False))
+        staged.replace(output / filename)
     print(json.dumps(metadata, indent=2, ensure_ascii=False))
 
 if __name__ == '__main__':

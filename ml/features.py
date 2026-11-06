@@ -55,8 +55,13 @@ def extract(payload):
         raise ValueError('experiencia debe ser una lista de fechas')
     if required is not None and not isinstance(required, str):
         raise ValueError('habilidadesRequeridas debe ser texto')
+    if not isinstance(payload.get('educacionRegistrada'), bool):
+        raise ValueError('educacionRegistrada debe ser verdadero o falso')
+    for key in CATEGORICAL + ['experienciaRequerida']:
+        if payload.get(key) is not None and not isinstance(payload[key], str):
+            raise ValueError(key + ' debe ser texto')
     wanted = {normalize(s) for s in re.split(r'[,;\n]', required or '') if normalize(s)}
-    owned = {normalize(s) for s in skills if normalize(s)}
+    owned = {normalize(part) for skill in skills for part in re.split(r'[,;\n]', skill) if normalize(part)}
     minimums = {'sin_experiencia': 0, 'sin experiencia': 0,
                 'de_1_a_2_anios': 1, '1-2 anos': 1,
                 'de_2_a_3_anios': 2, '2-3 anos': 2,

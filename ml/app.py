@@ -44,7 +44,9 @@ def create_app(bundle=None):
         refresh()
         current = bundle
         return jsonify({'modelReady': current is not None, 'schemaVersion': SCHEMA_VERSION,
-                        'trainedAt': current['metadata'].get('trainedAt') if current else None})
+                        'trainedAt': current['metadata'].get('trainedAt') if current else None,
+                        'modelVersion': current['metadata'].get('modelVersion', 'legacy') if current else None,
+                        'experimental': current['metadata'].get('experimental', True) if current else None})
 
     @app.post('/predict')
     def predict():
@@ -54,7 +56,7 @@ def create_app(bundle=None):
             return jsonify({'error': 'Modelo pendiente de entrenamiento', 'schemaVersion': SCHEMA_VERSION}), 503
         if current['metadata'].get('schemaVersion') != SCHEMA_VERSION:
             return jsonify({'error': 'Modelo incompatible'}), 503
-        if os.environ.get('ML_ENABLE_EXPERIMENTAL', 'true').lower() != 'true':
+        if current['metadata'].get('experimental', True) and os.environ.get('ML_ENABLE_EXPERIMENTAL', 'true').lower() != 'true':
             return jsonify({'error': 'Modelo experimental deshabilitado'}), 503
         data = request.get_json(silent=True)
         if not isinstance(data, dict):
@@ -74,7 +76,8 @@ def create_app(bundle=None):
         # Display categories are provisional UI thresholds, not a separately trained target.
         return jsonify({'probabilidad': round(probability * 100, 1),
                         'compatibilidad': 'Alta' if probability >= .7 else 'Media' if probability >= .45 else 'Baja',
-                        'schemaVersion': SCHEMA_VERSION, 'experimental': True,
+                        'schemaVersion': SCHEMA_VERSION, 'experimental': current['metadata'].get('experimental', True),
+                        'modelVersion': current['metadata'].get('modelVersion', 'legacy'),
                         'coberturaLimitada': bool(unsupported),
                         'algorithm': 'logistic_regression'})
     return app

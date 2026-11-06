@@ -26,11 +26,14 @@ def load_environment():
 def main():
     load_environment()
     parser = argparse.ArgumentParser()
-    parser.add_argument('command', choices=['serve', 'train', 'audit'])
+    parser.add_argument('command', choices=['serve', 'train', 'audit', 'verify'])
     parser.add_argument('--port', type=int, default=int(os.environ.get('PORT', '5050')))
     parser.add_argument('--captured-only', action='store_true',
                         help='Entrenar solamente con perfiles capturados y decisiones fechadas')
     args = parser.parse_args()
+    if args.command == 'verify':
+        subprocess.run([sys.executable, str(BASE / 'robustness.py')], check=True)
+        return
     if args.command == 'audit':
         subprocess.run([sys.executable, str(BASE / 'train.py'), '--audit-only'], check=True)
         return

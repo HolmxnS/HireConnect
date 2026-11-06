@@ -74,6 +74,30 @@ class FeatureTests(unittest.TestCase):
             self.assertEqual(outside.status_code, 200)
             self.assertTrue(outside.get_json()['coberturaLimitada'])
 
+    def test_calibration_uses_later_disjoint_examples(self):
+        from train import fit_estimator
+        from features import NUMERIC
+        rows = []
+        for i in range(160):
+            data = payload()
+            data['habilidades'] = ['Java', 'Python'] if i % 2 else []
+            rows.append({'features': extract(data), 'y': i % 2,
+                         'date': date(2024, 1, 1)+timedelta(days=i), 'group': str(i)})
+        rows[10]['group'] = rows[140]['group']
+        model, learning, calibration = fit_estimator(rows, NUMERIC, 1, calibrated=True)
+        self.assertTrue(calibration)
+        self.assertFalse({r['group'] for r in learning} & {r['group'] for r in calibration})
+        self.assertLess(max(r['date'] for r in learning), min(r['date'] for r in calibration))
+        self.assertEqual(model.__class__.__name__, 'CalibratedClassifierCV')
+
+    def test_skill_separators_and_invalid_types(self):
+        data = payload()
+        data['habilidades'] = ['JÁVA; Python']
+        self.assertEqual(extract(data)['coincidenciaHabilidades'], 100)
+        data['educacionRegistrada'] = 'false'
+        with self.assertRaises(ValueError):
+            extract(data)
+
     def test_experience_shortfall_and_surplus(self):
         data = payload()
         data['experienciaRequerida'] = 'DE_2_A_3_ANIOS'
@@ -95,7 +119,7 @@ class FeatureTests(unittest.TestCase):
         for training, validation in folds:
             self.assertFalse({r['group'] for r in training} & {r['group'] for r in validation})
             self.assertLess(max(r['date'] for r in training), min(r['date'] for r in validation))
-        self.assertEqual(len(select_configuration(rows)[2]), 8)
+        self.assertEqual(len(select_configuration(rows)[2]), 16)
 
     def test_refuses_insufficient_training(self):
         from train import fit
