@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy JAR app to Azure Web App - HireConnect-expo
+name: Build and deploy Java + Python to HireConnect-expo
 
 on:
   push:
@@ -24,14 +24,37 @@ jobs:
           java-version: '21'
           distribution: 'microsoft'
 
-      - name: Build with Maven
-        run: mvn clean install
+      - name: Set up portable Python tooling
+        uses: astral-sh/setup-uv@v6
 
-      - name: Upload artifact for deployment job
+      - name: Build and test Java
+        run: mvn -B clean package
+
+      - name: Install a relocatable Python runtime and model dependencies
+        env:
+          UV_PYTHON_INSTALL_DIR: ${{ runner.temp }}/hireconnect-python
+          UV_PYTHON_BIN_DIR: ${{ runner.temp }}/hireconnect-python-bin
+        run: |
+          uv python install 3.12
+          PYTHON_EXE="$(uv python find --managed-python 3.12)"
+          uv pip install --python "$PYTHON_EXE" --system --break-system-packages --link-mode copy --python-platform x86_64-manylinux_2_28 --only-binary :all: -r ml/requirements.lock.txt
+          "$PYTHON_EXE" -m unittest discover -s ml -p 'test_*.py' -v
+          "$PYTHON_EXE" -m unittest discover -s deploy -p 'test_*.py' -v
+          RUNTIME_DIR="$(dirname "$(dirname "$PYTHON_EXE")")"
+          "$PYTHON_EXE" deploy/package_azure.py --runtime "$RUNTIME_DIR"
+          SMOKE_ROOT="${{ runner.temp }}/hireconnect-relocated"
+          mkdir -p "$SMOKE_ROOT"
+          unzip -q target/azure-package.zip -d "$SMOKE_ROOT"
+          chmod +x "$SMOKE_ROOT/.python/bin/"*
+          cd "$SMOKE_ROOT"
+          .python/bin/python3 -c "import ssl, flask, sklearn, scipy, numpy, pymongo; print('Runtime reubicado listo')"
+          .python/bin/python3 -m unittest discover -s ml -p 'test_*.py' -v
+
+      - name: Upload the complete application
         uses: actions/upload-artifact@v4
         with:
-          name: java-app
-          path: '${{ github.workspace }}/target/*.jar'
+          name: hireconnect-linux
+          path: target/azure-package.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -39,13 +62,13 @@ jobs:
     permissions:
       id-token: write #This is required for requesting the JWT
       contents: read #This is required for actions/checkout
-  
+
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: java-app
-      
+          name: hireconnect-linux
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -59,5 +82,7 @@ jobs:
         with:
           app-name: 'HireConnect-expo'
           slot-name: 'Production'
-          package: '*.jar'
-          
+          package: azure-package.zip
+          type: ZIP
+          startup-command: 'bash /home/site/wwwroot/deploy/azure-start.sh'
+

@@ -51,3 +51,37 @@ docker build -t hireconnect .
 ```
 
 Referencias: https://render.com/docs/docker y https://render.com/docs/web-services
+
+## Azure Linux con Java SE (HireConnect-expo)
+
+Crear un App Service Linux de tipo Codigo/Java no ejecuta el Dockerfile.
+El flujo `main_hireconnect-expo.yml` publica ahora un ZIP que contiene:
+
+- `app.jar` con Java 21.
+- `.python/` con un CPython 3.12 portable y las dependencias del modelo.
+- `ml/` y los scripts de arranque de ambos procesos.
+
+El arranque configurado por GitHub Actions es:
+
+```sh
+bash /home/site/wwwroot/deploy/azure-start.sh
+```
+
+No se requiere otro App Service ni cambiar el runtime del servicio ya creado.
+El modelo se guarda en `/home/data/hireconnect-ml`, fuera del paquete de codigo,
+y usa `MONGODB_URI` o `SPRING_DATA_MONGODB_URI` del App Service.
+La URL interna `127.0.0.1:5050/predict` es valida porque ahora ambos procesos
+se ejecutan juntos. El servicio Windows anterior conserva su flujo de JAR.
+
+La construccion verifica el ZIP, rechaza `.env` y `.git` y prueba el runtime
+tras descomprimirlo en otra carpeta antes de publicarlo. Solo se empaquetan
+rutas permitidas; no se sube el directorio completo del repositorio.
+
+En el Log stream del servicio Linux deben aparecer, en este orden:
+
+1. `Iniciando HireConnect con Java + Python (paquete Linux)`.
+2. La preparacion del modelo, cuando aun no existe un archivo entrenado.
+3. `Modelo listo. Java usara la API interna en el puerto 5050.`.
+4. El arranque de Spring Boot.
+
+Si solo aparece el arranque de Java, no se esta usando el ZIP/comando nuevo.
