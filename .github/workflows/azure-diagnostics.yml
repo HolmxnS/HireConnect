@@ -1,0 +1,19 @@
+name: Diagnose HireConnect Azure startup
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_182D91575EE9478282D96C7034346B57 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_781A66D1AE25494CBCB99C97E382758E }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_E6EABAE6C42043D8BA072E6D820E60F8 }}
+      - name: Read startup configuration and sanitized logs
+        run: python3 deploy/azure_diagnostics.py
