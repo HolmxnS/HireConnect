@@ -1,12 +1,12 @@
 body main.content.interviews-page {
     padding: 4.8rem clamp(2.4rem, 4vw, 6.4rem) 6.4rem;
 }
-.interviews-shell { width: 100%; max-width: 116rem; margin-inline: auto; }
+.interviews-shell { width: 100%; max-width: 76rem; margin-inline: auto; }
 .interviews-page .opportunity-heading { align-items: center; gap: 1.6rem; margin-bottom: 3rem; }
 .interviews-page .opportunity-heading h1 { margin-bottom: .6rem; font-size: clamp(2.6rem, 2.5vw, 3.2rem); }
 .interviews-page .opportunity-heading p { margin: 0; font-size: 1.4rem; }
 .interviews-page .opportunity-heading > .opportunity-pill { padding: .8rem 1.2rem; font-size: 1.2rem; }
-.interviews-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.4rem; align-items: start; }
+.interviews-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.4rem; align-items: start; }
 .interview-card {
     --interview-text: #f6f2ff;
     --interview-muted: #c8c0dc;
@@ -71,7 +71,6 @@ body main.content.interviews-page {
     .interviews-grid { gap: 1.8rem; }
 }
 @media (max-width: 850px) {
-    .interviews-grid { grid-template-columns: minmax(0, 1fr); }
     .interviews-shell { max-width: 58rem; }
 }
 @media (max-width: 600px) {
