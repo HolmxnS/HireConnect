@@ -4,6 +4,8 @@ from pathlib import Path
 import re
 import subprocess
 import tempfile
+from urllib.request import urlopen
+from urllib.error import HTTPError, URLError
 from zipfile import ZipFile
 
 APP = 'HireConnect-expo'
@@ -45,7 +47,22 @@ def main():
         safe = {key: data.get(key) for key in ['ML_EMBEDDED','ML_REQUIRED','ML_PORT','PORT',
                          'SERVER_PORT','MODEL_PATH','ML_ENABLE_EXPERIMENTAL','WEBSITE_RUN_FROM_PACKAGE']}
         safe['MongoDBConfigured'] = bool(data.get('MONGODB_URI') or data.get('SPRING_DATA_MONGODB_URI'))
+        safe['WEBSITE_RUN_FROM_PACKAGE'] = bool(safe.get('WEBSITE_RUN_FROM_PACKAGE'))
         print(json.dumps(safe))
+    for suffix in ['/', '/actuator/health']:
+        try:
+            response = urlopen('https://hireconnect-expo-cngvhrc4ahere6fp.spaincentral-01.azurewebsites.net'+suffix, timeout=12)
+        except HTTPError as error:
+            response = error
+        except (URLError, OSError):
+            print('Public HTTP:', suffix, 'unreachable')
+            continue
+        with response:
+            body = response.read(65536).decode('utf-8', errors='replace')
+            public = {'path': suffix, 'http': response.code}
+            try: public['health'] = json.loads(body)
+            except ValueError: public['json'] = False
+            print(json.dumps(public))
     startup = az('webapp', 'log', 'startup', 'show', '-g', group, '-n', APP, '-o', 'json')
     if startup.returncode == 0 and startup.stdout.strip():
         try:
@@ -54,7 +71,6 @@ def main():
         except ValueError:
             text = startup.stdout
         print(scrub('\n'.join(text.splitlines()[-180:]), secret_values))
-        return 0
     print('Consultando archivos de arranque del servicio...')
     with tempfile.TemporaryDirectory() as directory:
         path = Path(directory) / 'logs.zip'
