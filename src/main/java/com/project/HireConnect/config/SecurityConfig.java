@@ -45,7 +45,7 @@ public class SecurityConfig {
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers(HttpMethod.GET,
                                                                 "/", "/index", "/login", "/register", "/styles/**",
-                                                                "/actuator/health",
+                                                                "/actuator/health", "/actuator/health/model",
                                                                 "/source/**",
                                                                 "/register/postulante",
                                                                 "/register/postulante/paso1",

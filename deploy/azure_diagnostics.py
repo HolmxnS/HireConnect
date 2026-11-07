@@ -49,7 +49,7 @@ def main():
         safe['MongoDBConfigured'] = bool(data.get('MONGODB_URI') or data.get('SPRING_DATA_MONGODB_URI'))
         safe['WEBSITE_RUN_FROM_PACKAGE'] = bool(safe.get('WEBSITE_RUN_FROM_PACKAGE'))
         print(json.dumps(safe))
-    for suffix in ['/', '/actuator/health']:
+    for suffix in ['/', '/actuator/health', '/actuator/health/model']:
         try:
             response = urlopen('https://hireconnect-expo-cngvhrc4ahere6fp.spaincentral-01.azurewebsites.net'+suffix, timeout=12)
         except HTTPError as error:

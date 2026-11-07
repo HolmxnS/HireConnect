@@ -90,7 +90,7 @@ jobs:
         run: |
           for attempt in $(seq 1 36); do
             if curl --silent --show-error --fail --max-time 8 \
-              'https://hireconnect-expo-cngvhrc4ahere6fp.spaincentral-01.azurewebsites.net/actuator/health' \
+              'https://hireconnect-expo-cngvhrc4ahere6fp.spaincentral-01.azurewebsites.net/actuator/health/model' \
               -o "${{ runner.temp }}/hireconnect-health.json"; then
               if python3 -c 'import json,sys; sys.exit(0 if json.load(open(sys.argv[1])).get("status") == "UP" else 1)' "${{ runner.temp }}/hireconnect-health.json"; then
                 echo 'Azure listo: Java, MongoDB y el predictor Python responden.'

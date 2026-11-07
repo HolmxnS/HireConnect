@@ -86,9 +86,15 @@ En el Log stream del servicio Linux deben aparecer, en este orden:
 
 Si solo aparece el arranque de Java, no se esta usando el ZIP/comando nuevo.
 
-El flujo verifica finalmente `GET /actuator/health` en el servicio publicado.
+El flujo verifica finalmente `GET /actuator/health/model` en el servicio publicado.
 La respuesta solo muestra disponibilidad general. Incluye un indicador que
 consulta Python: no da estado UP si falta el modelo, esta deshabilitado o no
 responde el contrato esperado. La evaluacion de salud de MongoDB tambien sigue
 activa. Un despliegue que solo copie archivos ya no basta para dar por terminada
 la verificacion.
+
+La disponibilidad del modelo agrupa especificamente MongoDB y el predictor.
+El estado global de `/actuator/health` continua comprobando tambien servicios
+como correo. Un fallo en otra integracion no declara caido el calculo de
+predicciones. El grupo muestra solo los nombres de componentes y su estado,
+sin detalles de conexion ni credenciales.
