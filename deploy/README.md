@@ -85,3 +85,10 @@ En el Log stream del servicio Linux deben aparecer, en este orden:
 4. El arranque de Spring Boot.
 
 Si solo aparece el arranque de Java, no se esta usando el ZIP/comando nuevo.
+
+El flujo verifica finalmente `GET /actuator/health` en el servicio publicado.
+La respuesta solo muestra disponibilidad general. Incluye un indicador que
+consulta Python: no da estado UP si falta el modelo, esta deshabilitado o no
+responde el contrato esperado. La evaluacion de salud de MongoDB tambien sigue
+activa. Un despliegue que solo copie archivos ya no basta para dar por terminada
+la verificacion.

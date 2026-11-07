@@ -37,4 +37,22 @@ class PredictionServiceTest {
         assertFalse(result.containsKey("probabilidad"));
         server.verify();
     }
+    @Test
+    void saludExigeModeloPreparadoYContratoCompatible() {
+        var service = new PredictionService("http://localhost/api/predict");
+        var server = MockRestServiceServer.bindTo((RestTemplate) ReflectionTestUtils.getField(service, "restTemplate")).build();
+        server.expect(requestTo("http://localhost/api/health"))
+                .andRespond(withSuccess("{\"modelReady\":true,\"schemaVersion\":2}", MediaType.APPLICATION_JSON));
+        assertTrue(service.estaListo());
+        server.verify();
+        server.reset();
+        server.expect(requestTo("http://localhost/api/health"))
+                .andRespond(withSuccess("{\"modelReady\":true,\"schemaVersion\":2,\"predictionReady\":false}", MediaType.APPLICATION_JSON));
+        assertFalse(service.estaListo());
+        server.verify();
+        server.reset();
+        server.expect(requestTo("http://localhost/api/health")).andRespond(withServiceUnavailable());
+        assertFalse(service.estaListo());
+        server.verify();
+    }
 }

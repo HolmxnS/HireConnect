@@ -46,7 +46,9 @@ def create_app(bundle=None):
         return jsonify({'modelReady': current is not None, 'schemaVersion': SCHEMA_VERSION,
                         'trainedAt': current['metadata'].get('trainedAt') if current else None,
                         'modelVersion': current['metadata'].get('modelVersion', 'legacy') if current else None,
-                        'experimental': current['metadata'].get('experimental', True) if current else None})
+                        'experimental': current['metadata'].get('experimental', True) if current else None,
+                        'predictionReady': current is not None and (not current['metadata'].get('experimental', True)
+                            or os.environ.get('ML_ENABLE_EXPERIMENTAL', 'true').lower() == 'true')})
 
     @app.post('/predict')
     def predict():

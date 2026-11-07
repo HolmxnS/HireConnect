@@ -23,6 +23,18 @@ public class PredictionService {
         this.restTemplate = new RestTemplate(factory);
     }
 
+    public boolean estaListo() {
+        try {
+            String healthUrl = java.net.URI.create(pythonApiUrl).resolve("health").toString();
+            Map<?, ?> response = restTemplate.getForObject(healthUrl, Map.class);
+            return response != null && Boolean.TRUE.equals(response.get("modelReady"))
+                    && !Boolean.FALSE.equals(response.get("predictionReady"))
+                    && response.get("schemaVersion") instanceof Number schema && schema.intValue() == 2;
+        } catch (Exception error) {
+            return false;
+        }
+    }
+
     public Map<String, Object> obtenerPrediccion(PrediccionRequestDTO dto) {
         try {
             Map<String, Object> result = restTemplate.postForObject(pythonApiUrl, dto, Map.class);

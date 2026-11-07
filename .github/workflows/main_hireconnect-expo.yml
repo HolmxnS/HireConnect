@@ -86,3 +86,19 @@ jobs:
           type: ZIP
           startup-command: 'bash /home/site/wwwroot/deploy/azure-start.sh'
 
+      - name: Verify Java and Python are ready in Azure
+        run: |
+          for attempt in $(seq 1 36); do
+            if curl --silent --show-error --fail --max-time 8 \
+              'https://hireconnect-expo-cngvhrc4ahere6fp.spaincentral-01.azurewebsites.net/actuator/health' \
+              -o "${{ runner.temp }}/hireconnect-health.json"; then
+              if python3 -c 'import json,sys; sys.exit(0 if json.load(open(sys.argv[1])).get("status") == "UP" else 1)' "${{ runner.temp }}/hireconnect-health.json"; then
+                echo 'Azure listo: Java, MongoDB y el predictor Python responden.'
+                exit 0
+              fi
+            fi
+            echo "Esperando el arranque completo ($attempt/36)..."
+            sleep 10
+          done
+          echo 'El servicio no quedo listo. Revisar Log stream; no se considera un despliegue funcional.'
+          exit 1
