@@ -1,18 +1,18 @@
 <!doctype html><html lang="es" xmlns:th="http://www.thymeleaf.org"><head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Oportunidades | HireConnect</title>
+<title>Entrevistas | HireConnect</title>
 <link rel="stylesheet" th:href="@{'/styles/fragments/' + (${esEmpresa} ? 'empresa' : 'postulante') + '/sidebar.css'}"/>
 <link rel="stylesheet" th:if="${not esEmpresa}" th:href="@{/styles/fragments/postulante/header.css}"/>
 <link rel="stylesheet" th:href="@{'/styles/' + (${esEmpresa} ? 'empresa' : 'postulante') + '/theme.css'}"/>
 <link rel="stylesheet" th:if="${esEmpresa}" th:href="@{/styles/empresa/layout.css}"/>
 <script th:src="@{/js/theme.js}"></script><link rel="stylesheet" th:href="@{/styles/satoshi.css}"/>
 <link rel="stylesheet" th:href="@{/styles/clash-display.css}"/><link rel="stylesheet" th:href="@{/styles/brand.css}"/>
-<link rel="stylesheet" th:href="@{/styles/oportunidades.css}"/><link rel="stylesheet" th:href="@{/styles/toasts.css}"/>
+<link rel="stylesheet" th:href="@{/styles/oportunidades.css}"/><link rel="stylesheet" th:href="@{/styles/entrevistas.css}"/><link rel="stylesheet" th:href="@{/styles/toasts.css}"/>
 <link rel="icon" type="image/svg+xml" th:href="@{/source/img/favicon.svg}"/>
 <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous" defer></script></head><body>
 <th:block th:if="${esEmpresa}"><div th:replace="~{fragments/empresa/sidebar_empresa :: sidebar(${activeMenu})}"></div><div th:replace="~{fragments/empresa/header_empresa :: header}"></div></th:block>
 <th:block th:unless="${esEmpresa}"><div th:replace="~{fragments/postulante/sidebar_postulante :: sidebar(${activeMenu})}"></div><div th:replace="~{fragments/postulante/header_postulante :: menu-fragment(false)}"></div></th:block>
-<main class="content opportunity-page">
+<main class="content opportunity-page interviews-page"><div class="interviews-shell">
 <p th:if="${exito}" th:text="${exito}" data-toast-message hidden role="status"></p><p th:if="${error}" th:text="${error}" class="error" data-toast-message hidden role="alert"></p>
 
 <header class="opportunity-heading"><div><h1>Entrevistas</h1><p th:text="${esEmpresa ? 'Programa encuentros y consulta las respuestas de tus candidatos.' : 'Revisa tus invitaciones y confirma tu asistencia.'}"></p></div><span class="opportunity-pill">Hora de Colombia · UTC−5</span></header>
@@ -30,18 +30,56 @@
 <button class="opportunity-primary" type="submit">Enviar invitación</button>
 </form></section>
 <div class="opportunity-empty" th:if="${pagina.empty}"><h2>Aún no hay entrevistas</h2><p th:text="${esEmpresa ? 'Abre un candidato en Postulaciones y selecciona Programar entrevista.' : 'Tus invitaciones aparecerán aquí cuando una empresa programe una entrevista.'}"></p><a th:href="@{${base + (esEmpresa ? '/postulaciones' : '/mis-postulaciones')}}" th:if="${esEmpresa}">Ir a postulaciones →</a></div>
-<section class="opportunity-card" th:each="e : ${pagina.content}">
-<div class="opportunity-row"><div><h2 th:text="${e.vacanteTitulo}"></h2><p th:text="${esEmpresa ? e.postulanteNombre : e.empresaNombre}"></p></div><span class="opportunity-pill" th:text="${e.estado.descripcion}"></span></div>
-<dl class="opportunity-facts"><div><dt>Fecha y hora · Colombia</dt><dd th:text="${#temporals.format(e.fechaLocal, 'dd/MM/yyyy HH:mm')}"></dd></div><div><dt>Duración</dt><dd th:text="${e.duracion + ' minutos'}"></dd></div><div><dt>Modalidad</dt><dd th:text="${e.virtual ? 'Virtual' : 'Presencial'}"></dd></div></dl>
-<p th:if="${e.virtual}"><a th:href="${e.lugar}" target="_blank" rel="noopener noreferrer">Abrir enlace de la entrevista ↗</a></p><p th:unless="${e.virtual}" th:text="${e.lugar}"></p>
-<p class="opportunity-preserve" th:if="${not #strings.isEmpty(e.indicaciones)}" th:text="${e.indicaciones}"></p>
-<p class="opportunity-note" th:if="${not #strings.isEmpty(e.respuesta)}" th:text="${'Respuesta: ' + e.respuesta}"></p>
-<p class="opportunity-muted" th:unless="${e.futura}">El horario de esta entrevista ya pasó.</p>
-<div class="opportunity-actions" th:if="${esEmpresa}"><a class="opportunity-secondary" th:href="@{/empresa/entrevistas(postulacion=${e.id})}">Cambiar horario</a><details th:if="${e.futura and e.estado.name() != 'CANCELADA'}"><summary>Cancelar entrevista</summary><p>Se avisará al candidato y se cerrará esta invitación.</p><form th:action="@{/empresa/entrevistas/{id}/cancelar(id=${e.id})}" method="post"><input type="hidden" name="version" th:value="${e.version}"/><button class="opportunity-danger" type="submit">Confirmar cancelación</button></form></details></div>
-<form class="opportunity-response" th:if="${not esEmpresa and e.futura and e.estado.name() == 'POR_CONFIRMAR'}" th:action="@{/postulante/entrevistas/{id}/responder(id=${e.id})}" method="post">
-<input type="hidden" name="version" th:value="${e.version}"/>
-<label>Mensaje o disponibilidad para otro horario<textarea name="mensaje" maxlength="1000" rows="2" placeholder="Si solicitas otro horario, indica cuándo puedes asistir."></textarea></label>
-<div class="opportunity-actions"><button type="submit" class="opportunity-primary" name="accion" value="confirmar">Confirmar asistencia</button><button type="submit" class="opportunity-secondary" name="accion" value="reprogramar">Solicitar otro horario</button><button type="submit" class="opportunity-danger" name="accion" value="rechazar">No podré asistir</button></div>
-</form>
-</section>
-<nav class="opportunity-pagination" aria-label="Páginas" th:if="${pagina.totalPages > 1}"><a th:if="${pagina.hasPrevious()}" th:href="@{${base + '/' + activeMenu}(pagina=${pagina.number - 1},q=${q},categoria=${categoria},propios=${propios})}">← Anterior</a><span th:text="${'Página ' + (pagina.number + 1) + ' de ' + pagina.totalPages}"></span><a th:if="${pagina.hasNext()}" th:href="@{${base + '/' + activeMenu}(pagina=${pagina.number + 1},q=${q},categoria=${categoria},propios=${propios})}">Siguiente →</a></nav></main><script th:src="@{/js/toasts.js}" defer></script><th:block th:unless="${esEmpresa}"><div th:replace="~{fragments/postulante/chatbot :: chatbot}"></div></th:block></body></html>
+<div class="interviews-grid" th:unless="${pagina.empty}">
+<article class="interview-card" th:each="e : ${pagina.content}">
+    <div class="interview-card__topline">
+        <span class="interview-card__eyebrow">Entrevista</span>
+        <span class="interview-status" th:classappend="${'interview-status--' + #strings.toLowerCase(e.estado.name())}" th:text="${e.estado.descripcion}"></span>
+    </div>
+    <header class="interview-card__heading">
+        <h2 th:text="${e.vacanteTitulo}"></h2>
+        <p th:text="${esEmpresa ? e.postulanteNombre : e.empresaNombre}"></p>
+    </header>
+    <dl class="interview-facts">
+        <div>
+            <dt><span class="interview-facts__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18m-14 4h3m4 0h3m-10 3h3"/></svg></span><span>Fecha</span></dt>
+            <dd><time th:datetime="${e.fechaLocal}" th:text="${#temporals.format(e.fechaLocal, 'dd MMM yyyy')}"></time><small th:text="${#temporals.format(e.fechaLocal, 'HH:mm') + ' h'}"></small></dd>
+        </div>
+        <div>
+            <dt><span class="interview-facts__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span>Duración</span></dt>
+            <dd th:text="${e.duracion + ' min'}"></dd>
+        </div>
+        <div>
+            <dt><span class="interview-facts__icon"><svg th:if="${e.virtual}" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="6" width="13" height="12" rx="3"/><path d="m15 10 6-3v10l-6-3"/></svg><svg th:unless="${e.virtual}" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 6-8 11-8 11S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></span><span>Modalidad</span></dt>
+            <dd th:text="${e.virtual ? 'Virtual' : 'Presencial'}"></dd>
+        </div>
+    </dl>
+    <div class="interview-card__location">
+        <a th:if="${e.virtual}" th:href="${e.lugar}" target="_blank" rel="noopener noreferrer">Abrir enlace de la reunión <span aria-hidden="true">↗</span></a>
+        <p th:unless="${e.virtual}" th:text="${e.lugar}"></p>
+    </div>
+    <details class="interview-details" th:if="${not #strings.isEmpty(e.indicaciones) or not #strings.isEmpty(e.respuesta)}">
+        <summary>Ver indicaciones<span th:if="${not #strings.isEmpty(e.respuesta)}"> y respuesta</span><span class="interview-details__chevron" aria-hidden="true">⌄</span></summary>
+        <div class="interview-details__body">
+            <p class="opportunity-preserve" th:if="${not #strings.isEmpty(e.indicaciones)}" th:text="${e.indicaciones}"></p>
+            <div class="interview-card__response" th:if="${not #strings.isEmpty(e.respuesta)}"><span>Respuesta enviada</span><p th:text="${e.respuesta}"></p></div>
+        </div>
+    </details>
+    <footer class="interview-card__footer">
+        <p class="interview-past" th:unless="${e.futura}"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>La fecha programada ya pasó</p>
+        <div class="opportunity-actions" th:if="${esEmpresa}">
+            <a class="opportunity-secondary" th:href="@{/empresa/entrevistas(postulacion=${e.id})}">Cambiar horario</a>
+            <details th:if="${e.futura and e.estado.name() != 'CANCELADA'}"><summary>Cancelar entrevista</summary><p>Se avisará al candidato y se cerrará esta invitación.</p><form th:action="@{/empresa/entrevistas/{id}/cancelar(id=${e.id})}" method="post"><input type="hidden" name="version" th:value="${e.version}"/><button class="opportunity-danger" type="submit">Confirmar cancelación</button></form></details>
+        </div>
+        <details class="interview-reply" th:if="${not esEmpresa and e.futura and e.estado.name() == 'POR_CONFIRMAR'}">
+            <summary class="interview-reply__trigger">Responder invitación <span aria-hidden="true">↗</span></summary>
+            <form class="opportunity-response" th:action="@{/postulante/entrevistas/{id}/responder(id=${e.id})}" method="post">
+                <input type="hidden" name="version" th:value="${e.version}"/>
+                <label>Mensaje o disponibilidad<textarea name="mensaje" maxlength="1000" rows="2" placeholder="Si necesitas otro horario, indica cuándo puedes asistir."></textarea></label>
+                <div class="opportunity-actions"><button type="submit" class="opportunity-primary" name="accion" value="confirmar">Confirmar asistencia</button><button type="submit" class="opportunity-secondary" name="accion" value="reprogramar">Solicitar otro horario</button><button type="submit" class="opportunity-danger" name="accion" value="rechazar">No podré asistir</button></div>
+            </form>
+        </details>
+    </footer>
+</article>
+</div>
+<nav class="opportunity-pagination" aria-label="Páginas" th:if="${pagina.totalPages > 1}"><a th:if="${pagina.hasPrevious()}" th:href="@{${base + '/' + activeMenu}(pagina=${pagina.number - 1},q=${q},categoria=${categoria},propios=${propios})}">← Anterior</a><span th:text="${'Página ' + (pagina.number + 1) + ' de ' + pagina.totalPages}"></span><a th:if="${pagina.hasNext()}" th:href="@{${base + '/' + activeMenu}(pagina=${pagina.number + 1},q=${q},categoria=${categoria},propios=${propios})}">Siguiente →</a></nav></div></main><script th:src="@{/js/toasts.js}" defer></script><th:block th:unless="${esEmpresa}"><div th:replace="~{fragments/postulante/chatbot :: chatbot}"></div></th:block></body></html>
