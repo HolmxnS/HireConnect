@@ -14,7 +14,7 @@
     const mobile = window.matchMedia('(max-width: 900px)');
     const emptyContent = content.cloneNode(true);
     const filterNames = [
-        'filtro', 'sector', 'modalidad', 'tipoContrato', 'fechaFiltro',
+        'filtro', 'sector', 'modalidad', 'tipoContrato', 'fechaFiltro', 'oferta',
         'salarioMin', 'salarioMax', 'pocosCandidatos'
     ];
 
@@ -319,6 +319,7 @@
     workspace.classList.add('is-enhanced');
     reader.hidden = false;
     synchronize(true);
+    if (new URLSearchParams(window.location.search).has('oferta') && selected) select(selected, true);
     bindObserver();
 
     list.addEventListener('scroll', () => {

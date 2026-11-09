@@ -143,7 +143,7 @@
                                 <p class="offer-card__salary"
                                     th:text="${item.vacante.salario != null and item.vacante.salario > 0} ? ${'$' + #numbers.formatDecimal(item.vacante.salario, 1, 'POINT', 0, 'COMMA') + ' COP'} : 'A convenir'">
                                     $3.200.000 COP</p>
-                                <a th:href="@{/login}" class="btn btn--solid btn--small">Ver oferta</a>
+                                <a th:href="@{/postulante/vacantes(oferta=${item.vacante.id})}" class="btn btn--solid btn--small">Ver oferta</a>
                             </div>
                         </article>
                     </div>

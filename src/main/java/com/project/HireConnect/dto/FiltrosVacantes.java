@@ -8,6 +8,7 @@ import lombok.Setter;
 public class FiltrosVacantes {
     private String filtro;
     private String query;
+    private String oferta;
     private String modalidad;
     private String sector;
     private String fechaFiltro;

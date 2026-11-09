@@ -53,6 +53,11 @@ class PublicVacanciesViewTest {
         assertFalse(html.contains("sidebar__logout-form"));
         assertFalse(html.contains("hc-chat-root"));
         verify(jobs).paginaPostulante(argThat(f -> f.texto().equals("Java")));
+        var selected = mvc.perform(get("/postulante/vacantes").param("oferta", job.getId())).andReturn().getResponse();
+        assertEquals(200, selected.getStatus());
+        assertTrue(selected.getContentAsString().contains("Ver todas las vacantes"));
+        assertTrue(selected.getContentAsString().contains("Desarrollador Java"));
+        verify(jobs).paginaPostulante(argThat(f -> job.getId().equals(f.getOferta())));
         var ajax = mvc.perform(get("/postulante/vacantes/resultados").param("filtro", "Java")).andReturn().getResponse();
         assertEquals(200, ajax.getStatus());
         assertTrue(ajax.getContentAsString().contains("Desarrollador Java"));

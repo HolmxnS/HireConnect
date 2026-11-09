@@ -43,6 +43,7 @@ public class VacanteService {
     public org.springframework.data.domain.Page<Vacante> paginaPostulante(FiltrosVacantes filtro) {
         var filtros = new ArrayList<Criteria>();
         filtros.add(Criteria.where("estado").is(VacanteEstado.ACTIVA));
+        if (tieneTexto(filtro.getOferta())) filtros.add(Criteria.where("_id").is(filtro.getOferta()));
         if (!filtro.texto().isEmpty()) {
             String patron = patronLiteral(filtro.texto());
             filtros.add(new Criteria().orOperator(Criteria.where("titulo").regex(patron, "i"),

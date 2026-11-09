@@ -30,6 +30,7 @@
             <div>
                 <h1>Encuentra tu próxima oportunidad</h1>
                 <p>Explora las vacantes y consulta sus detalles sin salir de la lista.</p>
+                <a class="vacancy-page__all" th:if="${oferta != null}" th:href="@{/postulante/vacantes}">Ver todas las vacantes →</a>
             </div><span class="vacancy-page__count" data-vacancy-count aria-live="polite"
                 th:text="${paginaVacantes.totalElements + ' vacantes disponibles'}"></span>
         </div>

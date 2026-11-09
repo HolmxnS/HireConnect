@@ -133,6 +133,7 @@ public class PostulanteController {
         model.addAttribute("paginaVacantes", pagina);
         model.addAttribute("vacantes", pagina.getContent());
         model.addAttribute("filtro", filtros.texto());
+        model.addAttribute("oferta", filtros.getOferta());
         agregarConteosVacantes(model);
     }
 

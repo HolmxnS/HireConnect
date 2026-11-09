@@ -258,5 +258,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     updateControls();
-    searchVacancies();
+    if (!new URLSearchParams(window.location.search).has('oferta')) searchVacancies();
 });
