@@ -33,10 +33,10 @@
                                     th:if="${not #strings.isEmpty(empresa?.foto)}" th:src="${empresa.foto}" alt="" /><i
                                     th:unless="${not #strings.isEmpty(empresa?.foto)}"
                                     class="fa-regular fa-building"></i></span>
-                            <div><a class="company-profile-link" th:if="${empresa != null}"
+                            <div><a class="company-profile-link" th:if="${empresa != null and visitante != true}"
                                     th:href="@{/postulante/empresas/{id}(id=${empresa.id})}"
                                     th:text="${empresa.nombre}"></a>
-                                <p th:unless="${empresa != null}">Empresa</p><span
+                                <span class="company-profile-name" th:if="${empresa != null and visitante == true}" th:text="${empresa.nombre}"></span><p th:unless="${empresa != null}">Empresa</p><span
                                     th:if="${vacante.fechaPublicacion != null}"
                                     th:text="${'Publicada el ' + #temporals.format(vacante.fechaPublicacion, 'dd/MM/yyyy')}"></span>
                             </div>
@@ -62,7 +62,7 @@
                             th:unless="${vacante.estado != null and vacante.estado.name() == 'ACTIVA'}">Vacante no
                             disponible</span>
                     </div>
-                    <div class="prediction-card" data-prediction hidden
+                    <div class="prediction-card" th:if="${visitante != true}" data-prediction hidden
                         th:attr="data-url=@{/postulante/vacante/{id}/prediccion(id=${vacante.id})}">
                         <div class="prediction-header">
                             <i class="fa-solid fa-chart-line" aria-hidden="true"></i>

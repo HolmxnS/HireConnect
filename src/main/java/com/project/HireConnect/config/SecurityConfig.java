@@ -47,6 +47,8 @@ public class SecurityConfig {
                                                                 "/", "/index", "/login", "/register", "/styles/**",
                                                                 "/actuator/health", "/actuator/health/model",
                                                                 "/source/**",
+                                                                "/postulante/vacantes", "/postulante/vacantes/listar",
+                                                                "/postulante/vacantes/resultados", "/postulante/vacante/*",
                                                                 "/register/postulante",
                                                                 "/register/postulante/paso1",
                                                                 "/register/postulante/paso2",

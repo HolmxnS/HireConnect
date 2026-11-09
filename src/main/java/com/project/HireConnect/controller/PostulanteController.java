@@ -64,7 +64,8 @@ public class PostulanteController {
     }
 
     private Optional<Postulante> getAuthenticatedPostulante(Authentication authentication) {
-        if (authentication == null || !authentication.isAuthenticated()) {
+        if (authentication == null || !authentication.isAuthenticated()
+                || authentication instanceof org.springframework.security.authentication.AnonymousAuthenticationToken) {
             return Optional.empty();
         }
         return postulanteService.buscarPorEmail(authentication.getName());
@@ -108,13 +109,8 @@ public class PostulanteController {
             RedirectAttributes redirectAttributes) {
 
         Optional<Postulante> optPostulante = getAuthenticatedPostulante(authentication);
-        if (optPostulante.isEmpty()) {
-            redirectAttributes.addFlashAttribute("error", "Tu sesión ha expirado.");
-            return "redirect:/login";
-        }
-        Postulante postulante = optPostulante.get();
-
-        model.addAttribute("postulante", postulante);
+        model.addAttribute("visitante", optPostulante.isEmpty());
+        optPostulante.ifPresent(p -> model.addAttribute("postulante", p));
         model.addAttribute("activeMenu", "vacantes");
         prepararPaginaVacantes(filtros, model);
         model.addAttribute("sectoresDisponibles", vacanteService.sectoresDisponibles());
@@ -126,8 +122,8 @@ public class PostulanteController {
             @ModelAttribute FiltrosVacantes filtros,
             Authentication authentication,
             Model model) {
-        if (getAuthenticatedPostulante(authentication).isEmpty())
-            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.UNAUTHORIZED);
+        var persona = getAuthenticatedPostulante(authentication);
+        model.addAttribute("visitante", persona.isEmpty());
         prepararPaginaVacantes(filtros, model);
         return "postulante/fragments/vacantes_resultados :: resultados";
     }
@@ -209,10 +205,6 @@ public class PostulanteController {
 
         Optional<Postulante> optPostulante = getAuthenticatedPostulante(authentication);
 
-        if (optPostulante.isEmpty()) {
-            return "redirect:/login";
-        }
-
         Optional<Vacante> optVacante = vacanteService.buscarPorId(idVacante);
 
         if (optVacante.isEmpty()) {
@@ -221,6 +213,8 @@ public class PostulanteController {
         }
 
         Vacante vacante = optVacante.get();
+        if (optPostulante.isEmpty() && vacante.getEstado() != VacanteEstado.ACTIVA)
+            throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.NOT_FOUND);
 
         String primeraPalabra = vacante.getTitulo().split(" ")[0];
 
@@ -228,12 +222,14 @@ public class PostulanteController {
                 primeraPalabra,
                 null).stream()
                 .filter(v -> !v.getId().equals(vacante.getId()))
+                .filter(v -> optPostulante.isPresent() || v.getEstado() == VacanteEstado.ACTIVA)
                 .limit(10)
                 .toList();
 
         model.addAttribute("vacantesSimilares", vacantesSimilares);
         model.addAttribute("vacante", vacante);
-        model.addAttribute("postulante", optPostulante.get());
+        model.addAttribute("visitante", optPostulante.isEmpty());
+        optPostulante.ifPresent(p -> model.addAttribute("postulante", p));
         return "postulante/detalle_vacante";
     }
 

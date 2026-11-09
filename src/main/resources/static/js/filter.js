@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const filters = document.querySelector('.applicant-quick-filters');
     if (!filters) return;
+    const guest = document.body.classList.contains('vacancy-browser--guest');
 
     const search = document.getElementById('buscador');
     const publication = document.getElementById('quickPublicationFilter');
@@ -201,6 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function loadSuggestions() {
+        if (guest) return;
         suggestionRequest?.abort();
         suggestionRequest = new AbortController();
         const signal = suggestionRequest.signal;
@@ -233,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
         searchVacancies();
         if (history) history.style.display = 'none';
         const text = search?.value.trim();
-        if (text) {
+        if (text && !guest) {
             fetch('/postulante/historial/guardar', {
                 method: 'POST',
                 credentials: 'same-origin',

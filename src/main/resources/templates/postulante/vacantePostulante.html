@@ -16,11 +16,15 @@
     <link rel="icon" type="image/svg+xml" sizes="any" th:href="@{/source/img/favicon.svg}" />
     <script src="https://kit.fontawesome.com/e71256cba2.js" crossorigin="anonymous" defer></script>
     <title>Vacantes | HireConnect</title>
+<link rel="stylesheet" th:href="@{/styles/postulante/vacantes_publicas.css}"/>
 </head>
 
-<body class="vacancy-browser">
+<body class="vacancy-browser" th:classappend="${visitante == true} ? 'vacancy-browser--guest' : ''">
+    <th:block th:unless="${visitante == true}">
     <div th:replace="~{fragments/postulante/sidebar_postulante :: sidebar('vacantes')}"></div>
     <div th:replace="~{fragments/postulante/header_postulante :: menu-fragment(true)}"></div>
+    </th:block>
+    <th:block th:if="${visitante == true}"><div th:replace="~{fragments/vacantes_publicas_header :: header}"></div></th:block>
     <main class="main vacancy-page">
         <div class="vacancy-page__heading">
             <div>
@@ -115,7 +119,7 @@
     <script th:src="@{/js/filter.js}" defer></script>
     <script th:src="@{/js/vacante_postulante.js}" defer></script>
     <script th:src="@{/js/vacante_prediccion.js}" defer></script>
-    <div th:replace="~{fragments/postulante/chatbot :: chatbot}"></div>
+    <th:block th:unless="${visitante == true}"><div th:replace="~{fragments/postulante/chatbot :: chatbot}"></div></th:block>
 </body>
 
 </html>

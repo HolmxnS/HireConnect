@@ -28,7 +28,7 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
             redirectUrl = "/empresa/home";
         } 
         else if (authorities.stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_PERSONA"))) {
-            redirectUrl = "/postulante/vacantes";
+            redirectUrl = SavedVacancySearch.destination(request, response);
         } 
         response.sendRedirect(request.getContextPath() + redirectUrl);
     }

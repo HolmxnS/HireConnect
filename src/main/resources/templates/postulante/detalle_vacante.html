@@ -15,10 +15,14 @@
 
     <title th:text="${vacante.titulo} + ' | Detalle'"></title>
     <link rel="stylesheet" th:href="@{/styles/brand.css}" />
+<link rel="stylesheet" th:href="@{/styles/postulante/vacantes_publicas.css}"/>
 </head>
 
-<body>
+<body th:classappend="${visitante == true} ? 'vacancy-browser--guest' : ''">
+    <th:block th:unless="${visitante == true}">
     <div th:replace="~{fragments/postulante/sidebar_postulante :: sidebar ('vacantes')}"></div>
+    </th:block>
+    <th:block th:if="${visitante == true}"><div th:replace="~{fragments/vacantes_publicas_header :: header}"></div></th:block>
 
     <div class="details">
         <div class="details__layout">
@@ -36,7 +40,7 @@
                         <div class="info__company">
                             <span th:if="${vacante.empresa != null}">
                                 <i class="fa-solid fa-building"></i>
-                                <a th:href="@{/postulante/empresas/{id}(id=${vacante.empresa.id})}" th:text="${vacante.empresa.nombre}"></a>
+                                <span th:if="${visitante == true}" th:text="${vacante.empresa.nombre}"></span><a th:unless="${visitante == true}" th:href="@{/postulante/empresas/{id}(id=${vacante.empresa.id})}" th:text="${vacante.empresa.nombre}"></a>
                             </span>
 
                             <span class="info__separator"></span>
@@ -188,7 +192,7 @@
 
         </div>
     </div>
-    <div th:replace="~{fragments/postulante/chatbot :: chatbot}"></div>
+    <th:block th:unless="${visitante == true}"><div th:replace="~{fragments/postulante/chatbot :: chatbot}"></div></th:block>
 </body>
 
 </html>

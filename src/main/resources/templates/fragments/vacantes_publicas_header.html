@@ -1,0 +1,10 @@
+<!doctype html><html lang="es" xmlns:th="http://www.thymeleaf.org"><body>
+<header class="public-vacancies-header" th:fragment="header">
+    <a class="public-vacancies-header__brand" th:href="@{/}" aria-label="HireConnect, ir al inicio"><img th:src="@{/source/img/isotipo.png}" alt=""/><span>Hire<span>Connect</span></span></a>
+    <form id="searchForm" class="public-vacancies-header__search" th:action="@{/postulante/vacantes}" method="get" role="search">
+        <input id="buscador" name="filtro" type="search" maxlength="100" placeholder="Cargo, empresa o palabra clave" aria-label="Buscar vacantes" th:value="${filtro}"/>
+        <button type="submit">Buscar</button>
+    </form>
+    <a class="public-vacancies-header__login" th:href="@{/login}">Iniciar sesión</a>
+</header>
+</body></html>

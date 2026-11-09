@@ -74,7 +74,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
                                 SecurityContextHolder.getContext());
 
                 if ("ROLE_PERSONA".equals(rol)) {
-                        response.sendRedirect(perfilCompleto ? "/postulante/vacantes"
+                        response.sendRedirect(perfilCompleto ? request.getContextPath() + SavedVacancySearch.destination(request, response)
                                         : "/postulante/completar_perfil_postulante");
                 } else {
                         response.sendRedirect(perfilCompleto ? "/empresa/home" : "/empresa/completar_perfil_empresa");

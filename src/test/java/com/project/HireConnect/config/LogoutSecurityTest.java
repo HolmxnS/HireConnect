@@ -164,6 +164,14 @@ class LogoutSecurityTest {
         mvc.perform(get("/" + tipo + "/menu-prueba").session(session)).andExpect(status().isOk());
     }
 
+    @Test
+    void lecturaPublicaNoAbrePostulacionesNiDatosPrivados() throws Exception {
+        for (String path : List.of("/postulante/vacantes", "/postulante/vacantes/resultados", "/postulante/vacante/oferta"))
+            mvc.perform(get(path)).andExpect(status().isNotFound()); // No controller in this security-only fixture.
+        for (String path : List.of("/postulante/postular?vacanteId=oferta", "/postulante/perfil", "/postulante/historial", "/postulante/vacante/oferta/prediccion"))
+            mvc.perform(get(path)).andExpect(status().is3xxRedirection());
+    }
+
     @Controller
     static class MenuPrueba {
         @GetMapping("/{tipo}/menu-prueba")

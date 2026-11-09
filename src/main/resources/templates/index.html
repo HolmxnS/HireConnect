@@ -69,9 +69,9 @@
                     <p class="hero__text">Explora vacantes, encuentra la que va contigo y sigue tus postulaciones
                         desde un solo lugar.</p>
 
-                    <form class="hero__search" th:action="@{/register}" method="get" role="search">
+                    <form class="hero__search" th:action="@{/postulante/vacantes}" method="get" role="search">
                         <label class="hero__search-label" for="hero-search-input">Cargo o palabra clave</label>
-                        <input class="hero__search-input" id="hero-search-input" name="q" type="search"
+                        <input class="hero__search-input" id="hero-search-input" name="filtro" maxlength="100" type="search"
                             placeholder="Cargo, empresa o palabra clave" autocomplete="off">
                         <button class="btn btn--solid hero__search-btn" type="submit" aria-label="Buscar empleos">
                             <i class="fa-solid fa-magnifying-glass"></i>
@@ -80,13 +80,13 @@
                     </form>
 
                     <ul class="hero__tags" aria-label="Búsquedas populares">
-                        <li><a th:href="@{/register}" class="hero__tag">Ventas</a></li>
-                        <li><a th:href="@{/register}" class="hero__tag">Tecnología</a></li>
-                        <li><a th:href="@{/register}" class="hero__tag">Logística</a></li>
-                        <li><a th:href="@{/register}" class="hero__tag">Salud</a></li>
-                        <li><a th:href="@{/register}" class="hero__tag">Educación</a></li>
-                        <li><a th:href="@{/register}" class="hero__tag">Turismo</a></li>
-                        <li><a th:href="@{/register}" class="hero__tag">Diseño</a></li>
+                        <li><a th:href="@{/postulante/vacantes(filtro='Ventas')}" class="hero__tag">Ventas</a></li>
+                        <li><a th:href="@{/postulante/vacantes(filtro='Tecnología')}" class="hero__tag">Tecnología</a></li>
+                        <li><a th:href="@{/postulante/vacantes(filtro='Logística')}" class="hero__tag">Logística</a></li>
+                        <li><a th:href="@{/postulante/vacantes(filtro='Salud')}" class="hero__tag">Salud</a></li>
+                        <li><a th:href="@{/postulante/vacantes(filtro='Educación')}" class="hero__tag">Educación</a></li>
+                        <li><a th:href="@{/postulante/vacantes(filtro='Turismo')}" class="hero__tag">Turismo</a></li>
+                        <li><a th:href="@{/postulante/vacantes(filtro='Diseño')}" class="hero__tag">Diseño</a></li>
                     </ul>
                 </div>
             </div>
