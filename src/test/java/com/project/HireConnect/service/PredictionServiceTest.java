@@ -13,6 +13,27 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 class PredictionServiceTest {
     @Test
+    void conservaLaCoincidenciaComoResultadoDistintoDeLaProbabilidad() {
+        var service = new PredictionService("http://localhost/predict");
+        var server = MockRestServiceServer.bindTo((RestTemplate) ReflectionTestUtils.getField(service, "restTemplate")).build();
+        server.expect(requestTo("http://localhost/predict"))
+                .andRespond(withSuccess("""
+                    {"schemaVersion":2,"algorithm":"skill_overlap","tipoResultado":"coincidencia_habilidades",
+                     "disponible":true,"coincidenciaHabilidades":50,"habilidadesCoincidentes":1,"habilidadesRequeridasTotal":2}
+                    """, MediaType.APPLICATION_JSON));
+        var result = service.obtenerPrediccion(new PrediccionRequestDTO());
+        assertEquals(50, result.get("coincidenciaHabilidades"));
+        assertFalse(result.containsKey("probabilidad"));
+        server.verify();
+        server.reset();
+        server.expect(requestTo("http://localhost/predict"))
+                .andRespond(withSuccess("""
+                    {"schemaVersion":2,"algorithm":"skill_overlap","tipoResultado":"datos_insuficientes","disponible":false}
+                    """, MediaType.APPLICATION_JSON));
+        assertEquals("datos_insuficientes", service.obtenerPrediccion(new PrediccionRequestDTO()).get("tipoResultado"));
+        server.verify();
+    }
+    @Test
     void rechazaLaFormulaAnteriorYAceptaCeroDelModeloNuevo() {
         var service = new PredictionService("http://localhost/predict");
         var server = MockRestServiceServer.bindTo((RestTemplate) ReflectionTestUtils.getField(service, "restTemplate")).build();

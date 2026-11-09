@@ -47,21 +47,6 @@
                         <div class="vacancy-detail__title-row">
                             <h2 tabindex="-1" data-vacancy-title th:id="${'vacancy-title-' + vacante.id}"
                                 th:text="${vacante.titulo}"></h2>
-
-                            <div class="prediction-card" data-prediction hidden
-                                th:attr="data-url=@{/postulante/vacante/{id}/prediccion(id=${vacante.id})}">
-                                <div class="prediction-header">
-                                    <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
-                                    <h3>Estimación de aceptación</h3>
-                                </div>
-                                <div class="prediction-body">
-                                    <p class="percentage">
-                                        Probabilidad estimada de aceptación (experimental):
-                                        <strong data-prediction-value>Calculando…</strong>
-                                    </p>
-                                    <span class="badge" data-prediction-badge hidden></span>
-                                </div>
-                            </div>
                         </div>
                     </header>
                     <div class="vacancy-detail__intro">
@@ -76,6 +61,19 @@
                         <span class="vacancy-detail__closed"
                             th:unless="${vacante.estado != null and vacante.estado.name() == 'ACTIVA'}">Vacante no
                             disponible</span>
+                    </div>
+                    <div class="prediction-card" data-prediction hidden
+                        th:attr="data-url=@{/postulante/vacante/{id}/prediccion(id=${vacante.id})}">
+                        <div class="prediction-header">
+                            <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+                            <h3>Probabilidad de aceptación</h3>
+                        </div>
+                        <div class="prediction-body">
+                            <p class="percentage" aria-live="polite"><strong data-prediction-value>Calculando…</strong><span>según tu perfil y esta vacante</span></p>
+                            <div class="prediction-meter" data-prediction-meter hidden aria-hidden="true"><span></span></div>
+                            <span class="badge" data-prediction-badge hidden></span>
+                        </div>
+                        <p class="prediction-note" data-prediction-note hidden></p>
                     </div>
                     <dl class="vacancy-detail__facts">
                         <div>

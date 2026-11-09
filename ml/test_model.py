@@ -51,13 +51,15 @@ class FeatureTests(unittest.TestCase):
         for i in range(100):
             data = payload()
             data['habilidades'] = ['Java', 'Python'] if i % 2 else []
+            data['experiencia'] = [] if i % 3 else [{'fechaInicio': '2025-01-01'}]
             rows.append({'features': extract(data), 'y': i % 2,
                          'date': date(2024, 1, 1) + timedelta(days=i), 'group': str(i)})
         training, testing = temporal_split(rows)
         self.assertFalse({r['group'] for r in training} & {r['group'] for r in testing})
         model, report = fit(rows)
         self.assertIn('brier', report)
-        bundle = {'model': model, 'metadata': {'schemaVersion': 2, 'metrics': report}}
+        bundle = {'model': model, 'metadata': {'schemaVersion': 2, 'metrics': report,
+                  'trainingMode': 'capturas_con_trazabilidad', 'fuentes': {'snapshot': len(rows)}}}
         client = create_app(bundle).test_client()
         with patch.dict(os.environ, {'ML_ENABLE_EXPERIMENTAL': 'false'}):
             self.assertEqual(client.post('/predict', json=payload()).status_code, 503)
@@ -81,6 +83,7 @@ class FeatureTests(unittest.TestCase):
         for i in range(160):
             data = payload()
             data['habilidades'] = ['Java', 'Python'] if i % 2 else []
+            data['experiencia'] = [] if i % 3 else [{'fechaInicio': '2025-01-01'}]
             rows.append({'features': extract(data), 'y': i % 2,
                          'date': date(2024, 1, 1)+timedelta(days=i), 'group': str(i)})
         rows[10]['group'] = rows[140]['group']

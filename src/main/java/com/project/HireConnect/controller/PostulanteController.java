@@ -388,6 +388,7 @@ public class PostulanteController {
         }
 
         model.addAttribute("postulante", optPerfilCompleto.get());
+        model.addAttribute("completitud", com.project.HireConnect.dto.CompletitudPerfil.calcular(optPerfilCompleto.get()));
         model.addAttribute("activeMenu", "perfil");
 
         return "postulante/perfil_postulante";

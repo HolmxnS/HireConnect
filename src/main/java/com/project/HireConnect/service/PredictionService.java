@@ -39,6 +39,20 @@ public class PredictionService {
         try {
             Map<String, Object> result = restTemplate.postForObject(pythonApiUrl, dto, Map.class);
             if (result != null && Integer.valueOf(2).equals(result.get("schemaVersion"))
+                    && "skill_overlap".equals(result.get("algorithm")) && !result.containsKey("probabilidad")) {
+                if ("datos_insuficientes".equals(result.get("tipoResultado"))
+                        && Boolean.FALSE.equals(result.get("disponible"))) return result;
+                if ("coincidencia_habilidades".equals(result.get("tipoResultado"))
+                        && Boolean.TRUE.equals(result.get("disponible"))
+                        && result.get("coincidenciaHabilidades") instanceof Number overlap
+                        && Double.isFinite(overlap.doubleValue()) && overlap.doubleValue() >= 0
+                        && overlap.doubleValue() <= 100
+                        && result.get("habilidadesCoincidentes") instanceof Number matched
+                        && result.get("habilidadesRequeridasTotal") instanceof Number total
+                        && total.intValue() > 0 && matched.intValue() >= 0 && matched.intValue() <= total.intValue()
+                        && Math.abs(overlap.doubleValue() - 100.0 * matched.intValue() / total.intValue()) <= .051) return result;
+            }
+            if (result != null && Integer.valueOf(2).equals(result.get("schemaVersion"))
                     && "logistic_regression".equals(result.get("algorithm"))
                     && result.get("probabilidad") instanceof Number probability
                     && Double.isFinite(probability.doubleValue())

@@ -10,6 +10,14 @@ from unittest.mock import Mock, patch
 from start import configuration, prepare_model, start_services, stop, wait_for_predictor
 
 class ConfigurationTests(unittest.TestCase):
+    def test_test_stage_uses_a_separate_model_and_does_not_require_database_writes(self):
+        root, env, _, _ = configuration({}, '/app')
+        self.assertEqual(env['ML_MODEL_MODE'], 'demo')
+        self.assertEqual(env['MODEL_PATH'], '/app/ml/artifacts/demo/model.joblib')
+        with patch('start.subprocess.run') as run:
+            prepare_model(root, env)
+            run.assert_called_once()
+
     def test_render_uses_internal_model_and_same_database_as_java(self):
         _, env, embedded, port = configuration({
             'PORT': '10000', 'SPRING_DATA_MONGODB_URI': 'mongodb://database/hireconnect',
@@ -32,7 +40,7 @@ class ConfigurationTests(unittest.TestCase):
 
     def test_missing_database_fails_explicitly_before_starting_java(self):
         with tempfile.TemporaryDirectory() as directory:
-            root, env, _, _ = configuration({}, directory)
+            root, env, _, _ = configuration({'ML_MODEL_MODE': 'real'}, directory)
             with self.assertRaisesRegex(RuntimeError, 'MONGODB_URI'):
                 prepare_model(root, env)
 

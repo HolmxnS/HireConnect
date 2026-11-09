@@ -9,6 +9,8 @@ fi
 if [[ ! -x "$ML_PYTHON" ]]; then chmod u+x "$ML_PYTHON"; fi
 # Azure's application package may be read-only. Keep trained data in /home.
 ML_DATA_DIR="${ML_DATA_DIR:-/home/data/hireconnect-ml}"
+export ML_MODEL_MODE="${ML_MODEL_MODE:-$("$ML_PYTHON" "$APP_ROOT/ml/runtime_mode.py")}"
+if [[ "$ML_MODEL_MODE" == "demo" ]]; then ML_DATA_DIR="$ML_DATA_DIR/demo"; fi
 mkdir -p "$ML_DATA_DIR"
 export MODEL_PATH="${MODEL_PATH:-$ML_DATA_DIR/model.joblib}"
 export PORT="${SERVER_PORT:-${PORT:-8080}}"

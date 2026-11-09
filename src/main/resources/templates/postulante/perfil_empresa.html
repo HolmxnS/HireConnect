@@ -19,17 +19,21 @@
     <div th:replace="~{fragments/postulante/sidebar_postulante :: sidebar('vacantes')}"></div>
     <div th:replace="~{fragments/postulante/header_postulante :: menu-fragment(false)}"></div>
     <main class="content company-visitor">
+        <div class="company-visitor__shell">
         <a class="company-visitor__back" th:href="@{/postulante/vacantes}">← Volver a vacantes</a>
         <article class="company-visitor__profile">
             <div class="company-visitor__cover"><img th:if="${not #strings.isEmpty(empresa.portada)}" th:src="${empresa.portada}" alt="Portada de la empresa" /></div>
             <div class="company-visitor__body">
                 <div class="company-visitor__identity">
                     <div class="company-visitor__logo"><img th:if="${not #strings.isEmpty(empresa.foto)}" th:src="${empresa.foto}" th:alt="${'Logo de ' + empresa.nombre}" /><span th:if="${#strings.isEmpty(empresa.foto)}" aria-hidden="true">↗</span></div>
+                    <div class="company-visitor__name">
+                        <span class="company-visitor__eyebrow">PERFIL DE EMPRESA</span>
+                        <h1 th:text="${empresa.nombre}"></h1>
+                        <p class="company-visitor__sector" th:if="${not #strings.isEmpty(empresa.sector)}" th:text="${empresa.sector}"></p>
+                        <div class="company-visitor__meta"><span th:if="${not #strings.isEmpty(empresa.ubicacion)}" th:text="${empresa.ubicacion}"></span><a href="#empleos" th:text="${#lists.size(empleos) + (#lists.size(empleos) == 1 ? ' empleo disponible' : ' empleos disponibles')}"></a></div>
+                    </div>
                     <a class="company-visitor__website" th:if="${empresa.website != null}" th:href="${empresa.website}" target="_blank" rel="noopener noreferrer">Visitar sitio web ↗</a>
                 </div>
-                <h1 th:text="${empresa.nombre}"></h1>
-                <p class="company-visitor__sector" th:if="${not #strings.isEmpty(empresa.sector)}" th:text="${empresa.sector}"></p>
-                <div class="company-visitor__meta"><span th:if="${not #strings.isEmpty(empresa.ubicacion)}" th:text="${empresa.ubicacion}"></span><a href="#empleos" th:text="${#lists.size(empleos) + (#lists.size(empleos) == 1 ? ' empleo disponible' : ' empleos disponibles')}"></a></div>
                 <section class="company-visitor__about" aria-label="Información de la empresa"><p th:text="${#strings.isEmpty(empresa.descripcion) ? 'La empresa aún no ha añadido una descripción.' : empresa.descripcion}"></p></section>
                 <nav class="company-visitor__social" th:if="${not #maps.isEmpty(redes)}" aria-label="Perfiles sociales"><a th:each="red : ${redes}" th:href="${red.value}" th:text="${red.key + ' ↗'}" target="_blank" rel="noopener noreferrer"></a></nav>
                 <section class="company-visitor__jobs" id="empleos" aria-labelledby="company-jobs-heading">
@@ -46,6 +50,7 @@
                 </section>
             </div>
         </article>
+        </div>
     </main>
     <script th:src="@{/js/perfil_empresa_publico.js}" defer></script>
     <div th:replace="~{fragments/postulante/chatbot :: chatbot}"></div>

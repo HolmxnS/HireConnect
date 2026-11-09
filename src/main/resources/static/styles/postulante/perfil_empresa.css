@@ -1,42 +1,53 @@
-body main.content.company-visitor { padding: 3.2rem; }
+body main.content.company-visitor { padding: 4rem clamp(2.4rem, 4vw, 6.4rem) 6rem; }
+.company-visitor__shell { width: 100%; max-width: 112rem; margin-inline: auto; }
 .company-visitor__back { display: inline-block; margin-bottom: 2rem; color: var(--text-medium); text-decoration: none; font-size: 1.4rem; }
 .company-visitor__profile { max-width: 112rem; margin: auto; background: var(--pc-surface); border: 1px solid var(--pc-line); border-radius: 2rem; overflow: hidden; }
-.company-visitor__cover { height: clamp(16rem, 23vw, 28rem); background: linear-gradient(125deg, var(--pc-line), var(--pc-bg)); }
+.company-visitor__cover { height: clamp(12rem, 12vw, 18rem); background: linear-gradient(125deg, var(--pc-line), var(--pc-bg)); }
 .company-visitor__cover img { width: 100%; height: 100%; object-fit: cover; }
-.company-visitor__body { padding: 0 3.2rem 3.2rem; }
-.company-visitor__identity { display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem; margin-top: -5.5rem; position: relative; }
-.company-visitor__logo { width: 12rem; height: 12rem; border: .5rem solid var(--pc-surface); border-radius: 2.4rem; overflow: hidden; background: white; display: grid; place-items: center; flex-shrink: 0; }
-.company-visitor__logo img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.company-visitor__body { padding: 3.2rem; }
+.company-visitor__identity { display: flex; align-items: center; gap: 2.4rem; }
+.company-visitor__name { flex: 1; min-width: 0; }
+.company-visitor__eyebrow { color: var(--text-medium); font-size: 1rem; font-weight: 700; letter-spacing: .12em; }
+.company-visitor__logo { width: 9.6rem; height: 9.6rem; border: .5rem solid var(--pc-surface); border-radius: 2.4rem; overflow: hidden; background: white; display: grid; place-items: center; flex-shrink: 0; }
+.company-visitor__logo img { width: 100%; height: 100%; object-fit: contain; object-position: center; }
 .company-visitor__logo span { color: #8e22bb; font-size: 4rem; }
-.company-visitor h1 { font-family: 'Clash Display', sans-serif; font-size: clamp(2.6rem, 3vw, 3.6rem); margin: 2rem 0 .8rem; color: var(--text-strong); overflow-wrap: anywhere; }
-.company-visitor__sector { color: var(--text-medium); font-size: 1.6rem; margin: 0 0 1.2rem; }
+.company-visitor h1 { font-family: 'Clash Display', sans-serif; font-size: clamp(2.2rem, 2vw, 2.8rem); line-height: 1.25; margin: .6rem 0 .8rem; color: var(--text-strong); overflow-wrap: anywhere; }
+.company-visitor__sector { color: var(--text-medium); font-size: 1.4rem; margin: 0 0 .8rem; }
 .company-visitor__meta { display: flex; flex-wrap: wrap; gap: 1.6rem; font-size: 1.4rem; color: var(--text-medium); }
-.company-visitor a { color: var(--primary-color); text-underline-offset: .3rem; }
+.company-visitor a { color: var(--text-strong); text-underline-offset: .3rem; }
 .company-visitor a:hover { text-decoration: underline; }
+.company-visitor__website:hover, .company-visitor__more:hover { background: var(--pc-surface); border-color: var(--text-medium); }
+.company-visitor__website { flex-shrink: 0; }
 .company-visitor__website, .company-visitor__more { padding: 1.2rem 1.6rem; border-radius: 1rem; border: 1px solid var(--pc-line); background: var(--pc-bg); text-decoration: none; font: inherit; font-size: 1.4rem; }
-.company-visitor__about { margin-top: 3rem; padding: 2.8rem 0; border-top: 1px solid var(--pc-line); }
-.company-visitor__about p { font-size: 1.6rem; color: var(--text-base); white-space: pre-line; line-height: 1.8; margin: 0; max-width: 80rem; overflow-wrap: anywhere; }
+.company-visitor__about { margin-top: 2.4rem; padding: 2.4rem 0; border-top: 1px solid var(--pc-line); }
+.company-visitor__about p { font-size: 1.4rem; color: var(--text-base); white-space: pre-line; line-height: 1.8; margin: 0; max-width: 90rem; overflow-wrap: anywhere; }
 .company-visitor__social { display: flex; flex-wrap: wrap; gap: 2.4rem; border-top: 1px solid var(--pc-line); padding: 2.4rem 0; font-size: 1.4rem; }
-.company-visitor__jobs { border-top: 1px solid var(--pc-line); padding-top: 2.8rem; scroll-margin-top: 10rem; }
+.company-visitor__jobs { border-top: 1px solid var(--pc-line); padding-top: 2.4rem; scroll-margin-top: 10rem; }
 .company-visitor__jobs-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
 .company-visitor h2 { font-size: 2.2rem; color: var(--text-strong); margin: 0; }
 .company-visitor__jobs-heading span, .company-visitor__empty, .company-visitor__progress { color: var(--text-medium); font-size: 1.4rem; }
 a.company-visitor__job { display: flex; justify-content: space-between; gap: 2rem; padding: 2.4rem 0; border-bottom: 1px solid var(--pc-line); text-decoration: none; }
-.company-visitor__job:hover h3 { color: var(--primary-color); }
+.company-visitor__job:hover h3 { color: var(--text-strong); text-decoration: underline; text-underline-offset: .3rem; }
 .company-visitor__job h3 { font-size: 1.8rem; color: var(--text-strong); margin: 0 0 .8rem; }
 .company-visitor__job p { display: flex; flex-wrap: wrap; gap: 1.6rem; color: var(--text-medium); font-size: 1.4rem; margin: 0 0 .8rem; }
 .company-visitor__job small { font-size: 1.2rem; color: var(--text-medium); }
 .company-visitor__job-action { display: flex; flex-direction: column; align-items: flex-end; justify-content: center; gap: 1rem; flex-shrink: 0; font-size: 1.4rem; }
 .company-visitor__job-action strong { color: var(--text-strong); }
-.company-visitor__more { display: block; margin: 2.4rem auto 0; color: var(--primary-color); cursor: pointer; }
+.company-visitor__more { display: block; margin: 2.4rem auto 0; color: var(--text-strong); cursor: pointer; }
 .company-visitor__progress { text-align: center; }
 .company-visitor [hidden] { display: none !important; }
-.company-visitor a:focus-visible, .company-visitor button:focus-visible { outline: 2px solid var(--primary-color); outline-offset: 4px; }
+.company-visitor a:focus-visible, .company-visitor button:focus-visible { outline: 2px solid var(--text-strong); outline-offset: 4px; }
+@media (max-width: 900px) {
+    .company-visitor__identity { flex-wrap: wrap; gap: 1.6rem; }
+    .company-visitor__website { margin-left: auto; }
+    .company-visitor__name { flex-basis: calc(100% - 12rem); }
+}
 @media (max-width: 600px) {
     body main.content.company-visitor { padding: 1.6rem; }
-    .company-visitor__body { padding: 0 2rem 2rem; }
-    .company-visitor__logo { width: 10rem; height: 10rem; }
-    .company-visitor__website { max-width: 15rem; text-align: center; }
+    .company-visitor__body { padding: 2rem; }
+    .company-visitor__logo { width: 7.2rem; height: 7.2rem; border-radius: 1.8rem; }
+    .company-visitor__name { flex-basis: calc(100% - 9rem); }
+    .company-visitor__website { width: 100%; text-align: center; box-sizing: border-box; }
     a.company-visitor__job { flex-direction: column; gap: 1.6rem; }
     .company-visitor__job-action { flex-direction: row; justify-content: space-between; align-items: center; flex-wrap: wrap; }
 }

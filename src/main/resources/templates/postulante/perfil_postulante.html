@@ -410,7 +410,7 @@
         </div>
       </div>
         </div>
-        <aside class="profile-aside" aria-label="Documentos y próximas funciones">
+        <aside class="profile-aside" aria-label="Documentos y completitud del perfil">
         <div class="profile-card cv-section">
           <h3>Hoja de vida</h3>
           <form
@@ -445,7 +445,25 @@
             </a>
           </div>
         </div>
-          <section class="profile-features"><span class="profile-features__label">NEW FEATURES</span><div class="profile-features__circle" aria-hidden="true"><span>✦</span></div><h2>Tu perfil, con más posibilidades</h2><p>Próximamente</p></section>
+          <section class="profile-completeness" aria-labelledby="profile-completeness-title" data-profile-completeness>
+            <span class="profile-completeness__label">TU PERFIL</span>
+            <div class="profile-completeness__ring" role="progressbar" aria-label="Completitud del perfil" aria-valuemin="0" aria-valuemax="100" th:attr="aria-valuenow=${completitud.porcentaje}" th:style="${'--profile-progress:' + completitud.porcentaje + '%'}">
+              <span th:text="${completitud.porcentaje + '%'}" data-profile-percentage></span>
+            </div>
+            <h2 id="profile-completeness-title">Perfil completado</h2>
+            <p data-profile-completed-count aria-live="polite" th:text="${completitud.completados + ' de ' + completitud.total + ' apartados completos'}"></p>
+            <details class="profile-completeness__details">
+              <summary>Ver mi progreso</summary>
+              <p>Cada apartado aporta el mismo porcentaje. Se actualiza al guardar tus cambios.</p>
+              <ul>
+                <li th:each="apartado : ${completitud.apartados}" th:attr="data-profile-part=${apartado.clave},data-complete=${apartado.completo}">
+                  <span class="profile-completeness__check" aria-hidden="true" th:text="${apartado.completo ? '✓' : '○'}"></span>
+                  <span th:text="${apartado.nombre}"></span>
+                  <span class="profile-completeness__state" th:text="${apartado.completo ? 'Completo' : 'Pendiente'}"></span>
+                </li>
+              </ul>
+            </details>
+          </section>
         </aside>
       </div>
     </main>
@@ -460,6 +478,7 @@
     </dialog>
     <script th:src="@{/js/toasts.js}" defer></script>
     <script th:src="@{/js/perfil_foto.js}" defer></script>
+    <script th:src="@{/js/perfil_completitud.js}" defer></script>
     <script th:src="@{/js/modal_postulante.js}" defer></script>
     <script th:src="@{/js/perfil_tabs.js}" defer></script>
     <div th:replace="~{fragments/postulante/chatbot :: chatbot}"></div>

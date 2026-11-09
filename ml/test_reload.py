@@ -15,7 +15,8 @@ class Predictor:
 
 def artifact(probability):
     return {'model': Predictor(probability), 'metadata': {'schemaVersion': 2,
-            'trainedAt': str(probability), 'metrics': {'rangos_train': {'coincidenciaHabilidades': [0, 100]},
+            'trainedAt': str(probability), 'trainingMode': 'capturas_con_trazabilidad',
+            'fuentes': {'snapshot': 100}, 'metrics': {'rangos_train': {'coincidenciaHabilidades': [0, 100], 'experienciaAnos': [0, 30]},
             'categorias_train': {'modalidad': ['remoto']}}}}
 
 class ReloadTests(unittest.TestCase):

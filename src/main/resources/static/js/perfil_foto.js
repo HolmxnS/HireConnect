@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     document.querySelectorAll('input[name="foto"]').forEach(field => { field.value = url || ''; });
     remove.hidden = !url;
+    document.dispatchEvent(new CustomEvent('profile-photo-saved', { detail: { foto: url || null } }));
   }
   async function request(options) {
     const headers = {};

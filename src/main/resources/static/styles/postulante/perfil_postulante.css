@@ -53,11 +53,22 @@
 .cv-view-container { margin-top: 1.6rem; padding-top: 1.6rem; border-top: 1px solid var(--hc-line); }
 .profile-cv-status { font-size: 1.2rem; color: var(--pc-ok); margin-bottom: 1rem; }
 .profile-page .btn-view-cv { display: inline-flex; gap: .6rem; font-size: 1.2rem; font-weight: 600; color: var(--hc-accent-ink); text-decoration: none; }
-.profile-features { padding: 2.4rem 2rem; border: 1px dashed var(--hc-line); border-radius: 1.4rem; background: var(--hc-surface); text-align: center; }
-.profile-features__label { display: inline-block; padding: .5rem .8rem; background: var(--hc-soft); color: var(--hc-accent-ink); border-radius: .5rem; font-size: .9rem; font-weight: 700; letter-spacing: .12em; }
-.profile-features__circle { display: grid; place-items: center; width: 9.6rem; height: 9.6rem; margin: 2.4rem auto; border: .8rem solid var(--hc-soft); outline: 1px dashed var(--hc-line); border-radius: 50%; color: var(--hc-accent-ink); font-size: 2.6rem; }
-.profile-features h2 { color: var(--hc-text); font-family: var(--font-satoshi); font-size: 1.4rem; font-weight: 600; line-height: 1.5; }
-.profile-features p { margin-top: .8rem; color: var(--hc-muted); font-size: 1.2rem; }
+/* Completitud del perfil calculada con los apartados guardados. */
+.profile-completeness { padding: 2.4rem 2rem; border: 1px solid var(--hc-line); border-radius: 1.4rem; background: var(--hc-surface); text-align: center; }
+.profile-completeness__label { display: inline-block; padding: .5rem .8rem; background: var(--hc-soft); color: var(--hc-accent-ink); border-radius: .5rem; font-size: .9rem; font-weight: 700; letter-spacing: .12em; }
+.profile-completeness__ring { position: relative; isolation: isolate; display: grid; place-items: center; width: 12rem; height: 12rem; margin: 2.4rem auto 2rem; border-radius: 50%; background: conic-gradient(var(--hc-accent) var(--profile-progress, 0%), var(--hc-soft) 0); }
+.profile-completeness__ring::before { content: ''; position: absolute; inset: .9rem; border-radius: 50%; background: var(--hc-surface); z-index: -1; }
+.profile-completeness__ring > span { color: var(--hc-text); font: 700 2.8rem var(--font-satoshi); }
+.profile-completeness h2 { color: var(--hc-text); font-family: var(--font-satoshi); font-size: 1.4rem; font-weight: 600; line-height: 1.5; }
+.profile-completeness p { margin-top: .8rem; color: var(--hc-muted); font-size: 1.2rem; line-height: 1.6; }
+.profile-completeness__details { margin-top: 1.8rem; padding-top: 1.4rem; border-top: 1px solid var(--hc-line); text-align: left; }
+.profile-completeness__details summary { color: var(--hc-accent-ink); cursor: pointer; font-size: 1.2rem; font-weight: 600; }
+.profile-completeness__details ul { list-style: none; margin: 1.4rem 0 0; padding: 0; }
+.profile-completeness__details li { display: flex; align-items: center; gap: .8rem; padding: .6rem 0; color: var(--hc-muted); font-size: 1.15rem; }
+.profile-completeness__details li[data-complete="true"] .profile-completeness__check { color: var(--hc-accent-ink); }
+.profile-completeness__check { width: 1.4rem; flex-shrink: 0; }
+.profile-completeness__state { margin-left: auto; font-size: 1rem; }
+
 .profile-page .form-grid { display: grid; gap: 1.6rem; margin-bottom: 1.6rem; }
 .profile-page .form-grid.cols-2 { grid-template-columns: repeat(2,minmax(0,1fr)); }
 .profile-page .form-grid.cols-3 { grid-template-columns: repeat(3,minmax(0,1fr)); }

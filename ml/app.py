@@ -5,16 +5,23 @@ from pathlib import Path
 import joblib
 import pandas as pd
 from flask import Flask, request, jsonify
+from runtime_mode import model_mode
 from features import SCHEMA_VERSION, extract
+from reliability import training_limits, coverage_limits, overlap_result, valid_probability
 
 
 def create_app(bundle=None):
     app = Flask(__name__)
     app.config['MAX_CONTENT_LENGTH'] = 128 * 1024
     path = None if bundle is not None else Path(os.environ.get(
-        'MODEL_PATH', str(Path(__file__).resolve().parent / 'artifacts/model.joblib')))
+        'MODEL_PATH', str(Path(__file__).resolve().parent / ('artifacts/demo/model.joblib' if model_mode() == 'demo' else 'artifacts/model.joblib'))))
     signature = None
     lock = threading.Lock()
+
+    def demo_enabled(current):
+        return (current is not None and current['metadata'].get('synthetic') is True
+                and current['metadata'].get('trainingMode') == 'simulacion'
+                and model_mode() == 'demo')
 
     def refresh():
         nonlocal bundle, signature
@@ -46,6 +53,8 @@ def create_app(bundle=None):
         return jsonify({'modelReady': current is not None, 'schemaVersion': SCHEMA_VERSION,
                         'trainedAt': current['metadata'].get('trainedAt') if current else None,
                         'modelVersion': current['metadata'].get('modelVersion', 'legacy') if current else None,
+                        'probabilityReady': current is not None and not training_limits(current['metadata']),
+                        'simulationReady': demo_enabled(current),
                         'experimental': current['metadata'].get('experimental', True) if current else None,
                         'predictionReady': current is not None and (not current['metadata'].get('experimental', True)
                             or os.environ.get('ML_ENABLE_EXPERIMENTAL', 'true').lower() == 'true')})
@@ -70,13 +79,23 @@ def create_app(bundle=None):
         ranges = current['metadata'].get('metrics', {}).get('rangos_train')
         if not ranges:
             return jsonify({'error': 'Modelo sin informe de cobertura'}), 503
-        unsupported = [key for key, (low, high) in ranges.items() if not low <= features[key] <= high]
-        categories = current['metadata'].get('metrics', {}).get('categorias_train', {})
-        unsupported += [key for key, values in categories.items() if features[key] not in values]
+        unsupported = coverage_limits(current['metadata'], features)
+        simulated = demo_enabled(current)
+        reasons = [] if simulated else training_limits(current['metadata'])
+        if unsupported:
+            reasons.append('perfil_fuera_de_cobertura')
+        if reasons:
+            result = overlap_result(features, reasons, unsupported)
+            result['modelVersion'] = current['metadata'].get('modelVersion', 'legacy')
+            return jsonify(result)
         model = current['model']
         probability = float(model.predict_proba(pd.DataFrame([features]))[0, list(model.classes_).index(1)])
+        if not valid_probability(probability):
+            return jsonify({'error': 'El modelo devolvio una probabilidad invalida'}), 503
         # Display categories are provisional UI thresholds, not a separately trained target.
         return jsonify({'probabilidad': round(probability * 100, 1),
+                        'disponible': True, 'tipoResultado': 'simulacion' if simulated else 'probabilidad',
+                        'probabilidadDisponible': not simulated, 'synthetic': simulated,
                         'compatibilidad': 'Alta' if probability >= .7 else 'Media' if probability >= .45 else 'Baja',
                         'schemaVersion': SCHEMA_VERSION, 'experimental': current['metadata'].get('experimental', True),
                         'modelVersion': current['metadata'].get('modelVersion', 'legacy'),

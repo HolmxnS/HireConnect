@@ -33,15 +33,17 @@ class PrediccionLiveIntegrationTest {
         when(people.buscarPorEmail("integracion@example.invalid")).thenReturn(Optional.of(person));
         when(vacancies.buscarPorId("vacante-prueba")).thenReturn(Optional.of(vacancy));
         var controller = new PrediccionVacanteController(vacancies, people,
-                new PredictionService("http://127.0.0.1:5050/predict"), new PrediccionPerfilService());
+                new PredictionService(System.getProperty("ml.integration.url", "http://127.0.0.1:5050/predict")), new PrediccionPerfilService());
         var mvc = MockMvcBuilders.standaloneSetup(controller).build();
         mvc.perform(get("/postulante/vacante/vacante-prueba/prediccion")
                         .principal(new UsernamePasswordAuthenticationToken("integracion@example.invalid", null)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.algorithm").value("logistic_regression"))
                 .andExpect(jsonPath("$.schemaVersion").value(2))
+                .andExpect(jsonPath("$.tipoResultado").value("simulacion"))
+                .andExpect(jsonPath("$.synthetic").value(true))
                 .andExpect(jsonPath("$.probabilidad").isNumber())
-                .andExpect(jsonPath("$.coberturaLimitada").value(true));
+                .andExpect(jsonPath("$.coberturaLimitada").value(false));
         mvc.perform(get("/postulante/vacante/vacante-prueba/prediccion"))
                 .andExpect(status().isUnauthorized());
     }

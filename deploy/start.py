@@ -9,6 +9,9 @@ import json
 from urllib.error import URLError
 from urllib.request import urlopen
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "ml"))
+from runtime_mode import model_mode
+
 
 def configuration(environment=None, root=None):
     env = dict(os.environ if environment is None else environment)
@@ -21,7 +24,8 @@ def configuration(environment=None, root=None):
         raise ValueError('ML_PORT debe ser distinto del puerto publico PORT')
     env['MONGODB_URI'] = env.get('MONGODB_URI') or env.get('SPRING_DATA_MONGODB_URI', '')
     env['MONGODB_DATABASE'] = env.get('MONGODB_DATABASE') or env.get('SPRING_DATA_MONGODB_DATABASE') or 'hireconnect'
-    env.setdefault('MODEL_PATH', str(root / 'ml/artifacts/model.joblib'))
+    env['ML_MODEL_MODE'] = model_mode(env)
+    env.setdefault('MODEL_PATH', str(root / ('ml/artifacts/demo/model.joblib' if env['ML_MODEL_MODE'] == 'demo' else 'ml/artifacts/model.joblib')))
     env.setdefault('ML_ENABLE_EXPERIMENTAL', 'true')
     if embedded:
         # Embedded mode always uses the API included in this deployment, even if
@@ -33,9 +37,9 @@ def configuration(environment=None, root=None):
 def prepare_model(root, env):
     if Path(env['MODEL_PATH']).is_file():
         return
-    if not env.get('MONGODB_URI'):
+    if not env.get('MONGODB_URI') and env.get('ML_MODEL_MODE') != 'demo':
         raise RuntimeError('Falta MONGODB_URI o SPRING_DATA_MONGODB_URI para preparar el modelo')
-    print('Preparando regresion logistica con las postulaciones de MongoDB...', flush=True)
+    print('Preparando regresion logistica en modo ' + env.get('ML_MODEL_MODE', 'real') + '...', flush=True)
     subprocess.run([sys.executable, str(root / 'ml/manage.py'), 'train'],
                    env=env, check=True, timeout=180)
 

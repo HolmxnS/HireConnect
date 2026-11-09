@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+from runtime_mode import model_mode
 
 BASE = Path(__file__).resolve().parent
 
@@ -19,7 +20,7 @@ def load_environment():
                 continue
             name, value = line.split('=', 1)
             name = name.strip()
-            if name in {'MONGODB_URI', 'MONGODB_DATABASE', 'MONGODB_TLS_CA_FILE', 'MODEL_PATH', 'PORT', 'ML_ENABLE_EXPERIMENTAL'}:
+            if name in {'MONGODB_URI', 'MONGODB_DATABASE', 'MONGODB_TLS_CA_FILE', 'MODEL_PATH', 'PORT', 'ML_ENABLE_EXPERIMENTAL', 'ML_MODEL_MODE'}:
                 os.environ.setdefault(name, value.strip().strip('\"\x27'))
 
 
@@ -37,12 +38,16 @@ def main():
     if args.command == 'audit':
         subprocess.run([sys.executable, str(BASE / 'train.py'), '--audit-only'], check=True)
         return
-    artifact = Path(os.environ.get('MODEL_PATH', str(BASE / 'artifacts/model.joblib'))).resolve()
+    demo = model_mode() == 'demo'
+    default_artifact = BASE / ('artifacts/demo/model.joblib' if demo else 'artifacts/model.joblib')
+    artifact = Path(os.environ.get('MODEL_PATH', str(default_artifact))).resolve()
     os.environ['MODEL_PATH'] = str(artifact)
     if args.command == 'train' or not artifact.is_file():
         # Current DB is explicitly authorized for the functional experimental model.
-        command = [sys.executable, str(BASE / 'train.py'), '--output', str(artifact.parent)]
-        if not args.captured_only:
+        command = [sys.executable, str(BASE / ('demo.py' if demo else 'train.py')), '--output', str(artifact.parent)]
+        if demo and args.captured_only:
+            raise ValueError('--captured-only requiere ML_MODEL_MODE=real')
+        if not demo and not args.captured_only:
             command.append('--allow-current-profiles')
         subprocess.run(command, check=True)
         if artifact.name != 'model.joblib':

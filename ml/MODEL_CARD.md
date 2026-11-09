@@ -1,5 +1,15 @@
 # Modelo de aceptación de HireConnect
 
+Modo actual: pruebas con datos generados y artefacto separado. La configuración
+predeterminada y su operación se describen en TEST_STAGE.md. Las limitaciones
+del histórico real y su protección se mantienen como se detalla abajo.
+
+Actualización del 7 de noviembre: la auditoría reprodujo un 99 % injustificado
+por el sesgo de modalidad del histórico. El servicio ahora se abstiene de mostrar
+probabilidades sin capturas trazables y variación de perfiles. Puede mostrar una
+coincidencia de habilidades identificada como comparación, nunca como aceptación.
+La validación predictiva sigue pendiente. Detalles en PREDICTION_AUDIT.md.
+
 Estado al 5 de noviembre de 2026: versión operativa y comprobada técnicamente;
 validación predictiva con resultados reales pendiente. La etiqueta experimental
 se conserva por esa limitación, no por fallos de arranque o integración.

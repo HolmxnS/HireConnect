@@ -70,6 +70,8 @@ def extract(payload):
     years = experience_years(experience, reference)
     return {
         'coincidenciaHabilidades': len(owned & wanted) / len(wanted) * 100 if wanted else 0,
+        'habilidadesCoincidentes': len(owned & wanted),
+        'habilidadesRequeridasTotal': len(wanted),
         'habilidadesConocidas': int(bool(wanted)),
         'experienciaAnos': years,
         'experienciaFaltanteAnos': max(0, minimum - years) if minimum is not None else 0,

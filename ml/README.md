@@ -1,3 +1,12 @@
+> Etapa de pruebas activa: desde el 7 de noviembre, el modo predeterminado es
+> `demo`, con datos generados y un modelo separado. Mantiene «Estimación de
+> aceptación» y una nota breve de procedencia. Operación: [TEST_STAGE.md](TEST_STAGE.md).
+
+> Actualización del 7 de noviembre de 2026: el servicio distingue probabilidad
+> de aceptación, coincidencia de habilidades y datos insuficientes. El histórico
+> actual no respalda una probabilidad de aceptación: no se vuelve a mostrar el
+> 99 % originado por la modalidad. Véase [PREDICTION_AUDIT.md](PREDICTION_AUDIT.md).
+
 # Predicción de aceptación de HireConnect
 
 Regresión logística binaria: `ACEPTADA=1`, `RECHAZADA=0`. Las postulaciones

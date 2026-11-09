@@ -1,5 +1,6 @@
 """Unlabelled synthetic requests test operation only, never predictive accuracy."""
 import argparse
+from collections import Counter
 import json
 import math
 import os
@@ -38,12 +39,19 @@ def verify(count=512):
     if not health.get('modelReady'):
         raise ValueError('No hay un modelo cargado para verificar')
     latencies, failures, limited, predictions = [], [], 0, []
+    result_types = Counter()
     for i, payload in enumerate(requests(count)):
         started = time.perf_counter()
         response = client.post('/predict', json=payload)
         latencies.append((time.perf_counter()-started) * 1000)
         result = response.get_json() or {}
-        probability = result.get('probabilidad')
+        probability = (result.get('coincidenciaHabilidades') if result.get('tipoResultado') == 'coincidencia_habilidades' else result.get('probabilidad'))
+        insufficient = result.get('tipoResultado') == 'datos_insuficientes'
+        result_types[result.get('tipoResultado', 'sin_tipo')] += 1
+        if result.get('tipoResultado') in {'coincidencia_habilidades', 'datos_insuficientes'} and 'probabilidad' in result:
+            failures.append({'caso': i, 'error': 'Coincidencia presentada como probabilidad'})
+        if insufficient and response.status_code == 200 and 'probabilidad' not in result:
+            continue
         if (response.status_code != 200 or not isinstance(probability, (float, int))
                 or not math.isfinite(probability) or not 0 <= probability <= 100):
             failures.append({'caso': i, 'status': response.status_code})
@@ -61,6 +69,7 @@ def verify(count=512):
             'casos_validos': count, 'entradas_invalidas': len(invalid), 'fallos': failures,
             'casos_cobertura_limitada': limited,
             'porcentajes_distintos': len(set(predictions)),
+            'tipos_resultado': dict(result_types),
             'latencia_mediana_ms': round(statistics.median(latencies), 3),
             'latencia_p95_ms': round(sorted(latencies)[math.ceil(.95 * len(latencies))-1], 3)}
 
