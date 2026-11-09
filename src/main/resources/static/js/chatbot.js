@@ -105,7 +105,7 @@
     }
     function welcome() {
         var box = el('div', 'hc-chat__welcome');
-        box.append(el('span', 'hc-chat__welcome-spark', '✦'), el('h2', '', 'Hola' + (root.dataset.chatName ? ', ' + root.dataset.chatName.split(' ')[0] : '') + '.'), el('p', '', 'Hagamos más fácil tu búsqueda de empleo.'), el('small', '', 'Podemos revisar tu perfil, explorar ofertas o preparar tu próxima entrevista.'));
+        box.append(el('span', 'hc-chat__welcome-spark', '✦'), el('h2', '', 'Hola' + (root.dataset.chatName ? ', ' + root.dataset.chatName.split(' ')[0] : '') + '.'), el('p', '', '¿Qué te gustaría resolver hoy?'), el('small', '', 'Cuéntame qué buscas y lo vemos paso a paso.'));
         messages.append(box); suggestions(starters);
     }
     function syncInput() {
@@ -116,7 +116,11 @@
     function setBusy(value) { busy = value; messages.setAttribute('aria-busy', String(value)); syncInput(); chips.querySelectorAll('button').forEach(function (b) { b.disabled = value; }); }
     function open(value) {
         panel.hidden = !value; toggle.setAttribute('aria-expanded', String(value));
-        if (value) { scroll(); input.focus({ preventScroll: true }); } else toggle.focus({ preventScroll: true });
+        if (value) {
+            if (!conversation.length) suggestions(selectedVacancy()
+                ? ['Analiza esta vacante', 'Preparar una entrevista para esta oferta', 'Revisa mi perfil'] : starters);
+            scroll(); input.focus({ preventScroll: true });
+        } else toggle.focus({ preventScroll: true });
     }
     function cancel() {
         generation++;

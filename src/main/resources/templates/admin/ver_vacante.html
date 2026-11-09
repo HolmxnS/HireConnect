@@ -16,94 +16,32 @@
     <link rel="stylesheet" th:href="@{/styles/admin/workspace.css}" />
     <link rel="stylesheet" th:href="@{/styles/toasts.css}" />
     <link rel="stylesheet" th:href="@{/styles/admin/content.css}" />
+<link rel="stylesheet" th:href="@{/styles/admin/vacantes.css}"/>
 </head>
 
-<body class="admin-area admin-layout-page">
-    <div th:replace="~{fragments/admin/sidebar_admin :: sidebar('vacantes')}"></div>
-
-    <div th:replace="~{fragments/admin/header_admin :: topbar('Administración', '')}"></div>
-    <main class="main">
-        <p th:if="${success}" th:text="${success}" data-toast-message hidden></p><p th:if="${error}" th:text="${error}" data-toast-message data-toast-error hidden></p>
-
-
-        <div>
-            <a th:href="@{/admin/vacantes}" class="back-btn">
-                <i class="fa-solid fa-arrow-left"></i> Volver
-            </a>
-        </div>
-
-        <section class="panel">
-            <div class="detail-top" style="margin-bottom: 0; padding-bottom: 0; border-bottom: none;">
-                <div class="detail-top__heading">
-                    <h2 th:text="${vacante.titulo}">Título de la vacante</h2>
-                    <p>Publicada por: <strong th:text="${vacante.empresa?.nombre ?: 'Sin empresa'}">Empresa</strong></p>
-                </div>
-
-                <div class="detail-top__actions">
-                    <span class="badge"
-                        th:classappend="${vacante.estado?.name() == 'ACTIVA'} ? 'badge--ok' : (${vacante.estado?.name() == 'CERRADA'} ? 'badge--bad' : 'badge--warn')"
-                        th:text="${vacante.estado}">ACTIVA</span>
-                    <a th:if="${vacante.estado == null or vacante.estado.name() != 'CERRADA'}" th:href="@{/admin/vacantes/cerrar/{id}(id=${vacante.id})}"
-                        data-admin-confirm="¿Estás seguro de CERRAR esta vacante?" class="btn btn--danger">
-                        <i class="fa-solid fa-circle-xmark"></i> Cerrar
-                    </a>
-                </div>
-            </div>
-        </section>
-
-        <section class="panel">
-            <div class="detail-grid">
-                <div>
-                    <h3>Información</h3>
-                    <ul class="info-list">
-                        <li><i class="fa-solid fa-money-bill"></i> Salario: $<span
-                                th:text="${#numbers.formatDecimal(vacante.salario, 0, 'COMMA', 0, 'POINT')}"></span></li>
-                        <li><i class="fa-solid fa-clock"></i> Tipo: <span th:text="${vacante.tipoContrato?.descripcion ?: 'No especificado'}"></span></li>
-                        <li><i class="fa-solid fa-map-pin"></i> Modalidad: <span th:text="${vacante.modalidad?.descripcion ?: 'No especificada'}"></span></li>
-                        <li><i class="fa-solid fa-graduation-cap"></i> Nivel: <span th:text="${vacante.experienciaRequerida?.descripcion ?: 'No especificada'}"></span></li>
-                        <li><i class="fa-solid fa-calendar-check"></i> Publicación:
-                            <span th:text="${#temporals.format(vacante.fechaPublicacion, 'dd/MMM/yyyy')}"></span></li>
-                        <li><i class="fa-solid fa-list-ol"></i> Total postulantes:
-                            <span th:text="${#lists.size(postulantes)}"></span></li>
-                    </ul>
-                </div>
-
-                <div>
-                    <h3>Descripción detallada</h3>
-                    <div class="text-box rich-text" th:text="${vacante.descripcion}" style="white-space:pre-line"></div>
-                </div>
-            </div>
-        </section>
-
-        <section class="panel table-panel">
-            <div class="panel__head" style="padding: 2.4rem 2.4rem 0;">
-                <h2 class="panel__title"><i class="fa-solid fa-users-line"></i> Postulaciones</h2>
-            </div>
-
-            <div class="table-scroll">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th scope="col">Nombre del postulante</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Fecha de postulación</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="postulacion : ${postulantes}">
-                            <td class="table__strong"
-                                th:text="${postulacion.postulante.nombre} + ' ' + ${postulacion.postulante.apellido}"></td>
-                            <td class="table__muted" th:text="${postulacion.postulante.email}"></td>
-                            <td class="table__muted" th:text="${#temporals.format(postulacion.fechaPostulacion, 'dd/MM/yyyy')}"></td>
-                        </tr>
-                        <tr th:if="${#lists.isEmpty(postulantes)}">
-                            <td colspan="3" class="table__empty">Aún no hay postulaciones.</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-    </main>
-</body>
-
-</html>
+<body class="admin-area admin-layout-page admin-jobs">
+<div th:replace="~{fragments/admin/sidebar_admin :: sidebar('vacantes')}"></div>
+<div th:replace="~{fragments/admin/header_admin :: topbar('Administración', '')}"></div>
+<main class="main"><div class="admin-job-detail">
+<p th:if="${success}" th:text="${success}" data-toast-message hidden></p><p th:if="${error}" th:text="${error}" data-toast-message data-toast-error hidden></p>
+<a th:href="@{/admin/vacantes}" class="jobs-back">← Volver a vacantes</a>
+<section class="jobs-detail-hero">
+  <div class="jobs-detail-hero__top"><span class="jobs-eyebrow">DETALLE DE LA PUBLICACIÓN</span><span class="jobs-status" th:classappend="${'jobs-status--' + (vacante.estado?.name() ?: 'NONE')}" th:text="${vacante.estado?.name() == 'ACTIVA' ? 'Activa' : (vacante.estado?.name() == 'PENDIENTE' ? 'Pendiente' : (vacante.estado?.name() == 'CERRADA' ? 'Cerrada' : 'Sin estado'))}"></span></div>
+  <h1 th:text="${vacante.titulo}"></h1>
+  <div class="jobs-detail-company"><span class="jobs-company__logo"><img th:if="${not #strings.isEmpty(vacante.empresa?.foto)}" th:src="${vacante.empresa.foto}" alt=""/><span th:if="${#strings.isEmpty(vacante.empresa?.foto)}" aria-hidden="true">▣</span></span><div><strong th:text="${vacante.empresa?.nombre ?: 'Sin empresa'}"></strong><span th:text="${vacante.fechaPublicacion != null ? 'Publicada el ' + #temporals.format(vacante.fechaPublicacion, 'dd MMM yyyy') : 'Fecha de publicación sin registrar'}"></span></div></div>
+  <dl class="jobs-facts"><div><dt>Salario mensual</dt><dd th:text="${vacante.salario != null and vacante.salario > 0 ? '$' + #numbers.formatDecimal(vacante.salario, 0, 'POINT', 0, 'COMMA') + ' COP' : 'A convenir'}"></dd></div><div><dt>Modalidad</dt><dd th:text="${vacante.modalidad?.descripcion ?: 'Sin especificar'}"></dd></div><div><dt>Contrato</dt><dd th:text="${vacante.tipoContrato?.descripcion ?: 'Sin especificar'}"></dd></div><div><dt>Experiencia requerida</dt><dd th:text="${vacante.experienciaRequerida?.descripcion ?: 'Sin especificar'}"></dd></div></dl>
+</section>
+<div class="jobs-detail-columns"><div>
+  <section class="jobs-section"><h2>Descripción de la vacante</h2><p class="jobs-description" th:text="${#strings.isEmpty(vacante.descripcion) ? 'La empresa no ha añadido una descripción.' : vacante.descripcion}"></p></section>
+  <section class="jobs-section" th:if="${not #strings.isEmpty(vacante.habilidadesRequeridas)}"><h2>Habilidades requeridas</h2><ul class="jobs-skills"><li th:each="habilidad : ${#strings.arraySplit(vacante.habilidadesRequeridas, ',')}" th:text="${#strings.trim(habilidad)}"></li></ul></section>
+</div><aside>
+  <section class="jobs-section jobs-manage"><span class="jobs-eyebrow">SUPERVISIÓN</span><h2>Gestión de la oferta</h2><p th:text="${vacante.estado?.name() == 'CERRADA' ? 'Esta convocatoria está cerrada. Puedes consultar su información y las postulaciones recibidas.' : 'Revisa la publicación antes de cerrar la convocatoria. Las postulaciones recibidas se conservarán.'}"></p>
+    <a th:if="${vacante.empresa != null}" class="jobs-secondary" th:href="@{/admin/empresas/ver/{id}(id=${vacante.empresa.id})}">Consultar empresa ↗</a>
+    <a th:if="${vacante.estado != null and vacante.estado.name() != 'CERRADA'}" th:href="@{/admin/vacantes/cerrar/{id}(id=${vacante.id})}" data-admin-confirm="¿Cerrar esta vacante? Dejará de mostrarse como una convocatoria abierta." class="jobs-close">Cerrar vacante</a>
+  </section>
+  <section class="jobs-section jobs-applicants-summary"><span>Postulaciones recibidas</span><strong th:text="${#lists.size(postulantes)}"></strong><a href="#job-applications">Consultar postulantes ↓</a></section>
+</aside></div>
+<section class="jobs-section jobs-applications" id="job-applications"><div class="jobs-results-heading"><div><h2>Postulaciones</h2><p>Personas que se han interesado en esta vacante.</p></div><span class="jobs-count" th:text="${#lists.size(postulantes)}"></span></div>
+<div class="table-scroll" role="region" tabindex="0" aria-label="Postulaciones de la vacante"><table class="table jobs-table"><thead><tr><th scope="col">Candidato</th><th scope="col">Correo</th><th scope="col">Fecha</th><th scope="col">Estado</th></tr></thead><tbody><tr th:each="p : ${postulantes}"><td><strong class="jobs-table__title" th:text="${p.postulante.nombre + ' ' + p.postulante.apellido}"></strong><span class="jobs-table__subtitle" th:text="${p.postulante.titulacion}"></span></td><td th:text="${p.postulante.email}"></td><td class="jobs-date" th:text="${p.fechaPostulacion != null ? #temporals.format(p.fechaPostulacion,'dd MMM yyyy') : 'Sin fecha'}"></td><td th:text="${p.estado?.descripcion ?: 'Sin estado'}"></td></tr><tr th:if="${#lists.isEmpty(postulantes)}"><td colspan="4" class="table__empty"><strong>Aún no hay postulaciones</strong><p>Los candidatos aparecerán aquí cuando se postulen.</p></td></tr></tbody></table></div>
+</section>
+</div></main></body></html>

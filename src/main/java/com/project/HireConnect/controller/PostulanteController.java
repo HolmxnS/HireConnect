@@ -412,6 +412,13 @@ public class PostulanteController {
             if (result.hasErrors())
                 return "redirect:/postulante/perfil";
 
+            String descripcion = postulanteForm.getDescripcion();
+            if (descripcion != null && descripcion.length() > 500) {
+                redirectAttributes.addFlashAttribute("error", "La descripción no puede superar 500 caracteres.");
+                return "redirect:/postulante/perfil";
+            }
+            postulanteForm.setDescripcion(descripcion == null || descripcion.isBlank() ? null : descripcion.strip());
+
             BeanUtils.copyProperties(postulanteForm, postulanteExistente,
                     "id", "email", "password", "cv", "foto", "fechaRegistro",
                     "habilidades", "educacion", "experiencia", "postulaciones",
@@ -660,6 +667,16 @@ public class PostulanteController {
         }
 
         Postulante postulante = optPostulante.get();
+        if (postulante.getCv().startsWith("gridfs:")) {
+            Resource archivo = postulanteService.buscarCvAlmacenado(postulante.getCv());
+            if (archivo == null) return ResponseEntity.notFound().build();
+            String nombre = archivo.getFilename() == null ? "cv.pdf" : archivo.getFilename();
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .header(HttpHeaders.CONTENT_DISPOSITION, org.springframework.http.ContentDisposition.attachment()
+                            .filename(nombre, java.nio.charset.StandardCharsets.UTF_8).build().toString())
+                    .body(archivo);
+        }
         String filenameInDB = Paths.get(postulante.getCv()).getFileName().toString();
         Path path = Paths.get(UPLOAD_DIR).resolve(filenameInDB);
 

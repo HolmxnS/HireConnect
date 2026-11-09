@@ -13,10 +13,22 @@ public class PostulanteService {
 
     private final PostulanteRepository postulanteRepository;
     private final PasswordEncoder passwordEncoder;
+    private final org.springframework.data.mongodb.gridfs.GridFsTemplate cvStorage;
 
-    public PostulanteService(PostulanteRepository postulanteRepository, PasswordEncoder passwordEncoder) {
+    public PostulanteService(PostulanteRepository postulanteRepository, PasswordEncoder passwordEncoder,
+            org.springframework.data.mongodb.gridfs.GridFsTemplate cvStorage) {
         this.postulanteRepository = postulanteRepository;
         this.passwordEncoder = passwordEncoder;
+        this.cvStorage = cvStorage;
+    }
+
+    public org.springframework.core.io.Resource buscarCvAlmacenado(String referencia) {
+        if (referencia == null || !referencia.startsWith("gridfs:")) return null;
+        String id = referencia.substring("gridfs:".length());
+        if (!org.bson.types.ObjectId.isValid(id)) return null;
+        var archivo = cvStorage.findOne(org.springframework.data.mongodb.core.query.Query.query(
+                org.springframework.data.mongodb.core.query.Criteria.where("_id").is(new org.bson.types.ObjectId(id))));
+        return archivo == null ? null : cvStorage.getResource(archivo);
     }
 
     public long contarPostulantes() {

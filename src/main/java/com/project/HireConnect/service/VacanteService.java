@@ -32,6 +32,21 @@ public class VacanteService {
         return vacanteRepository.count();
     }
 
+    public java.util.Map<String, Long> resumenAdmin() {
+        var resultado = new java.util.LinkedHashMap<String, Long>();
+        for (String clave : List.of("total", "ACTIVA", "PENDIENTE", "CERRADA")) resultado.put(clave, 0L);
+        var grupos = mongoTemplate.aggregate(org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation(
+                org.springframework.data.mongodb.core.aggregation.Aggregation.group("estado").count().as("cantidad")),
+                "vacantes", org.bson.Document.class);
+        for (var grupo : grupos) {
+            long cantidad = ((Number) grupo.get("cantidad")).longValue();
+            resultado.merge("total", cantidad, Long::sum);
+            String estado = grupo.getString("_id");
+            if (estado != null && resultado.containsKey(estado)) resultado.put(estado, cantidad);
+        }
+        return resultado;
+    }
+
     public Vacante guardar(Vacante vacante) {
         return vacanteRepository.save(vacante);
     }

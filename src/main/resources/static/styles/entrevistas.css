@@ -5,7 +5,7 @@ body main.content.interviews-page {
 .interviews-page .opportunity-heading { align-items: center; gap: 1.6rem; margin-bottom: 3rem; }
 .interviews-page .opportunity-heading h1 { margin-bottom: .6rem; font-size: clamp(2.6rem, 2.5vw, 3.2rem); }
 .interviews-page .opportunity-heading p { margin: 0; font-size: 1.4rem; }
-.interviews-page .opportunity-heading > .opportunity-pill { padding: .8rem 1.2rem; font-size: 1.2rem; }
+.interviews-page .opportunity-heading > .opportunity-pill { padding: .8rem 1.2rem; font-size: 1.2rem; color: #fff; }
 .interviews-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.4rem; align-items: start; }
 .interview-card {
     --interview-text: #f6f2ff;

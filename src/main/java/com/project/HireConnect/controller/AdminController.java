@@ -232,6 +232,7 @@ public class AdminController {
         model.addAttribute("paginaVacantes", resultado);
         model.addAttribute("q", q); model.addAttribute("estadoFiltro", estado); model.addAttribute("ordenFiltro", orden);
         if (fragmento) return "admin/gestion_vacantes :: resultados";
+        model.addAttribute("resumenVacantes", vacanteService.resumenAdmin());
         model.addAttribute("activeMenu", "vacantes");
         return "admin/gestion_vacantes";
     }
@@ -241,7 +242,7 @@ public class AdminController {
         Optional<Vacante> vacanteOpt = vacanteService.buscarPorId(id);
 
         if (vacanteOpt.isEmpty()) {
-            return "redirect:/admin/empresas?error=notfound";
+            return "redirect:/admin/vacantes?error=notfound";
         }
 
         Vacante vacante = vacanteOpt.get();

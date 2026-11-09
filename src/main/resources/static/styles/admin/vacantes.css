@@ -1,0 +1,73 @@
+/* Administración de vacantes: listado y detalle. */
+.admin-jobs .vacancy-management, .admin-job-detail { max-width: 132rem; width: 100%; margin-inline: auto; }
+.jobs-eyebrow { display: block; color: var(--hc-muted); font-size: 1rem; font-weight: 700; letter-spacing: .14em; }
+.admin-jobs .jobs-page-heading h1 { margin-top: .8rem; font-family: var(--font-clash); font-size: clamp(2.6rem, 2.5vw, 3.2rem); }
+.jobs-summary { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 1.6rem; }
+.admin-jobs a.jobs-stat { min-width: 0; padding: 2rem; border: 1px solid var(--hc-line); border-radius: 1.6rem; background: var(--hc-surface); color: var(--hc-text); text-decoration: none; }
+.jobs-stat:hover { border-color: var(--hc-accent-ink); }
+.jobs-stat__label { display: flex; align-items: center; gap: .7rem; font-size: 1.25rem; }
+.jobs-stat__label i { width: .7rem; height: .7rem; border-radius: 50%; background: var(--hc-muted); }
+.jobs-stat--active i { background: var(--hc-ok); }
+.jobs-stat--pending i { background: var(--hc-warn); }
+.jobs-stat--closed i { background: var(--hc-danger); }
+.jobs-stat strong { display: block; margin: 1.2rem 0 .8rem; font-size: 3rem; line-height: 1; font-weight: 600; font-variant-numeric: tabular-nums; }
+.jobs-stat > span:last-child { display: flex; justify-content: space-between; gap: .6rem; font-size: 1.1rem; color: var(--hc-muted); }
+.admin-jobs .company-search-form { padding: 1.6rem; border: 1px solid var(--hc-line); border-radius: 1.4rem; background: var(--hc-surface); box-sizing: border-box; gap: 1rem; }
+.admin-jobs .company-search-form .search { border-radius: .9rem; background: var(--hc-bg); }
+.admin-jobs .company-search-form select { border-radius: .9rem; }
+.admin-jobs .company-search-submit { border-radius: .9rem; }
+.admin-jobs .jobs-results-heading { display: flex; align-items: center; justify-content: space-between; gap: 1.6rem; margin: 0 0 1.4rem; }
+.jobs-results-heading h2 { margin: 0; color: var(--hc-text); font: 600 1.6rem var(--font-satoshi); }
+.admin-jobs .jobs-results-heading .admin-list-count { margin: 0; color: var(--hc-muted); font-size: 1.2rem; }
+.admin-jobs .company-table-scroll { max-height: none; overflow: auto; }
+.admin-jobs .jobs-table { width: 100%; border-collapse: collapse; min-width: 78rem; }
+.admin-jobs .jobs-table th { padding: 1.5rem 1.8rem; font-size: 1.1rem; font-weight: 500; color: var(--hc-muted); white-space: nowrap; }
+.admin-jobs .jobs-table td { padding: 1.8rem; font-size: 1.25rem; }
+.jobs-table__title { display: block; font-weight: 600; font-size: 1.35rem; color: var(--hc-text); line-height: 1.5; }
+.jobs-table__subtitle { display: block; margin-top: .5rem; color: var(--hc-muted); font-size: 1.1rem; line-height: 1.5; }
+.jobs-company { display: flex; align-items: center; gap: 1rem; max-width: 28rem; }
+.jobs-company__logo { display: grid; place-items: center; width: 3.8rem; height: 3.8rem; flex-shrink: 0; border: 1px solid var(--hc-line); border-radius: 1rem; overflow: hidden; background: var(--hc-soft); color: var(--hc-muted); }
+.jobs-company__logo img { width: 100%; height: 100%; object-fit: contain; background: white; }
+.jobs-date { white-space: nowrap; color: var(--hc-muted); }
+.jobs-status { display: inline-flex; align-items: center; gap: .6rem; padding: .5rem .9rem; border-radius: 1rem; background: var(--hc-soft); color: var(--hc-muted); font-size: 1.1rem; white-space: nowrap; }
+.jobs-status::before { content: ''; width: .5rem; height: .5rem; background: currentColor; border-radius: 50%; }
+.jobs-status--ACTIVA { background: color-mix(in srgb, var(--hc-ok) 12%, transparent); color: var(--hc-ok); }
+.jobs-status--PENDIENTE { background: color-mix(in srgb, var(--hc-warn) 12%, transparent); color: var(--hc-warn); }
+.jobs-status--CERRADA { background: var(--hc-soft); color: var(--hc-muted); }
+.admin-jobs a.jobs-detail-link { display: inline-flex; align-items: center; gap: 1rem; padding: .9rem 1.2rem; border: 1px solid var(--hc-line); border-radius: .9rem; color: var(--hc-text); text-decoration: none; white-space: nowrap; font-size: 1.15rem; }
+.admin-jobs a.jobs-detail-link:hover { border-color: var(--hc-accent-ink); background: var(--hc-soft); }
+.admin-jobs .table__empty p { margin: .7rem 0 1rem; font-size: 1.2rem; }
+.admin-jobs .table__empty a { color: var(--hc-text); text-underline-offset: .3rem; }
+.jobs-back { display: inline-block; margin-bottom: 2rem; color: var(--hc-text); font-size: 1.3rem; text-decoration: none; }
+.jobs-back:hover { text-decoration: underline; }
+.jobs-detail-hero { padding: 2.8rem; border: 1px solid var(--hc-line); border-radius: 1.8rem; background: linear-gradient(120deg,var(--hc-soft),var(--hc-surface)); }
+.jobs-detail-hero__top { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.jobs-detail-hero h1 { margin: 1.5rem 0 1.8rem; color: var(--hc-text); font: 600 clamp(2.4rem,2.5vw,3.2rem)/1.25 var(--font-clash); overflow-wrap: anywhere; }
+.jobs-detail-company { display: flex; align-items: center; gap: 1rem; }
+.jobs-detail-company strong { display: block; color: var(--hc-text); font-size: 1.35rem; font-weight: 500; }
+.jobs-detail-company div > span { display: block; margin-top: .4rem; color: var(--hc-muted); font-size: 1.15rem; }
+.jobs-facts { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 2rem; border-top: 1px solid var(--hc-line); padding-top: 2rem; margin: 2.4rem 0 0; }
+.jobs-facts dt { color: var(--hc-muted); font-size: 1.1rem; margin-bottom: .7rem; }
+.jobs-facts dd { margin: 0; color: var(--hc-text); font-size: 1.4rem; font-weight: 600; overflow-wrap: anywhere; }
+.jobs-detail-columns { display: grid; grid-template-columns: minmax(0,1fr) 30rem; gap: 2.4rem; margin: 2.4rem 0; align-items: start; }
+.jobs-detail-columns > * { min-width: 0; }
+.jobs-section { padding: 2.4rem; margin-bottom: 2rem; border: 1px solid var(--hc-line); border-radius: 1.5rem; background: var(--hc-surface); }
+.jobs-section h2 { color: var(--hc-text); font-size: 1.6rem; margin: 0 0 1.6rem; }
+.jobs-description { white-space: pre-wrap; overflow-wrap: anywhere; color: var(--hc-text); font-size: 1.4rem; line-height: 1.9; margin: 0; }
+.jobs-skills { display: flex; flex-wrap: wrap; gap: .8rem; margin: 0; padding: 0; list-style: none; }
+.jobs-skills li { padding: .7rem 1rem; border: 1px solid var(--hc-line); border-radius: .8rem; background: var(--hc-soft); color: var(--hc-text); font-size: 1.2rem; }
+.jobs-manage .jobs-eyebrow { margin-bottom: 1rem; }
+.jobs-manage p { color: var(--hc-muted); font-size: 1.2rem; line-height: 1.8; margin-bottom: 1.6rem; }
+.admin-jobs .jobs-secondary, .admin-jobs .jobs-close { display: block; padding: 1rem 1.2rem; border: 1px solid var(--hc-line); border-radius: .8rem; text-align: center; text-decoration: none; color: var(--hc-text); font-size: 1.2rem; }
+.admin-jobs .jobs-close { margin-top: 1rem; color: var(--hc-danger); border-color: color-mix(in srgb,var(--hc-danger) 30%,transparent); }
+.admin-jobs .jobs-close:hover { background: color-mix(in srgb,var(--hc-danger) 8%,transparent); }
+.jobs-applicants-summary > span { color: var(--hc-muted); font-size: 1.2rem; }
+.jobs-applicants-summary strong { display: block; color: var(--hc-text); font-size: 3.6rem; margin: 1rem 0; }
+.jobs-applicants-summary a { color: var(--hc-text); font-size: 1.2rem; }
+.jobs-applications { scroll-margin-top: 10rem; padding: 2.4rem 0 0; overflow: hidden; }
+.jobs-applications .jobs-results-heading { padding-inline: 2.4rem; }
+.jobs-applications .jobs-results-heading p { margin: .6rem 0 0; color: var(--hc-muted); font-size: 1.2rem; }
+.jobs-count { padding: .5rem 1rem; border-radius: .8rem; background: var(--hc-soft); color: var(--hc-text); font-size: 1.3rem; }
+.admin-jobs :is(.jobs-stat,.jobs-detail-link,.jobs-secondary,.jobs-close,.jobs-back):focus-visible { outline: 2px solid var(--hc-accent-ink); outline-offset: 3px; }
+@media(max-width:1000px) { .jobs-summary { grid-template-columns: repeat(2,minmax(0,1fr)); } .jobs-detail-columns { grid-template-columns: minmax(0,1fr); } .jobs-detail-columns aside { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; } }
+@media(max-width:600px) { .jobs-summary { gap: 1rem; } .admin-jobs a.jobs-stat { padding: 1.5rem; } .jobs-stat strong { font-size: 2.6rem; } .jobs-stat > span:last-child { font-size: 1rem; } .jobs-detail-hero { padding: 2rem; } .jobs-facts { grid-template-columns: repeat(2,minmax(0,1fr)); } .jobs-detail-columns aside { grid-template-columns: minmax(0,1fr); gap: 0; } .jobs-section { padding: 2rem; } .admin-jobs .jobs-results-heading { align-items: flex-start; flex-direction: column; gap: .6rem; } }

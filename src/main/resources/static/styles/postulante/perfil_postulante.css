@@ -130,3 +130,10 @@
 .profile-photo-dialog__actions { display: flex; justify-content: flex-end; gap: 1rem; }
 .profile-photo-dialog__actions > button:first-child { border: 1px solid var(--hc-line); border-radius: 1rem; padding: 1rem 1.6rem; background: var(--hc-soft); color: var(--hc-text); cursor: pointer; font: inherit; }
 .profile-photo-dialog button:disabled { opacity: .6; cursor: wait; }
+.profile-summary-data { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.8rem 2.4rem; margin: 0; }
+.profile-summary-data dt { color: var(--hc-muted); font-size: 1.2rem; margin-bottom: .5rem; }
+.profile-summary-data dd { color: var(--hc-text); font-size: 1.4rem; margin: 0; overflow-wrap: anywhere; }
+.profile-page .profile-about { margin: 0; color: var(--hc-text); font-size: 1.4rem; line-height: 1.8; white-space: pre-wrap; overflow-wrap: anywhere; }
+.profile-field-optional, .profile-field-help { color: var(--hc-muted); font-size: 1.2rem; font-weight: 400; }
+.profile-description-input { resize: vertical; min-height: 11rem; }
+@media (max-width: 600px) { .profile-summary-data { grid-template-columns: minmax(0, 1fr); } }

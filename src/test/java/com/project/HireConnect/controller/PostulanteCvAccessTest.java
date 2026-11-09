@@ -69,4 +69,18 @@ class PostulanteCvAccessTest {
         assertEquals(404, controller.descargarCV(DESTINO, auth("admin@example.invalid", "ROLE_ADMIN_PLATAFORMA")).getStatusCode().value());
         verifyNoInteractions(candidaturas);
     }
+    @Test
+    void descargaDesdeMongoSoloDespuesDeComprobarPermisos() {
+        var candidato = new Postulante(); candidato.setId(DESTINO); candidato.setCv("gridfs:000000000000000000000001");
+        when(personas.buscarPorId(DESTINO)).thenReturn(Optional.of(candidato));
+        var recurso = new org.springframework.core.io.ByteArrayResource("%PDF-test".getBytes());
+        when(personas.buscarCvAlmacenado(candidato.getCv())).thenReturn(recurso);
+        var response = controller.descargarCV(DESTINO, auth("admin@example.invalid", "ROLE_ADMIN_PLATAFORMA"));
+        assertEquals(200, response.getStatusCode().value());
+        assertSame(recurso, response.getBody());
+        clearInvocations(personas);
+        assertEquals(403, controller.descargarCV(DESTINO, auth("ajeno@example.invalid", "ROLE_PERSONA")).getStatusCode().value());
+        verify(personas, never()).buscarCvAlmacenado(anyString());
+    }
+
 }

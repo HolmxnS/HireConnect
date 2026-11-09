@@ -61,6 +61,17 @@
             <button type="button" class="profile-tab" data-tab="experiencia" role="tab" aria-selected="false">Experiencia</button>
           </nav>
           <div id="section-resumen" class="profile-section profile-section--visible">
+            <section class="profile-card">
+              <h2>Datos personales</h2>
+              <dl class="profile-summary-data">
+                <div><dt>Nombre completo</dt><dd th:text="${postulante.nombre + ' ' + postulante.apellido}"></dd></div>
+                <div><dt>Titulación</dt><dd th:text="${#strings.isEmpty(postulante.titulacion) ? 'Sin registrar' : postulante.titulacion}"></dd></div>
+                <div><dt>Correo</dt><dd th:text="${postulante.email}"></dd></div>
+                <div><dt>Teléfono</dt><dd th:text="${#strings.isEmpty(postulante.telefono) ? 'Sin registrar' : postulante.telefono}"></dd></div>
+                <div><dt>Nacionalidad</dt><dd th:text="${#strings.isEmpty(postulante.nacionalidad) ? 'Sin registrar' : postulante.nacionalidad}"></dd></div>
+              </dl>
+            </section>
+            <section class="profile-card"><h2>Sobre mí</h2><p class="profile-about" th:if="${not #strings.isEmpty(postulante.descripcion)}" th:text="${postulante.descripcion}"></p><p class="profile-empty" th:if="${#strings.isEmpty(postulante.descripcion)}">Añade una breve descripción en la pestaña Datos para presentarte a las empresas.</p></section>
             <section class="profile-card"><h2>Habilidades</h2><div class="profile-skill-list" th:if="${not #lists.isEmpty(postulante.habilidades)}"><span th:each="habilidad : ${postulante.habilidades}" th:text="${habilidad}"></span></div><p class="profile-empty" th:if="${#lists.isEmpty(postulante.habilidades)}">Sin habilidades registradas.</p></section>
             <section class="profile-card"><h2>Experiencia</h2><ul class="profile-timeline" th:if="${not #lists.isEmpty(postulante.experiencia)}"><li th:each="exp : ${postulante.experiencia}"><span class="profile-timeline__icon" aria-hidden="true"><i class="fa-solid fa-briefcase"></i></span><div><h3 th:text="${exp.cargo}"></h3><p th:text="${exp.empresa}"></p><p class="profile-timeline__date" th:if="${exp.fechaInicio != null}" th:text="${#temporals.format(exp.fechaInicio, 'MMM yyyy') + ' — ' + (exp.fechaFin != null ? #temporals.format(exp.fechaFin, 'MMM yyyy') : 'Actualidad')}"></p><p class="profile-timeline__description" th:if="${not #strings.isEmpty(exp.descripcion)}" th:text="${exp.descripcion}"></p></div></li></ul><p class="profile-empty" th:if="${#lists.isEmpty(postulante.experiencia)}">Sin experiencia registrada.</p></section>
             <section class="profile-card"><h2>Educación</h2><ul class="profile-timeline" th:if="${not #lists.isEmpty(postulante.educacion)}"><li th:each="edu : ${postulante.educacion}"><span class="profile-timeline__icon" aria-hidden="true"><i class="fa-solid fa-graduation-cap"></i></span><div><h3 th:text="${edu.titulo}"></h3><p th:text="${edu.institucion}"></p><p class="profile-timeline__date" th:if="${edu.fechaInicio != null}" th:text="${#temporals.format(edu.fechaInicio, 'MMM yyyy') + ' — ' + (edu.fechaFin != null ? #temporals.format(edu.fechaFin, 'MMM yyyy') : 'Actualidad')}"></p></div></li></ul><p class="profile-empty" th:if="${#lists.isEmpty(postulante.educacion)}">Sin estudios registrados.</p></section>
@@ -174,6 +185,11 @@
               </div>
             </div>
 
+            <div class="form-field">
+              <label for="profile-description">Sobre mí <span class="profile-field-optional">(opcional)</span></label>
+              <textarea id="profile-description" class="form-input profile-description-input" name="descripcion" rows="4" maxlength="500" aria-describedby="profile-description-help" placeholder="Cuéntanos sobre tu experiencia, tus fortalezas y el tipo de oportunidad que buscas." th:text="${postulante.descripcion}"></textarea>
+              <small id="profile-description-help" class="profile-field-help">Máximo 500 caracteres.</small>
+            </div>
             <div class="form-actions">
               <button type="submit" class="btn-submit-save">
                 Guardar cambios

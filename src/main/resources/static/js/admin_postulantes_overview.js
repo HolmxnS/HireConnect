@@ -5,8 +5,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('[data-people-total]').textContent = total;
     document.querySelector('[data-people-with-cv]').textContent = withCv;
     document.querySelector('[data-people-without-cv]').textContent = total - withCv;
-    const percent = total ? Math.round(withCv / total * 100) : 0;
-    document.querySelector('[data-people-cv-percent]').textContent = percent + '%';
+    const percent = total ? withCv / total * 100 : 0;
+    document.querySelector('[data-people-cv-percent]').textContent = percent > 0 && percent < .1
+        ? '<0,1%'
+        : new Intl.NumberFormat('es-CO', { maximumFractionDigits: 1 }).format(percent) + '%';
     document.querySelector('[data-people-cv-summary]').textContent = withCv + ' de ' + total + ' postulantes tienen un CV disponible.';
     document.querySelector('[data-people-cv-ring]').style.background = 'conic-gradient(var(--hc-accent) ' + percent + '%, var(--hc-soft) 0)';
     const recent = document.querySelector('[data-people-recent]');

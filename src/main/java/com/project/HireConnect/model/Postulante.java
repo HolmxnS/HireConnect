@@ -87,6 +87,9 @@ public class Postulante {
     @Size(max = 100, message = "La titulación no puede superar 100 caracteres")
     private String titulacion;
 
+    @Size(max = 500, message = "La descripción no puede superar 500 caracteres")
+    private String descripcion;
+
     @Size(max = 50, message = "La nacionalidad no puede superar 50 caracteres")
     private String nacionalidad;
 

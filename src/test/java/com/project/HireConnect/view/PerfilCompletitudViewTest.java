@@ -34,6 +34,10 @@ class PerfilCompletitudViewTest {
         assertTrue(html.contains("2 de 10 apartados completos"));
         assertTrue(html.contains("data-profile-part=\"foto\" data-complete=\"false\""));
         assertFalse(html.contains("Próximamente"));
+        assertTrue(html.contains("Datos personales"));
+        assertTrue(html.contains("Sobre mí"));
+        assertTrue(html.contains("Me gusta &lt;Java&gt; &amp; SQL"));
+        assertFalse(html.contains("Me gusta <Java>"));
         if (Boolean.getBoolean("profile.preview")) {
             java.nio.file.Files.writeString(java.nio.file.Path.of(System.getProperty("java.io.tmpdir"), "hireconnect-profile-preview.html"), html);
         }
@@ -47,6 +51,7 @@ class PerfilCompletitudViewTest {
             p.setNombre("Ana");
             p.setApellido("Pérez");
             p.setEmail("ana@example.invalid");
+            p.setDescripcion("Me gusta <Java> & SQL");
             model.addAttribute("postulante", p);
             model.addAttribute("completitud", CompletitudPerfil.calcular(p));
             return "postulante/perfil_postulante";

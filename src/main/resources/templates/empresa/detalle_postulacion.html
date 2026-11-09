@@ -55,6 +55,7 @@
                     </div>
 
 
+                    <section class="candidate-about" th:if="${not #strings.isEmpty(postulante.descripcion)}"><h3>Sobre mí</h3><p th:text="${postulante.descripcion}"></p></section>
                     <div class="card__data">
                         <div class="card__data-item">
                             <p class="card__data-title">Edad</p>
