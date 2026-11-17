@@ -44,7 +44,7 @@ def prepare_model(root, env):
                    env=env, check=True, timeout=180)
 
 
-def wait_for_predictor(process, port, timeout=45, require_model=True):
+def wait_for_predictor(process, port, timeout=120, require_model=True):
     deadline = time.monotonic() + timeout
     while time.monotonic() < deadline:
         if process.poll() is not None:
@@ -80,6 +80,9 @@ def stop(processes):
 
 
 def start_services(root, env, port, java_command):
+    startup_timeout = int(env.get('ML_STARTUP_TIMEOUT_SECONDS', '120'))
+    if not 1 <= startup_timeout <= 600:
+        raise ValueError('ML_STARTUP_TIMEOUT_SECONDS debe estar entre 1 y 600')
     processes = []
     try:
         predictor = subprocess.Popen([
@@ -88,7 +91,8 @@ def start_services(root, env, port, java_command):
             '--timeout', '30', '--access-logfile', '-', 'app:create_app()'],
             env=env, start_new_session=True)
         processes.append(predictor)
-        wait_for_predictor(predictor, port, require_model=env.get('ML_REQUIRED', 'true').lower() == 'true')
+        wait_for_predictor(predictor, port, timeout=startup_timeout,
+                           require_model=env.get('ML_REQUIRED', 'true').lower() == 'true')
         print(f'Modelo listo. Java usara la API interna en el puerto {port}.', flush=True)
         processes.append(subprocess.Popen(java_command, env=env, start_new_session=True))
         return processes

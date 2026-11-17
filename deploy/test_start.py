@@ -6,6 +6,7 @@ import sys
 import tempfile
 import unittest
 from unittest.mock import Mock, patch
+from urllib.error import URLError
 
 from start import configuration, prepare_model, start_services, stop, wait_for_predictor
 
@@ -57,6 +58,25 @@ class ConfigurationTests(unittest.TestCase):
         process.poll.return_value = 1
         with self.assertRaisesRegex(RuntimeError, 'termino'):
             wait_for_predictor(process, 5050)
+
+    def test_slow_predictor_can_become_ready_after_the_old_45_second_limit(self):
+        process = Mock()
+        process.poll.return_value = None
+        response = io.BytesIO(b'{"modelReady":true,"schemaVersion":2}')
+        with patch('start.time.monotonic', side_effect=[0, 0, 60]), \
+             patch('start.time.sleep'), \
+             patch('start.urlopen', side_effect=[URLError('starting'), response]) as request:
+            wait_for_predictor(process, 5050)
+        self.assertEqual(request.call_count, 2)
+
+    def test_predictor_startup_timeout_is_configurable(self):
+        with patch('start.subprocess.Popen'), patch('start.wait_for_predictor') as wait:
+            start_services(Path('/app'), {'ML_STARTUP_TIMEOUT_SECONDS': '180'}, 5050, ['java'])
+            self.assertEqual(wait.call_args.kwargs['timeout'], 180)
+        with patch('start.subprocess.Popen') as spawn:
+            with self.assertRaisesRegex(ValueError, 'ML_STARTUP_TIMEOUT_SECONDS'):
+                start_services(Path('/app'), {'ML_STARTUP_TIMEOUT_SECONDS': '0'}, 5050, ['java'])
+            spawn.assert_not_called()
 
     def test_empty_local_database_can_start_without_a_trained_model(self):
         process = Mock()
