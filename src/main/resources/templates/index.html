@@ -135,9 +135,9 @@
                                 <li class="offer-card__tag" th:if="${item.vacante.modalidad != null}"
                                     th:text="${item.vacante.modalidad}">Presencial</li>
                                 <li class="offer-card__tag" th:if="${item.vacante.tipoContrato != null}"
-                                    th:text="${item.vacante.tipoContrato}">Tiempo completo</li>
+                                    th:text="${item.vacante.tipoContrato.descripcion}">Tiempo completo</li>
                                 <li class="offer-card__tag" th:if="${item.vacante.experienciaRequerida != null}"
-                                    th:text="${item.vacante.experienciaRequerida}">Sin experiencia</li>
+                                    th:text="${item.vacante.experienciaRequerida.descripcion}">Sin experiencia</li>
                             </ul>
                             <div class="offer-card__footer">
                                 <p class="offer-card__salary"
