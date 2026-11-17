@@ -106,11 +106,13 @@ public class PostulanteController {
             @ModelAttribute FiltrosVacantes filtros,
             Authentication authentication,
             Model model,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes,
+            jakarta.servlet.http.HttpSession session) {
 
         Optional<Postulante> optPostulante = getAuthenticatedPostulante(authentication);
         model.addAttribute("visitante", optPostulante.isEmpty());
         optPostulante.ifPresent(p -> model.addAttribute("postulante", p));
+        optPostulante.ifPresent(p -> prepararInvitacionPerfil(p, session, model));
         model.addAttribute("activeMenu", "vacantes");
         prepararPaginaVacantes(filtros, model);
         model.addAttribute("sectoresDisponibles", vacanteService.sectoresDisponibles());
@@ -202,7 +204,8 @@ public class PostulanteController {
     public String verDetalleVacante(@PathVariable("id") String idVacante,
             Authentication authentication,
             Model model,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes,
+            jakarta.servlet.http.HttpSession session) {
 
         Optional<Postulante> optPostulante = getAuthenticatedPostulante(authentication);
 
@@ -231,7 +234,29 @@ public class PostulanteController {
         model.addAttribute("vacante", vacante);
         model.addAttribute("visitante", optPostulante.isEmpty());
         optPostulante.ifPresent(p -> model.addAttribute("postulante", p));
+        optPostulante.ifPresent(p -> prepararInvitacionPerfil(p, session, model));
         return "postulante/detalle_vacante";
+    }
+
+    private void prepararInvitacionPerfil(Postulante postulante,
+            jakarta.servlet.http.HttpSession session, Model model) {
+        String clave = "invitacionPerfil:" + postulante.getId();
+        if (postulante.isOcultarInvitacionPerfil() || session.getAttribute(clave) != null) return;
+        var completitud = com.project.HireConnect.dto.CompletitudPerfil.calcular(postulante);
+        if (completitud.getPorcentaje() == 100) return;
+        model.addAttribute("invitarCompletarPerfil", true);
+        model.addAttribute("porcentajePerfil", completitud.getPorcentaje());
+        session.setAttribute(clave, true);
+    }
+
+    @PostMapping("/perfil/invitacion")
+    @ResponseBody
+    public ResponseEntity<Void> preferenciaInvitacionPerfil(@RequestParam boolean ocultar,
+            Authentication authentication) {
+        var postulante = getAuthenticatedPostulante(authentication);
+        if (postulante.isEmpty()) return ResponseEntity.status(401).build();
+        postulanteService.actualizarInvitacionPerfil(postulante.get().getId(), ocultar);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/postular")
@@ -422,7 +447,7 @@ public class PostulanteController {
             BeanUtils.copyProperties(postulanteForm, postulanteExistente,
                     "id", "email", "password", "cv", "foto", "fechaRegistro",
                     "habilidades", "educacion", "experiencia", "postulaciones",
-                    "tipoDocumento", "identificacion", "fechaNacimiento", "genero");
+                    "tipoDocumento", "identificacion", "fechaNacimiento", "genero", "ocultarInvitacionPerfil");
 
             postulanteService.guardar(postulanteExistente);
 

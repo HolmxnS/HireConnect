@@ -14,6 +14,10 @@ public interface PostulanteRepository extends MongoRepository<Postulante, String
 
     Optional<Postulante> findByEmail(String email);
 
+    @Query("{ '_id': ?0 }")
+    @org.springframework.data.mongodb.repository.Update("{ '$set': { 'ocultarInvitacionPerfil': ?1 } }")
+    void actualizarInvitacionPerfil(String id, boolean ocultar);
+
 
     @Query(value = "{ 'cv' : { $ne : null } }", count = true)
     long countByCvIsNotNull();

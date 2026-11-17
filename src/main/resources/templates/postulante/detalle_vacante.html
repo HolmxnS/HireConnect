@@ -126,6 +126,7 @@
                         <div class="flex-end">
                             <a th:href="@{/postulante/postular(vacanteId=${vacante.id}, postulanteId=${postulanteId})}"
                                 class="details__postulate"
+                                th:attr="data-confirm-application=${visitante != true},data-application-title=${vacante.titulo},data-application-company=${vacante.empresa?.nombre ?: 'la empresa'}"
                                 th:if="${vacante.estado != null and vacante.estado.name() == 'ACTIVA'}">
                                 <i class="fa-solid fa-paper-plane mr-2"></i> Postularme Ahora
                             </a>

@@ -43,6 +43,8 @@ public class Postulante {
     @Id
     private String id;
 
+    private boolean ocultarInvitacionPerfil;
+
     @Indexed(unique = true)
     @NotBlank(message = "El correo es obligatorio", groups = Paso2.class)
     @Email(message = "Debe ingresar un correo válido", groups = Paso2.class)

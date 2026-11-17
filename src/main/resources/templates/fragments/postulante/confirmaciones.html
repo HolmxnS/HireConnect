@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:fragment="modales">
+    <link rel="stylesheet" th:href="@{/styles/postulante/confirmaciones.css}" />
+    <dialog class="candidate-modal" id="complete-profile-dialog" aria-labelledby="complete-profile-title"
+            th:if="${invitarCompletarPerfil == true}" data-profile-invitation>
+        <button class="candidate-modal__close" type="button" data-modal-close aria-label="Cerrar">×</button>
+        <div class="candidate-modal__art" aria-hidden="true"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.5"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/></svg></span></div>
+        <span class="candidate-modal__eyebrow">TU PERFIL EN HIRECONNECT</span>
+        <h2 id="complete-profile-title">¿Completamos tu perfil?</h2>
+        <p>Añade tu formación, habilidades y hoja de vida para que las empresas conozcan mejor tu talento.</p>
+        <div class="candidate-modal__progress"><div><span>Tu progreso</span><strong th:text="${porcentajePerfil + '%'}"></strong></div><progress max="100" th:value="${porcentajePerfil}" aria-label="Perfil completado"></progress></div>
+        <form th:action="@{/postulante/perfil/invitacion}" method="post" data-profile-preference>
+            <label class="candidate-modal__preference"><input type="checkbox" name="ocultar" value="true" /> No volver a mostrar este aviso</label>
+            <p data-preference-error role="status" hidden>No se pudo guardar tu preferencia. Inténtalo de nuevo.</p>
+        </form>
+        <div class="candidate-modal__actions"><button type="button" class="candidate-modal__secondary" data-modal-close autofocus>Ahora no</button><a class="candidate-modal__primary" th:href="@{/postulante/perfil}">Completar mi perfil <span aria-hidden="true">→</span></a></div>
+    </dialog>
+    <dialog class="candidate-modal" id="confirm-application-dialog" aria-labelledby="confirm-application-title" aria-describedby="confirm-application-description">
+        <button class="candidate-modal__close" type="button" data-modal-close aria-label="Cerrar">×</button>
+        <div class="candidate-modal__art" aria-hidden="true"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="m21 3-7 18-4-7-7-4 18-7Z"/><path d="m10 14 6-6"/></svg></span></div>
+        <span class="candidate-modal__eyebrow">UN NUEVO PASO</span>
+        <h2 id="confirm-application-title">¿Quieres postularte?</h2>
+        <p id="confirm-application-description">La empresa podrá revisar tu perfil y tu hoja de vida disponible para esta oferta.</p>
+        <div class="candidate-modal__vacancy"><strong data-application-name></strong><span data-application-employer></span></div>
+        <div class="candidate-modal__actions"><button type="button" class="candidate-modal__secondary" data-modal-close autofocus>Cancelar</button><a class="candidate-modal__primary" data-application-proceed>Confirmar postulación <span aria-hidden="true">→</span></a></div>
+    </dialog>
+    <script th:src="@{/js/confirmaciones_postulante.js}" defer></script>
+</th:block>
+</body>
+</html>

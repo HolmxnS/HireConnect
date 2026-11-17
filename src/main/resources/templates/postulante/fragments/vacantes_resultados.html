@@ -55,6 +55,7 @@
                                 th:text="${vacante.salario != null and vacante.salario > 0} ? ${'$' + #numbers.formatDecimal(vacante.salario, 0, 'POINT', 0, 'COMMA') + ' COP'} : 'A convenir'"></strong>
                         </div>
                         <a class="vacancy-detail__apply"
+                            th:attr="data-confirm-application=${visitante != true},data-application-title=${vacante.titulo},data-application-company=${empresa?.nombre ?: 'la empresa'}"
                             th:if="${vacante.estado != null and vacante.estado.name() == 'ACTIVA'}"
                             th:href="@{/postulante/postular(vacanteId=${vacante.id})}">Postularme <i
                                 class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>

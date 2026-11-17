@@ -30,11 +30,6 @@
     }
 
     var enviando = false;
-    var estado = document.createElement('p');
-    estado.setAttribute('role', 'status');
-    estado.setAttribute('aria-live', 'polite');
-    estado.hidden = true;
-    form.appendChild(estado);
 
     form.addEventListener('submit', function (evento) {
         if (enviando) {
@@ -43,17 +38,11 @@
         }
         enviando = true;
         form.setAttribute('aria-busy', 'true');
-        // Mantener los campos visibles mientras el servidor procesa el registro.
-        estado.hidden = false;
-        estado.textContent = stepInput.value === '2'
-            ? 'Enviando tu código de verificación. Espera un momento…'
-            : 'Validando tus datos. Espera un momento…';
     });
 
     window.addEventListener('pageshow', function () {
         enviando = false;
         form.removeAttribute('aria-busy');
-        estado.hidden = true;
     });
 
     Array.prototype.forEach.call(document.querySelectorAll('[data-toggle-password]'), function (boton) {

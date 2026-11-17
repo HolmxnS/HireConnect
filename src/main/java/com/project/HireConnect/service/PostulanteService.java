@@ -52,6 +52,10 @@ public class PostulanteService {
         return postulanteRepository.save(postulante);
     }
 
+    public void actualizarInvitacionPerfil(String id, boolean ocultar) {
+        postulanteRepository.actualizarInvitacionPerfil(id, ocultar);
+    }
+
     public List<Postulante> listarTodos() {
         return postulanteRepository.findAll();
     }
